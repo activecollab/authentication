@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a98e8c55f8e7201be10181c9e75270c3",
-    "content-hash": "d43990cc4443605e6ce4009bebf2e0e9",
+    "hash": "401066f2f946588529c12f5588181a30",
+    "content-hash": "f1753f1da5a3a400db42c41a931a1950",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -49,6 +49,51 @@
                 "cookies"
             ],
             "time": "2015-11-18 12:24:57"
+        },
+        {
+            "name": "activecollab/user",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/activecollab/user.git",
+                "reference": "8ecbc6fed0bc4590322042ba699afc1e9af7ee2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/activecollab/user/zipball/8ecbc6fed0bc4590322042ba699afc1e9af7ee2e",
+                "reference": "8ecbc6fed0bc4590322042ba699afc1e9af7ee2e",
+                "shasum": ""
+            },
+            "require": {
+                "jasonpriem/human-name-parser": "dev-master",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ActiveCollab\\User\\": "src",
+                    "ActiveCollab\\User\\Test\\": "test/src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ilija Studen",
+                    "email": "ilija.studen@activecollab.com"
+                }
+            ],
+            "description": "User interface",
+            "homepage": "https://labs.activecollab.com",
+            "keywords": [
+                "activecollab"
+            ],
+            "time": "2015-10-15 15:29:22"
         },
         {
             "name": "dflydev/fig-cookies",
@@ -101,6 +146,31 @@
                 "psr7"
             ],
             "time": "2015-06-03 18:02:30"
+        },
+        {
+            "name": "jasonpriem/human-name-parser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jasonpriem/HumanNameParser.php.git",
+                "reference": "da339cc2bc17ac19202a6cdd78c9f9f17aae2724"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jasonpriem/HumanNameParser.php/zipball/da339cc2bc17ac19202a6cdd78c9f9f17aae2724",
+                "reference": "da339cc2bc17ac19202a6cdd78c9f9f17aae2724",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Name.php",
+                    "Parser.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Takes human names of arbitrary complexity and various wacky formats and parses them out.",
+            "time": "2015-05-07 03:41:34"
         },
         {
             "name": "psr/http-message",
@@ -1105,6 +1175,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "activecollab/user": 20,
         "activecollab/cookies": 20
     },
     "prefer-stable": true,
