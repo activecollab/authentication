@@ -12,7 +12,7 @@ use ActiveCollab\Authentication\Test\Http\Request;
 /**
  * @package ActiveCollab\Authentication\Test
  */
-class AuthorizationBearerTest extends TestCase
+class AuthorizationBearerInitializeTest extends TestCase
 {
     /**
      * @var RepositoryInterface
@@ -62,9 +62,9 @@ class AuthorizationBearerTest extends TestCase
     }
 
     /**
-     * Test if we get authroized user when we use a good token
+     * Test if we get authetncated user when we use a good token
      */
-    public function testAuthorisationWithGoodToken()
+    public function testAuthenticationWithGoodToken()
     {
         $reposutory = new Repository([
             '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
@@ -75,7 +75,10 @@ class AuthorizationBearerTest extends TestCase
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
     }
 
-    public function testAuthorizationRecordsTokenUsage()
+    /**
+     * Test if authentication with good token records usage
+     */
+    public function testAuthenticationRecordsTokenUsage()
     {
         $reposutory = new Repository([
             '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
