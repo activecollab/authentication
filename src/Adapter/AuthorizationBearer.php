@@ -2,6 +2,7 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use Psr\Http\Message\RequestInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -55,11 +56,10 @@ class AuthorizationBearer implements AdapterInterface
     /**
      * Authenticate with given credential agains authentication source
      *
-     * @param  RequestInterface           $request
-     * @return AuthenticatedUserInterface
+     * @param  RequestInterface              $request
+     * @return AuthenticationResultInterface
      */
     public function authenticate(RequestInterface $request)
     {
-
     }
 }
