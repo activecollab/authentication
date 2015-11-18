@@ -1,6 +1,6 @@
 <?php
 
-namespace ActiveCollab\Authentication;
+namespace ActiveCollab\Authentication\AuthenticatedUser;
 
 use ActiveCollab\User\UserInterface;
 

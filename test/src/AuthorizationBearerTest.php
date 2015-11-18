@@ -3,6 +3,9 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\AuthorizationBearer;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
+use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
 use ActiveCollab\Authentication\Test\Base\TestCase;
 use ActiveCollab\Authentication\Test\Http\Request;
 
@@ -11,6 +14,21 @@ use ActiveCollab\Authentication\Test\Http\Request;
  */
 class AuthorizationBearerTest extends TestCase
 {
+    /**
+     * @var RepositoryInterface
+     */
+    private $empty_users_repository;
+
+    /**
+     * Set up test environment
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->empty_users_repository = new Repository();
+    }
+
     /**
      * Test if we can properly set header line using our stub request objects
      */
@@ -24,7 +42,7 @@ class AuthorizationBearerTest extends TestCase
      */
     public function testInitializationSkipWhenTheresNoAuthroizationHeader()
     {
-        $this->assertNull((new AuthorizationBearer())->initialize(new Request()));
+        $this->assertNull((new AuthorizationBearer($this->empty_users_repository))->initialize(new Request()));
     }
 
     /**
@@ -32,7 +50,7 @@ class AuthorizationBearerTest extends TestCase
      */
     public function testInitializationSkipWhenAuthorizationIsNotTokenBearer()
     {
-        $this->assertNull((new AuthorizationBearer())->initialize((new Request())->withHeader('Authorization', 'Basic 123')));
+        $this->assertNull((new AuthorizationBearer($this->empty_users_repository))->initialize((new Request())->withHeader('Authorization', 'Basic 123')));
     }
 
     /**
@@ -40,16 +58,34 @@ class AuthorizationBearerTest extends TestCase
      */
     public function testExceptionWhenTokenIsNotValid()
     {
-        (new AuthorizationBearer())->initialize((new Request())->withHeader('Authorization', 'Bearer 123'));
+        (new AuthorizationBearer($this->empty_users_repository))->initialize((new Request())->withHeader('Authorization', 'Bearer 123'));
     }
 
-//    public function testExceptionWhenTokenIsExpired()
-//    {
-//
-//    }
-//
-//    public function testAuthorisationWithGoodToken()
-//    {
-//
-//    }
+    /**
+     * Test if we get authroized user when we use a good token
+     */
+    public function testAuthorisationWithGoodToken()
+    {
+        $reposutory = new Repository([
+            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
+        ]);
+
+        $user = (new AuthorizationBearer($reposutory))->initialize((new Request())->withHeader('Authorization', 'Bearer 123'));
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+    }
+
+    public function testAuthorizationRecordsTokenUsage()
+    {
+        $reposutory = new Repository([
+            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
+        ]);
+
+        $this->assertSame(0, $reposutory->getTokenUsage('123'));
+
+        $user = (new AuthorizationBearer($reposutory))->initialize((new Request())->withHeader('Authorization', 'Bearer 123'));
+        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+
+        $this->assertSame(1, $reposutory->getTokenUsage('123'));
+    }
 }

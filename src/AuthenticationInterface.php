@@ -2,6 +2,7 @@
 
 namespace ActiveCollab\Authentication;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**

@@ -2,8 +2,9 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use Psr\Http\Message\RequestInterface;
-use ActiveCollab\Authentication\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
 
 /**
@@ -11,6 +12,19 @@ use ActiveCollab\Authentication\Exception\InvalidTokenException;
  */
 class AuthorizationBearer implements AdapterInterface
 {
+    /**
+     * @var RepositoryInterface
+     */
+    private $users_repository;
+
+    /**
+     * @param RepositoryInterface $users_repository
+     */
+    public function __construct(RepositoryInterface $users_repository)
+    {
+        $this->users_repository = $users_repository;
+    }
+
     /**
      * Initialize authentication layer and see if we have a user who's already logged in
      *
@@ -28,7 +42,11 @@ class AuthorizationBearer implements AdapterInterface
                 throw new InvalidTokenException();
             }
 
-            if ($token != 'my awesome token') {
+            if ($user = $this->users_repository->findByToken($token)) {
+                $this->users_repository->recordTokenUsage($token);
+
+                return $user;
+            } else {
                 throw new InvalidTokenException();
             }
         }
