@@ -37,9 +37,14 @@ class Token implements TokenInterface
      */
     public function jsonSerialize()
     {
-        return [
-            'token' => $this->token,
-            'expires_at' => $this->expires_at instanceof \JsonSerializable ? $this->expires_at : $this->expires_at->getTimestamp(),
-        ];
+        if ($this->expires_at instanceof \JsonSerializable) {
+            $expires_at = $this->expires_at->jsonSerialize();
+        } elseif ($this->expires_at instanceof \DateTimeInterface) {
+            $expires_at = $this->expires_at->getTimestamp();
+        } else {
+            $expires_at = null;
+        }
+
+        return ['token' => $this->token, 'expires_at' => $expires_at];
     }
 }

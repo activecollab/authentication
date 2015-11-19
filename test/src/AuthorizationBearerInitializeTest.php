@@ -74,6 +74,4 @@ class AuthorizationBearerInitializeTest extends AuthorizationBearerTestCase
 
         $this->assertSame(1, $repository->getTokenUsage('123'));
     }
-
-
 }
