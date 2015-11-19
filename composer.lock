@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1250906c640666d11033e596b59a0536",
-    "content-hash": "2a0efaf73f4bb83ddca31c0b51f32afd",
+    "hash": "cb1d6f33f3ed126d0f8e3be0ffedee7a",
+    "content-hash": "ac529c896bd3791a09d66ff88cf64fa4",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -52,16 +52,16 @@
         },
         {
             "name": "activecollab/user",
-            "version": "dev-master",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/user.git",
-                "reference": "8ecbc6fed0bc4590322042ba699afc1e9af7ee2e"
+                "reference": "23e8ceb3771d7a88fb22039050a87627b7e2396c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/user/zipball/8ecbc6fed0bc4590322042ba699afc1e9af7ee2e",
-                "reference": "8ecbc6fed0bc4590322042ba699afc1e9af7ee2e",
+                "url": "https://api.github.com/repos/activecollab/user/zipball/23e8ceb3771d7a88fb22039050a87627b7e2396c",
+                "reference": "23e8ceb3771d7a88fb22039050a87627b7e2396c",
                 "shasum": ""
             },
             "require": {
@@ -93,7 +93,7 @@
             "keywords": [
                 "activecollab"
             ],
-            "time": "2015-10-15 15:29:22"
+            "time": "2015-10-15 15:25:14"
         },
         {
             "name": "dflydev/fig-cookies",
@@ -1501,7 +1501,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "activecollab/user": 20,
         "activecollab/cookies": 20
     },
     "prefer-stable": true,
