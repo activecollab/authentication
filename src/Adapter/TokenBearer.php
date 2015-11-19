@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class AuthorizationBearer implements AdapterInterface
+class TokenBearer implements AdapterInterface
 {
     /**
      * @var UserRepositoryInterface
