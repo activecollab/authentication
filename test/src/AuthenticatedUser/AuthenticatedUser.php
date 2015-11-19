@@ -20,18 +20,27 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     /**
      * @var string
      */
-    private $name, $email;
+    private $name, $email, $password;
+
+    /**
+     * @var boolean
+     */
+    private $can_authenticate;
 
     /**
      * @param integer $id
      * @param string  $email
      * @param string  $name
+     * @param string  $password
+     * @param boolean $can_authenticate
      */
-    public function __construct($id, $email, $name)
+    public function __construct($id, $email, $name, $password, $can_authenticate = true)
     {
         $this->id = $id;
         $this->name = $name;
         $this->email = $email;
+        $this->password = $password;
+        $this->can_authenticate = $can_authenticate;
     }
 
     /**
@@ -62,6 +71,32 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     public function getFullName()
     {
         return $this->name;
+    }
+
+    /**
+     * Return user's password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidPassword($password)
+    {
+        return $password === $this->password;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canAuthenticate()
+    {
+        return $this->can_authenticate;
     }
 
     /**

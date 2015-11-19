@@ -5,7 +5,10 @@ namespace ActiveCollab\Authentication\Adapter;
 use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest;
+use ActiveCollab\Authentication\Exception\InvalidPassword;
 use ActiveCollab\Authentication\Exception\InvalidToken;
+use ActiveCollab\Authentication\Exception\UserNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -61,6 +64,26 @@ class AuthorizationBearer implements AdapterInterface
      */
     public function authenticate(ServerRequestInterface $request)
     {
-        $request->getBody();
+        $credentials = $request->getParsedBody();
+
+        if (!is_array($credentials) || empty($credentials['username']) || empty($credentials['password'])) {
+            throw new InvalidAuthenticateRequest();
+        }
+
+        $user = $this->users_repository->findByUsername($credentials['username']);
+
+        if (!$user) {
+            throw new UserNotFound();
+        }
+
+        if (!$user->isValidPassword($credentials['password'])) {
+            throw new InvalidPassword();
+        }
+
+        if (!$user->canAuthenticate()) {
+            throw new UserNotFound();
+        }
+
+        return $user;
     }
 }

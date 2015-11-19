@@ -13,16 +13,27 @@ class Repository implements RepositoryInterface
     /**
      * @var array
      */
-    private $users_by_token, $users_by_session_id;
+    private $users_by_username, $users_by_token, $users_by_session_id;
 
     /**
+     * @param array $users_by_username
      * @param array $users_by_token
      * @param array $users_by_session_id
      */
-    public function __construct(array $users_by_token = [], array $users_by_session_id = [])
+    public function __construct(array $users_by_username = [], array $users_by_token = [], array $users_by_session_id = [])
     {
+        $this->users_by_username = $users_by_username;
         $this->users_by_token = $users_by_token;
         $this->users_by_session_id = $users_by_session_id;
+    }
+
+    /**
+     * @param  string                          $username
+     * @return AuthenticatedUserInterface|null
+     */
+    public function findByUsername($username)
+    {
+        return isset($this->users_by_username[$username]) ? $this->users_by_username[$username] : null;
     }
 
     /**

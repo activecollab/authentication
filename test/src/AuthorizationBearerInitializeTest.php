@@ -65,8 +65,8 @@ class AuthorizationBearerInitializeTest extends RequestResponseTestCase
      */
     public function testAuthenticationWithGoodToken()
     {
-        $reposutory = new Repository([
-            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
+        $reposutory = new Repository([], [
+            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
         $user = (new AuthorizationBearer($reposutory))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
@@ -79,8 +79,8 @@ class AuthorizationBearerInitializeTest extends RequestResponseTestCase
      */
     public function testAuthenticationRecordsTokenUsage()
     {
-        $reposutory = new Repository([
-            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen'),
+        $reposutory = new Repository([], [
+            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
         $this->assertSame(0, $reposutory->getTokenUsage('123'));
