@@ -49,11 +49,11 @@ class AuthorizationBearerInitializeTest extends AuthorizationBearerTestCase
      */
     public function testAuthenticationWithGoodToken()
     {
-        $reposutory = new Repository([], [
+        $repository = new Repository([], [
             '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $user = (new AuthorizationBearer($reposutory, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $user = (new AuthorizationBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
     }
@@ -63,15 +63,17 @@ class AuthorizationBearerInitializeTest extends AuthorizationBearerTestCase
      */
     public function testAuthenticationRecordsTokenUsage()
     {
-        $reposutory = new Repository([], [
+        $repository = new Repository([], [
             '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $this->assertSame(0, $reposutory->getTokenUsage('123'));
+        $this->assertSame(0, $repository->getTokenUsage('123'));
 
-        $user = (new AuthorizationBearer($reposutory, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $user = (new AuthorizationBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
 
-        $this->assertSame(1, $reposutory->getTokenUsage('123'));
+        $this->assertSame(1, $repository->getTokenUsage('123'));
     }
+
+
 }
