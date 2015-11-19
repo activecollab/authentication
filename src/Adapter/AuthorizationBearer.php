@@ -9,6 +9,7 @@ use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest;
 use ActiveCollab\Authentication\Exception\InvalidPassword;
 use ActiveCollab\Authentication\Exception\InvalidToken;
 use ActiveCollab\Authentication\Exception\UserNotFound;
+use ActiveCollab\Authentication\Test\Token\Token;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -84,6 +85,6 @@ class AuthorizationBearer implements AdapterInterface
             throw new UserNotFound();
         }
 
-        return $user;
+        return new Token(sha1(time()));
     }
 }

@@ -4,9 +4,11 @@ namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\AuthorizationBearer;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
 use ActiveCollab\Authentication\Test\Base\RequestResponseTestCase;
+use ActiveCollab\Authentication\Token\TokenInterface;
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -81,7 +83,8 @@ class AuthorizationBearerAuthenticateTest extends RequestResponseTestCase
 
         $result = (new AuthorizationBearer($repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
 
-        $this->assertNotEmpty($result);
+        $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
+        $this->assertInstanceOf(TokenInterface::class, $result);
     }
 
     /**
