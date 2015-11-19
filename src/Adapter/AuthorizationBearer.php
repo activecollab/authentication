@@ -4,9 +4,9 @@ namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
-use Psr\Http\Message\RequestInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\Adapter
@@ -29,10 +29,10 @@ class AuthorizationBearer implements AdapterInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in
      *
-     * @param  RequestInterface                $request
+     * @param  ServerRequestInterface          $request
      * @return AuthenticatedUserInterface|null
      */
-    public function initialize(RequestInterface $request)
+    public function initialize(ServerRequestInterface $request)
     {
         $authorization = $request->getHeaderLine('Authorization');
 
@@ -56,10 +56,11 @@ class AuthorizationBearer implements AdapterInterface
     /**
      * Authenticate with given credential agains authentication source
      *
-     * @param  RequestInterface              $request
+     * @param  ServerRequestInterface        $request
      * @return AuthenticationResultInterface
      */
-    public function authenticate(RequestInterface $request)
+    public function authenticate(ServerRequestInterface $request)
     {
+        $request->getBody();
     }
 }

@@ -5,15 +5,14 @@ namespace ActiveCollab\Authentication\Test;
 use ActiveCollab\Authentication\Adapter\AuthorizationBearer;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
-use ActiveCollab\Authentication\Test\Base\TestCase;
-use ActiveCollab\Authentication\Test\Http\Request;
+use ActiveCollab\Authentication\Test\Base\RequestResponseTestCase;
 use GuzzleHttp\Psr7;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\Test
  */
-class AuthorizationBearerAuthenticateTest extends TestCase
+class AuthorizationBearerAuthenticateTest extends RequestResponseTestCase
 {
     /**
      * @var RepositoryInterface
@@ -46,13 +45,13 @@ class AuthorizationBearerAuthenticateTest extends TestCase
     }
 
     /**
-     * @param  string           $username
-     * @param  string           $password
-     * @return RequestInterface
+     * @param  string                 $username
+     * @param  string                 $password
+     * @return ServerRequestInterface
      */
     private function prepareAuthorizationRequest($username, $password)
     {
-        return (new Request())->withHeader('Content-Type', 'application/json')->withBody(Psr7\stream_for(json_encode([
+        return $this->request->withHeader('Content-Type', 'application/json')->withBody(Psr7\stream_for(json_encode([
             'username' => $username,
             'password' => $password,
         ])));

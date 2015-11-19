@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b3359517a01e9e14b847045299f5dedf",
-    "content-hash": "511242fad0e15d27f6bc96724785f676",
+    "hash": "f92e940e709216118357965f1d0d54a0",
+    "content-hash": "c008540fd24bd3f6e43e062ca801b2be",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -1301,16 +1301,16 @@
         },
         {
             "name": "slim/slim",
-            "version": "3.0.0-RC1",
+            "version": "3.0.0-RC2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Slim.git",
-                "reference": "d4ac4db27348eea2c3ba305c8b49028583600d3a"
+                "reference": "c181a3a7666677fcf5dee2c03c504d5731262745"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Slim/zipball/d4ac4db27348eea2c3ba305c8b49028583600d3a",
-                "reference": "d4ac4db27348eea2c3ba305c8b49028583600d3a",
+                "url": "https://api.github.com/repos/slimphp/Slim/zipball/c181a3a7666677fcf5dee2c03c504d5731262745",
+                "reference": "c181a3a7666677fcf5dee2c03c504d5731262745",
                 "shasum": ""
             },
             "require": {
@@ -1363,7 +1363,7 @@
                 "micro",
                 "router"
             ],
-            "time": "2015-09-07 20:13:22"
+            "time": "2015-11-09 10:57:43"
         },
         {
             "name": "symfony/yaml",
