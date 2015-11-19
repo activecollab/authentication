@@ -3,13 +3,13 @@
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticationResultInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest;
 use ActiveCollab\Authentication\Exception\InvalidPassword;
 use ActiveCollab\Authentication\Exception\InvalidToken;
 use ActiveCollab\Authentication\Exception\UserNotFound;
-use ActiveCollab\Authentication\Test\Token\Token;
+use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -18,16 +18,23 @@ use Psr\Http\Message\ServerRequestInterface;
 class AuthorizationBearer implements AdapterInterface
 {
     /**
-     * @var RepositoryInterface
+     * @var UserRepositoryInterface
      */
     private $users_repository;
 
     /**
-     * @param RepositoryInterface $users_repository
+     * @var TokenRepositoryInterface
      */
-    public function __construct(RepositoryInterface $users_repository)
+    private $tokens_repository;
+
+    /**
+     * @param UserRepositoryInterface  $users_repository
+     * @param TokenRepositoryInterface $tokens_repository
+     */
+    public function __construct(UserRepositoryInterface $users_repository, TokenRepositoryInterface $tokens_repository)
     {
         $this->users_repository = $users_repository;
+        $this->tokens_repository = $tokens_repository;
     }
 
     /**
@@ -85,6 +92,6 @@ class AuthorizationBearer implements AdapterInterface
             throw new UserNotFound();
         }
 
-        return new Token(sha1(time()));
+        return $this->tokens_repository->issueToken($user);
     }
 }
