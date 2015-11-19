@@ -34,15 +34,15 @@ class AuthorizationBearerAuthenticateTest extends RequestResponseTestCase
         (new AuthorizationBearer($this->empty_users_repository))->authenticate($this->prepareAuthorizationRequest('not found', '123'));
     }
 
-    public function testInvalidPasswordThrowsAnException()
-    {
-
-    }
-
-    public function testUserCantAuthenticateThrowsAnException()
-    {
-
-    }
+//    public function testInvalidPasswordThrowsAnException()
+//    {
+//
+//    }
+//
+//    public function testUserCantAuthenticateThrowsAnException()
+//    {
+//
+//    }
 
     /**
      * @param  string                 $username

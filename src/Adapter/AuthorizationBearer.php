@@ -5,7 +5,7 @@ namespace ActiveCollab\Authentication\Adapter;
 use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\Exception\InvalidTokenException;
+use ActiveCollab\Authentication\Exception\InvalidToken;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -40,7 +40,7 @@ class AuthorizationBearer implements AdapterInterface
             $token = trim(substr($authorization, 7));
 
             if (empty($token)) {
-                throw new InvalidTokenException();
+                throw new InvalidToken();
             }
 
             if ($user = $this->users_repository->findByToken($token)) {
@@ -48,7 +48,7 @@ class AuthorizationBearer implements AdapterInterface
 
                 return $user;
             } else {
-                throw new InvalidTokenException();
+                throw new InvalidToken();
             }
         }
     }

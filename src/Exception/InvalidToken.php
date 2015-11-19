@@ -5,7 +5,7 @@ namespace ActiveCollab\Authentication\Exception;
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-class InvalidTokenException extends RuntimeException
+class InvalidToken extends RuntimeException
 {
     /**
      * {@inheritdoc}
