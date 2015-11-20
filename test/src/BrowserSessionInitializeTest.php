@@ -12,7 +12,6 @@ use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
  */
 class BrowserSessionInitializeTest extends BrowserSessionTestCase
 {
-
     /**
      * Test request cookies
      */

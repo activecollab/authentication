@@ -13,7 +13,7 @@ use InvalidArgumentException;
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class BrowserSession implements AdapterInterface
+class BrowserSession extends Adapter
 {
     /**
      * @var UserRepositoryInterface
@@ -79,5 +79,6 @@ class BrowserSession implements AdapterInterface
      */
     public function authenticate(ServerRequestInterface $request)
     {
+        return $this->sessions_repository->createSession($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request)));
     }
 }
