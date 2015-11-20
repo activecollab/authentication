@@ -37,6 +37,43 @@ class Repository implements RepositoryInterface
     }
 
     /**
+     * @param  string                          $session_id
+     * @return AuthenticatedUserInterface|null
+     */
+    public function findBySessionId($session_id)
+    {
+        return isset($this->users_by_session_id[$session_id]) ? $this->users_by_session_id[$session_id] : null;
+    }
+
+    /**
+     * @var array
+     */
+    private $used_session = [];
+
+    /**
+     * @param string $session_id
+     */
+    public function recordSessionUsage($session_id)
+    {
+        if (empty($this->used_session[$session_id])) {
+            $this->used_session[$session_id] = 0;
+        }
+
+        $this->used_session[$session_id]++;
+    }
+
+    /**
+     * Return the number how many times was a session used
+     *
+     * @param  string $session_id
+     * @return int
+     */
+    public function getSessionUsage($session_id)
+    {
+        return empty($this->used_session[$session_id]) ? 0 : $this->used_session[$session_id];
+    }
+
+    /**
      * Find a user by an authorization token
      *
      * @param  string                          $token
