@@ -25,7 +25,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testInitializationSkipWhenTheresNoAuthroizationHeader()
     {
-        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_sessions_repository))->initialize($this->request));
+        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request));
     }
 
     /**
@@ -33,7 +33,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testInitializationSkipWhenAuthorizationIsNotTokenBearer()
     {
-        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_sessions_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
+        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
     }
 
     /**
@@ -41,7 +41,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testExceptionWhenTokenIsNotValid()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_sessions_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
     }
 
     /**
@@ -53,7 +53,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
             '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $user = (new TokenBearer($repository, $this->empty_sessions_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $user = (new TokenBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
     }
@@ -69,7 +69,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
 
         $this->assertSame(0, $repository->getTokenUsage('123'));
 
-        $user = (new TokenBearer($repository, $this->empty_sessions_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $user = (new TokenBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
 
         $this->assertSame(1, $repository->getTokenUsage('123'));

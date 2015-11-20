@@ -20,7 +20,7 @@ abstract class TokenBearerTestCase extends RequestResponseTestCase
     /**
      * @var TokenRepositoryInterface
      */
-    protected $empty_sessions_repository;
+    protected $empty_tokens_repository;
 
     /**
      * Set up test environment
@@ -30,6 +30,6 @@ abstract class TokenBearerTestCase extends RequestResponseTestCase
         parent::setUp();
 
         $this->empty_users_repository = new UserRepository();
-        $this->empty_sessions_repository = new TokenRepository();
+        $this->empty_tokens_repository = new TokenRepository();
     }
 }
