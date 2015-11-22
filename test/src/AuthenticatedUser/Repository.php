@@ -31,8 +31,15 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @param  string                          $username
-     * @return AuthenticatedUserInterface|null
+     * {@inheritdoc}
+     */
+    public function findById($user_id)
+    {
+        throw new LogicException('This implementation does not support user ID');
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function findByUsername($username)
     {
