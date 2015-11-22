@@ -30,7 +30,7 @@ interface RepositoryInterface
      *
      * @param string $session_or_session_id
      */
-    public function recordSessionUsage($session_or_session_id);
+    public function recordUsage($session_or_session_id);
 
     /**
      * Issue a new token

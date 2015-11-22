@@ -86,6 +86,14 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     /**
      * {@inheritdoc}
      */
+    public function getUsername()
+    {
+        return $this->getEmail();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isValidPassword($password)
     {
         return $password === $this->password;
@@ -100,14 +108,10 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {
-        return [
-            'id' => $this->getId(),
-            'name' => $this->getFullName(),
-            'email' => $this->getEmail(),
-        ];
+        return ['id' => $this->getId(), 'name' => $this->getFullName(), 'email' => $this->getEmail()];
     }
 }

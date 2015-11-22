@@ -42,19 +42,22 @@ class TokenBearer extends Adapter
         $authorization = $request->getHeaderLine('Authorization');
 
         if (!empty($authorization) && substr($authorization, 0, 7) == 'Bearer ') {
-            $token = trim(substr($authorization, 7));
+            $token_id = trim(substr($authorization, 7));
 
-            if (empty($token)) {
+            if (empty($token_id)) {
                 throw new InvalidToken();
             }
 
-            if ($user = $this->users_repository->findByToken($token)) {
-                $this->users_repository->recordTokenUsage($token);
+            if ($token = $this->tokens_repository->getById($token_id)) {
+                if ($user = $token->getAuthenticatedUser($this->users_repository)) {
+                    $this->tokens_repository->recordUsage($token);
+                    $authenticated_with = $token;
 
-                return $user;
-            } else {
-                throw new InvalidToken();
+                    return $user;
+                }
             }
+
+            throw new InvalidToken();
         }
     }
 

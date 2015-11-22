@@ -2,8 +2,9 @@
 
 namespace ActiveCollab\Authentication\Test\Token;
 
-use ActiveCollab\Authentication\Token\TokenInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResultInterface\Implementation as AuthenticationResultInterfaceImplementation;
+use ActiveCollab\Authentication\Token\TokenInterface;
 
 /**
  * @package ActiveCollab\Authentication\Test\Token
@@ -18,22 +19,45 @@ class Token implements TokenInterface
     private $token;
 
     /**
+     * @var string
+     */
+    private $user_id;
+
+    /**
      * @var \DateTimeInterface
      */
     private $expires_at;
 
     /**
      * @param string                  $token
+     * @param string                  $user_id
      * @param \DateTimeInterface|null $expires_at
      */
-    public function __construct($token, \DateTimeInterface $expires_at = null)
+    public function __construct($token, $user_id, \DateTimeInterface $expires_at = null)
     {
         $this->token = $token;
+        $this->user_id = $user_id;
         $this->expires_at = $expires_at;
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
+     */
+    public function getTokenId()
+    {
+        return $this->token;
+    }
+
+    /**
+     * {@inheritdocs}
+     */
+    public function getAuthenticatedUser(UserRepositoryInterface $repository)
+    {
+        return $repository->findByUsername($this->user_id);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {
@@ -45,6 +69,6 @@ class Token implements TokenInterface
             $expires_at = null;
         }
 
-        return ['token' => $this->token, 'expires_at' => $expires_at];
+        return ['token' => $this->token, 'user_id' => $this->user_id, 'expires_at' => $expires_at];
     }
 }

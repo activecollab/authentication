@@ -4,8 +4,11 @@ namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearer;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
-use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
+use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
+use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Base\TokenBearerTestCase;
+use ActiveCollab\Authentication\Test\Token\Token;
+use ActiveCollab\Authentication\Token\TokenInterface;
 
 /**
  * @package ActiveCollab\Authentication\Test
@@ -45,17 +48,36 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if we get authetncated user when we use a good token
+     * Test if we get authenticated user when we use a good token
      */
     public function testAuthenticationWithGoodToken()
     {
-        $repository = new Repository([], [
-            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $test_token = '123';
 
-        $user = (new TokenBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
+
+        $user = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
+    }
+
+    /**
+     * Test if we get authenticated user when we use a good token
+     */
+    public function testAuthenticationWithGoodTokenAlsoSetsToken()
+    {
+        $test_token = '123';
+
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
+
+        $token = null;
+
+        $user = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"), $token);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $this->assertInstanceOf(TokenInterface::class, $token);
     }
 
     /**
@@ -63,15 +85,16 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testAuthenticationRecordsTokenUsage()
     {
-        $repository = new Repository([], [
-            '123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $test_token = '123';
 
-        $this->assertSame(0, $repository->getTokenUsage('123'));
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
 
-        $user = (new TokenBearer($repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        $this->assertSame(0, $token_repository->getUsageById($test_token));
+
+        $user = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
 
-        $this->assertSame(1, $repository->getTokenUsage('123'));
+        $this->assertSame(1, $token_repository->getUsageById($test_token));
     }
 }

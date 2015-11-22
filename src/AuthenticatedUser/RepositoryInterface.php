@@ -12,17 +12,4 @@ interface RepositoryInterface
      * @return AuthenticatedUserInterface|null
      */
     public function findByUsername($username);
-
-    /**
-     * Find a user by an authorization token
-     *
-     * @param  string                          $token
-     * @return AuthenticatedUserInterface|null
-     */
-    public function findByToken($token);
-
-    /**
-     * @param string $token
-     */
-    public function recordTokenUsage($token);
 }

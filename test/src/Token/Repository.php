@@ -14,14 +14,54 @@ class Repository implements RepositoryInterface
     /**
      * @var array
      */
-    private $prepared_tokens;
+    private $tokens;
 
     /**
-     * @param array $prepared_tokens
+     * @param array $tokens
      */
-    public function __construct(array $prepared_tokens = [])
+    public function __construct(array $tokens = [])
     {
-        $this->prepared_tokens = $prepared_tokens;
+        $this->tokens = $tokens;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getById($token_id)
+    {
+        return isset($this->tokens[$token_id]) ? $this->tokens[$token_id] : null;
+    }
+
+    /**
+     * @var array
+     */
+    private $used_tokens = [];
+
+    /**
+     * Return number of times that a token with the give ID was used
+     *
+     * @param  string  $token_id
+     * @return integer
+     */
+    public function getUsageById($token_id)
+    {
+        return empty($this->used_tokens[$token_id]) ? 0 : $this->used_tokens[$token_id];
+    }
+
+    /**
+     * Record that token with the given ID was used
+     *
+     * @param string $token_or_token_id
+     */
+    public function recordUsage($token_or_token_id)
+    {
+        $token_id = $token_or_token_id instanceof TokenInterface ? $token_or_token_id->getTokenid() : $token_or_token_id;
+
+        if (empty($this->used_tokens[$token_id])) {
+            $this->used_tokens[$token_id] = 0;
+        }
+
+        $this->used_tokens[$token_id]++;
     }
 
     /**
@@ -33,8 +73,8 @@ class Repository implements RepositoryInterface
      */
     public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
     {
-        $token = isset($this->prepared_tokens[$user->getEmail()]) ? $this->prepared_tokens[$user->getEmail()] : sha1(time());
+        $token = isset($this->tokens[$user->getEmail()]) ? $this->tokens[$user->getEmail()] : sha1(time());
 
-        return new Token($token, $expires_at);
+        return new Token($token, $user->getUsername(), $expires_at);
     }
 }

@@ -4,6 +4,7 @@ namespace ActiveCollab\Authentication\Test\AuthenticatedUser;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use LogicException;
 
 /**
  * @package ActiveCollab\Authentication\Test\AuthenticatedUser
@@ -13,16 +14,20 @@ class Repository implements RepositoryInterface
     /**
      * @var array
      */
-    private $users_by_username, $users_by_token;
+    private $users_by_username;
 
     /**
      * @param array $users_by_username
-     * @param array $users_by_token
      */
-    public function __construct(array $users_by_username = [], array $users_by_token = [])
+    public function __construct(array $users_by_username = [])
     {
-        $this->users_by_username = $users_by_username;
-        $this->users_by_token = $users_by_token;
+        foreach ($users_by_username as $user) {
+            if ($user instanceof AuthenticatedUserInterface) {
+                $this->users_by_username[$user->getUsername()] = $user;
+            } else {
+                throw new LogicException('Users by username can only include users');
+            }
+        }
     }
 
     /**
@@ -32,44 +37,5 @@ class Repository implements RepositoryInterface
     public function findByUsername($username)
     {
         return isset($this->users_by_username[$username]) ? $this->users_by_username[$username] : null;
-    }
-
-    /**
-     * Find a user by an authorization token
-     *
-     * @param  string                          $token
-     * @return AuthenticatedUserInterface|null
-     */
-    public function findByToken($token)
-    {
-        return isset($this->users_by_token[$token]) ? $this->users_by_token[$token] : null;
-    }
-
-    /**
-     * @var array
-     */
-    private $used_tokens = [];
-
-    /**
-     * @param string $token
-     */
-    public function recordTokenUsage($token)
-    {
-        if (empty($this->used_tokens[$token])) {
-            $this->used_tokens[$token] = 0;
-        }
-
-        $this->used_tokens[$token]++;
-    }
-
-    /**
-     * Return the number how many times was $token used
-     *
-     * @param  string $token
-     * @return int
-     */
-    public function getTokenUsage($token)
-    {
-        return empty($this->used_tokens[$token]) ? 0 : $this->used_tokens[$token];
     }
 }

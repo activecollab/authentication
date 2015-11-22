@@ -44,7 +44,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if we get authetncated user when we use a good token
+     * Test if we get authenticated user when we use a good token
      */
     public function testAuthenticationWithGoodSessionId()
     {
@@ -66,7 +66,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if we get authetncated user when we use a good token
+     * Test if we get authenticated user when we use a good token
      */
     public function testAuthenticationWithGoodSessionIdAlsoSetsSession()
     {

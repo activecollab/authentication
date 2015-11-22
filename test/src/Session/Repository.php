@@ -51,7 +51,7 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function recordSessionUsage($session_or_session_id)
+    public function recordUsage($session_or_session_id)
     {
         $session_id = $session_or_session_id instanceof SessionInterface ? $session_or_session_id->getSessionId() : $session_or_session_id;
 
@@ -73,6 +73,6 @@ class Repository implements RepositoryInterface
     {
         $session_id = isset($this->sessions[$user->getEmail()]) ? $this->sessions[$user->getEmail()] : sha1(time());
 
-        return new Session($session_id, $user->getEmail(), $expires_at);
+        return new Session($session_id, $user->getUsername(), $expires_at);
     }
 }

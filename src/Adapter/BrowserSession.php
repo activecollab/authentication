@@ -61,7 +61,7 @@ class BrowserSession extends Adapter
 
             if ($session instanceof SessionInterface) {
                 if ($user = $session->getAuthenticatedUser($this->users_repository)) {
-                    $this->sessions_repository->recordSessionUsage($session_id);
+                    $this->sessions_repository->recordUsage($session);
                     $authenticated_with = $session;
 
                     return $user;

@@ -108,6 +108,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
         $this->assertInternalType('array', $decoded_response_body);
         $this->assertCount(3, $decoded_response_body);
         $this->assertEquals('my-session-id', $decoded_response_body['session_id']);
+        $this->assertEquals('ilija.studen@activecollab.com', $decoded_response_body['user_id']);
         $this->assertNull($decoded_response_body['expires_at']);
     }
 
