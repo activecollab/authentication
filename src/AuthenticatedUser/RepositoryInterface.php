@@ -25,17 +25,4 @@ interface RepositoryInterface
      * @param string $token
      */
     public function recordTokenUsage($token);
-
-    /**
-     * Find a user by an authorization token
-     *
-     * @param  string                          $session_id
-     * @return AuthenticatedUserInterface|null
-     */
-    public function findBySessionId($session_id);
-
-    /**
-     * @param string $session_id
-     */
-    public function recordSessionUsage($session_id);
 }

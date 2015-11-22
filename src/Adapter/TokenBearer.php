@@ -35,12 +35,9 @@ class TokenBearer extends Adapter
     }
 
     /**
-     * Initialize authentication layer and see if we have a user who's already logged in
-     *
-     * @param  ServerRequestInterface          $request
-     * @return AuthenticatedUserInterface|null
+     * {@inheritdoc}
      */
-    public function initialize(ServerRequestInterface $request)
+    public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
     {
         $authorization = $request->getHeaderLine('Authorization');
 

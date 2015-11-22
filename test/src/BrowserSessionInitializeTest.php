@@ -3,9 +3,12 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
+use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
-use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
+use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
+use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
+use ActiveCollab\Authentication\Test\Session\Session;
 
 /**
  * @package ActiveCollab\Authentication\Test
@@ -45,11 +48,17 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testAuthenticationWithGoodSessionId()
     {
-        $repository = new Repository([], [], [
-            's123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        $test_session_id = 's123';
+
+        $user_repository = new UserRepository([], [], [
+            $test_session_id => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $user = (new BrowserSession($repository, $this->empty_sessions_repository))->initialize($this->request->withCookieParams([
+        $session_repository = new SessionRepository([
+            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
+        ]);
+
+        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
             'sessid' => 's123',
         ]));
 
@@ -57,22 +66,53 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
+     * Test if we get authetncated user when we use a good token
+     */
+    public function testAuthenticationWithGoodSessionIdAlsoSetsSession()
+    {
+        $test_session_id = 's123';
+
+        $user_repository = new UserRepository([], [], [
+            $test_session_id => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        ]);
+
+        $session_repository = new SessionRepository([
+            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
+        ]);
+
+        $session = null;
+
+        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
+            'sessid' => $test_session_id,
+        ]), $session);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $this->assertInstanceOf(SessionInterface::class, $session);
+    }
+
+    /**
      * Test if session usage is recorded
      */
     public function testAuthenticationRecordsSessionUsage()
     {
-        $repository = new Repository([], [], [
-            's123' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        $test_session_id = 's123';
+
+        $user_repository = new UserRepository([], [], [
+            $test_session_id => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $this->assertSame(0, $repository->getSessionUsage('s123'));
+        $session_repository = new SessionRepository([
+            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
+        ]);
 
-        $user = (new BrowserSession($repository, $this->empty_sessions_repository))->initialize($this->request->withCookieParams([
-            'sessid' => 's123',
+        $this->assertSame(0, $session_repository->getUsageById($test_session_id));
+
+        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
+            'sessid' => $test_session_id,
         ]));
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
 
-        $this->assertSame(1, $repository->getSessionUsage('s123'));
+        $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }
 }

@@ -7,6 +7,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidSession;
+use ActiveCollab\Authentication\Session\SessionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use InvalidArgumentException;
 
@@ -47,25 +48,27 @@ class BrowserSession extends Adapter
     }
 
     /**
-     * Initialize authentication layer and see if we have a user who's already logged in
-     *
-     * @param  ServerRequestInterface          $request
-     * @return AuthenticatedUserInterface|null
+     * {@inheritdoc}
      */
-    public function initialize(ServerRequestInterface $request)
+    public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
     {
         $cookie_params = $request->getCookieParams();
 
         if (!empty($cookie_params[$this->session_cookie_name])) {
             $session_id = $cookie_params[$this->session_cookie_name];
 
-            if ($user = $this->users_repository->findBySessionId($session_id)) {
-                $this->users_repository->recordSessionUsage($session_id);
+            $session = $this->sessions_repository->getById($session_id);
 
-                return $user;
-            } else {
-                throw new InvalidSession();
+            if ($session instanceof SessionInterface) {
+                if ($user = $this->users_repository->findBySessionId($session_id)) {
+                    $this->sessions_repository->recordSessionUsage($session_id);
+                    $authenticated_with = $session;
+
+                    return $user;
+                }
             }
+
+            throw new InvalidSession();
         }
 
         return null;

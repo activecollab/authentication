@@ -12,16 +12,54 @@ use ActiveCollab\Authentication\Session\SessionInterface;
 class Repository implements RepositoryInterface
 {
     /**
-     * @var array
+     * @var SessionInterface[]
      */
-    private $prepared_session_ids;
+    private $sessions;
 
     /**
-     * @param array $prepared_sessions_ids
+     * @param array $sessions
      */
-    public function __construct(array $prepared_sessions_ids = [])
+    public function __construct(array $sessions = [])
     {
-        $this->prepared_session_ids = $prepared_sessions_ids;
+        $this->sessions = $sessions;
+    }
+
+    /**
+     * Find session by session ID
+     *
+     * @param  string                $session_id
+     * @return SessionInterface|null
+     */
+    public function getById($session_id)
+    {
+        return isset($this->sessions[$session_id]) ? $this->sessions[$session_id] : null;
+    }
+
+    /**
+     * @var array
+     */
+    private $used_session = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsageById($session_id)
+    {
+        return empty($this->used_session[$session_id]) ? 0 : $this->used_session[$session_id];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function recordSessionUsage($session_or_session_id)
+    {
+        $session_id = $session_or_session_id instanceof SessionInterface ? $session_or_session_id->getSessionId() : $session_or_session_id;
+
+        if (empty($this->used_session[$session_id])) {
+            $this->used_session[$session_id] = 0;
+        }
+
+        $this->used_session[$session_id]++;
     }
 
     /**
@@ -33,8 +71,8 @@ class Repository implements RepositoryInterface
      */
     public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
     {
-        $session_id = isset($this->prepared_session_ids[$user->getEmail()]) ? $this->prepared_session_ids[$user->getEmail()] : sha1(time());
+        $session_id = isset($this->sessions[$user->getEmail()]) ? $this->sessions[$user->getEmail()] : sha1(time());
 
-        return new Session($session_id, $expires_at);
+        return new Session($session_id, $user->getEmail(), $expires_at);
     }
 }
