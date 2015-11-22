@@ -20,15 +20,15 @@ interface RepositoryInterface
     /**
      * Return number of times that session with the give ID was used
      *
-     * @param  string  $session_id
+     * @param  SessionInterface|string $session_or_session_id
      * @return integer
      */
-    public function getUsageById($session_id);
+    public function getUsageById($session_or_session_id);
 
     /**
      * Record that session with the given ID was used
      *
-     * @param string $session_or_session_id
+     * @param SessionInterface|string $session_or_session_id
      */
     public function recordUsage($session_or_session_id);
 

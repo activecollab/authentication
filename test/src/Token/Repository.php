@@ -38,20 +38,19 @@ class Repository implements RepositoryInterface
     private $used_tokens = [];
 
     /**
-     * Return number of times that a token with the give ID was used
-     *
-     * @param  string  $token_id
-     * @return integer
+     * {@inheritdoc}
      */
-    public function getUsageById($token_id)
+    public function getUsageById($token_or_token_id)
     {
+        $token_id = $token_or_token_id instanceof TokenInterface ? $token_or_token_id->getTokenId() : $token_or_token_id;
+
         return empty($this->used_tokens[$token_id]) ? 0 : $this->used_tokens[$token_id];
     }
 
     /**
      * Record that token with the given ID was used
      *
-     * @param string $token_or_token_id
+     * @param TokenInterface|string $token_or_token_id
      */
     public function recordUsage($token_or_token_id)
     {

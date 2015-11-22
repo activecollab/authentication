@@ -43,8 +43,10 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getUsageById($session_id)
+    public function getUsageById($session_or_session_id)
     {
+        $session_id = $session_or_session_id instanceof SessionInterface ? $session_or_session_id->getSessionId() : $session_or_session_id;
+
         return empty($this->used_session[$session_id]) ? 0 : $this->used_session[$session_id];
     }
 
