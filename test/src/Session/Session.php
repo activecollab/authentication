@@ -53,7 +53,7 @@ class Session implements SessionInterface
      */
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
     {
-        return $repository->findBySessionId($this->session_id);
+        return $repository->findByUsername($this->user_id);
     }
 
     /**
