@@ -70,4 +70,14 @@ class TokenBearer extends Adapter
     {
         return $this->tokens_repository->issueToken($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request)));
     }
+
+    /**
+     * Terminate an instance that was used to authenticate a user
+     *
+     * @param AuthenticationResultInterface $authenticated_with
+     */
+    public function terminate(AuthenticationResultInterface $authenticated_with)
+    {
+//        $this->tokens_repository->terminateToken($authenticated_with);
+    }
 }

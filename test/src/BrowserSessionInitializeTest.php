@@ -50,9 +50,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     {
         $test_session_id = 's123';
 
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')
-        ]);
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
 
         $session_repository = new SessionRepository([
             $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
@@ -72,9 +70,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     {
         $test_session_id = 's123';
 
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
 
         $session_repository = new SessionRepository([
             $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
@@ -97,9 +93,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     {
         $test_session_id = 's123';
 
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
 
         $session_repository = new SessionRepository([
             $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),

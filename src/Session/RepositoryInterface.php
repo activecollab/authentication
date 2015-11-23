@@ -41,6 +41,13 @@ interface RepositoryInterface
      */
     public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
 
+    /**
+     * Terminate a session
+     *
+     * @param SessionInterface $session
+     */
+    public function terminateSession(SessionInterface $session);
+
 //    public function extendSession();
 //
 //    public function destroySession();

@@ -74,13 +74,22 @@ class BrowserSession extends Adapter
     }
 
     /**
-     * Authenticate with given credential agains authentication source
-     *
-     * @param  ServerRequestInterface        $request
-     * @return AuthenticationResultInterface
+     * {@inheritdoc}
      */
     public function authenticate(ServerRequestInterface $request)
     {
         return $this->sessions_repository->createSession($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request)));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function terminate(AuthenticationResultInterface $authenticated_with)
+    {
+        if ($authenticated_with instanceof SessionInterface) {
+            $this->sessions_repository->terminateSession($authenticated_with);
+        } else {
+            throw new InvalidArgumentException('Instance is not a browser session');
+        }
     }
 }

@@ -9,6 +9,7 @@ use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
+use ActiveCollab\Authentication\Test\Session\Session;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\Psr7;
@@ -78,15 +79,10 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
      */
     public function testAuthenticationResultToResponse()
     {
-        $user_repository = new UserRepository([
-        'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
 
-        $token_repository = new SessionRepository([
-            'ilija.studen@activecollab.com' => 'my-session-id',
-        ]);
-
-        $result = (new BrowserSession($user_repository, $token_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
+        $result = (new BrowserSession($user_repository, $session_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);

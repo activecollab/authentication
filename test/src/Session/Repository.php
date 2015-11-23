@@ -5,6 +5,7 @@ namespace ActiveCollab\Authentication\Test\Session;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use InvalidArgumentException;
 
 /**
  * @package ActiveCollab\Authentication\Test\Session
@@ -14,14 +15,20 @@ class Repository implements RepositoryInterface
     /**
      * @var SessionInterface[]
      */
-    private $sessions;
+    private $sessions = [];
 
     /**
-     * @param array $sessions
+     * @param Session[] $sessions
      */
     public function __construct(array $sessions = [])
     {
-        $this->sessions = $sessions;
+        foreach ($sessions as $session) {
+            if ($session instanceof Session) {
+                $this->sessions[$session->getSessionId()] = $session;
+            } else {
+                throw new InvalidArgumentException('Invalid session instance');
+            }
+        }
     }
 
     /**
@@ -73,8 +80,27 @@ class Repository implements RepositoryInterface
      */
     public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
     {
-        $session_id = isset($this->sessions[$user->getEmail()]) ? $this->sessions[$user->getEmail()] : sha1(time());
+        /** @var Session $session */
+        foreach ($this->sessions as $session) {
+            if ($session->getUserId() == $user->getEmail()) {
+                return $session;
+            }
+        }
 
-        return new Session($session_id, $user->getUsername(), $expires_at);
+        return new Session(sha1(time()), $user->getUsername(), $expires_at);
+    }
+
+    /**
+     * Terminate a session
+     *
+     * @param SessionInterface $session
+     */
+    public function terminateSession(SessionInterface $session)
+    {
+        foreach ($this->sessions as $k => $v) {
+            if ($session->getSessionId() == $v->getSessionId()) {
+                unset($this->sessions[$k]);
+            }
+        }
     }
 }

@@ -27,4 +27,11 @@ interface AdapterInterface
      * @return AuthenticationResultInterface
      */
     public function authenticate(ServerRequestInterface $request);
+
+    /**
+     * Terminate an instance that was used to authenticate a user
+     *
+     * @param AuthenticationResultInterface $authenticated_with
+     */
+    public function terminate(AuthenticationResultInterface $authenticated_with);
 }

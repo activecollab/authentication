@@ -49,6 +49,14 @@ class Session implements SessionInterface
     }
 
     /**
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
      * {@inheritdocs}
      */
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
