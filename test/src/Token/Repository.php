@@ -12,7 +12,7 @@ use ActiveCollab\Authentication\Token\TokenInterface;
 class Repository implements RepositoryInterface
 {
     /**
-     * @var array
+     * @var Token[]
      */
     private $tokens;
 
@@ -48,9 +48,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Record that token with the given ID was used
-     *
-     * @param TokenInterface|string $token_or_token_id
+     * {@inheritdoc}
      */
     public function recordUsage($token_or_token_id)
     {
@@ -64,16 +62,24 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Issue a new token
-     *
-     * @param  AuthenticatedUserInterface $user
-     * @param  \DateTimeInterface|null    $expires_at
-     * @return TokenInterface
+     * {@inheritdoc}
      */
     public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
     {
         $token = isset($this->tokens[$user->getEmail()]) ? $this->tokens[$user->getEmail()] : sha1(time());
 
         return new Token($token, $user->getUsername(), $expires_at);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function terminateToken(TokenInterface $token)
+    {
+        foreach ($this->tokens as $k => $v) {
+            if ($v->getTokenId() == $token->getTokenId()) {
+                unset($this->tokens[$k]);
+            }
+        }
     }
 }

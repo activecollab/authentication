@@ -41,4 +41,11 @@ interface RepositoryInterface
      * @return TokenInterface
      */
     public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
+
+    /**
+     * Terminate a token
+     *
+     * @param TokenInterface $token
+     */
+    public function terminateToken(TokenInterface $token);
 }

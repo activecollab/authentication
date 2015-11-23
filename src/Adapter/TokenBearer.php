@@ -6,7 +6,9 @@ use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidToken;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
+use ActiveCollab\Authentication\Token\TokenInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use InvalidArgumentException;
 
 /**
  * @package ActiveCollab\Authentication\Adapter
@@ -58,6 +60,8 @@ class TokenBearer extends Adapter
 
             throw new InvalidToken();
         }
+
+        return null;
     }
 
     /**
@@ -78,6 +82,10 @@ class TokenBearer extends Adapter
      */
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
-//        $this->tokens_repository->terminateToken($authenticated_with);
+        if ($authenticated_with instanceof TokenInterface) {
+            $this->tokens_repository->terminateToken($authenticated_with);
+        } else {
+            throw new InvalidArgumentException('Instance is not a browser session');
+        }
     }
 }
