@@ -24,7 +24,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
      */
     public function testTerminteNonSessionRaisesAnException()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository))->terminate(new Token('123', 'ilija.studen@activecollab.com'));
+        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->terminate(new Token('123', 'ilija.studen@activecollab.com'));
     }
 
     /**
@@ -37,7 +37,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
         $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
-        $browser_session_adapter = new BrowserSession($user_repository, $session_repository);
+        $browser_session_adapter = new BrowserSession($user_repository, $session_repository, $this->cookies);
 
         // ---------------------------------------------------
         //  Successufl authentication

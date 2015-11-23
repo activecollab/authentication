@@ -7,6 +7,7 @@ use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Exception\InvalidSession;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -26,6 +27,11 @@ class BrowserSession extends Adapter
     private $sessions_repository;
 
     /**
+     * @var CookiesInterface
+     */
+    private $cookies;
+
+    /**
      * @var string
      */
     private $session_cookie_name;
@@ -33,9 +39,10 @@ class BrowserSession extends Adapter
     /**
      * @param UserRepositoryInterface    $users_repository
      * @param SessionRepositoryInterface $sessions_repository
+     * @param CookiesInterface           $cookies
      * @param string                     $session_cookie_name
      */
-    public function __construct(UserRepositoryInterface $users_repository, SessionRepositoryInterface $sessions_repository, $session_cookie_name = 'sessid')
+    public function __construct(UserRepositoryInterface $users_repository, SessionRepositoryInterface $sessions_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid')
     {
         if (empty($session_cookie_name)) {
             throw new InvalidArgumentException('Session cookie name is required');
@@ -43,6 +50,7 @@ class BrowserSession extends Adapter
 
         $this->users_repository = $users_repository;
         $this->sessions_repository = $sessions_repository;
+        $this->cookies = $cookies;
         $this->session_cookie_name = $session_cookie_name;
     }
 

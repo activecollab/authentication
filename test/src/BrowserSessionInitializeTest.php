@@ -30,7 +30,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testInitializationSkipWhenTheresNoSessionCookie()
     {
-        $this->assertNull((new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository))->initialize($this->request));
+        $this->assertNull((new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request));
     }
 
     /**
@@ -38,7 +38,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testExceptionWhenSessionIsNotValid()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository))->initialize($this->request->withCookieParams([
+        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request->withCookieParams([
             'sessid' => 'not a valid session ID',
         ]));
     }
@@ -56,7 +56,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
             $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
         ]);
 
-        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
             'sessid' => 's123',
         ]));
 
@@ -78,7 +78,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $session = null;
 
-        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
             'sessid' => $test_session_id,
         ]), $session);
 
@@ -101,7 +101,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->assertSame(0, $session_repository->getUsageById($test_session_id));
 
-        $user = (new BrowserSession($user_repository, $session_repository))->initialize($this->request->withCookieParams([
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
             'sessid' => $test_session_id,
         ]));
 
