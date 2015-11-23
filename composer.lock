@@ -4,52 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cb1d6f33f3ed126d0f8e3be0ffedee7a",
-    "content-hash": "ac529c896bd3791a09d66ff88cf64fa4",
+    "hash": "750c9ba9bd610d849d7b056279c100b4",
+    "content-hash": "8c28add14fdebdcbce3b8dcde54a8aa4",
     "packages": [
-        {
-            "name": "activecollab/cookies",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "/Users/ilija/Projects/Components/Cookies",
-                "reference": "1baec2c518cfd62da1c50594fa11d4c65e851b3d"
-            },
-            "require": {
-                "dflydev/fig-cookies": "~1.0",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.8"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ActiveCollab\\Cookies\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "ActiveCollab\\Cookies\\Test\\": "test/src"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ilija Studen",
-                    "email": "ilija.studen@activecollab.com"
-                }
-            ],
-            "description": "Easily get and set cookies",
-            "homepage": "https://labs.activecollab.com",
-            "keywords": [
-                "activecollab",
-                "cookies"
-            ],
-            "time": "2015-11-18 12:24:57"
-        },
         {
             "name": "activecollab/user",
             "version": "1.0.1",
@@ -94,58 +51,6 @@
                 "activecollab"
             ],
             "time": "2015-10-15 15:25:14"
-        },
-        {
-            "name": "dflydev/fig-cookies",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dflydev/dflydev-fig-cookies.git",
-                "reference": "3777cdff8d47fd914034e00a335c836c4ef8e84e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dflydev/dflydev-fig-cookies/zipball/3777cdff8d47fd914034e00a335c836c4ef8e84e",
-                "reference": "3777cdff8d47fd914034e00a335c836c4ef8e84e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4",
-                "psr/http-message": "~1.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "~0.1@dev",
-                "phpunit/phpunit": "~4.5",
-                "squizlabs/php_codesniffer": "~2.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dflydev\\FigCookies\\": "src/Dflydev/FigCookies"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Beau Simensen",
-                    "email": "beau@dflydev.com"
-                }
-            ],
-            "description": "Cookies for PSR-7 HTTP Message Interface.",
-            "keywords": [
-                "cookies",
-                "psr-7",
-                "psr7"
-            ],
-            "time": "2015-06-03 18:02:30"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -1500,9 +1405,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "activecollab/cookies": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

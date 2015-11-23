@@ -2,12 +2,6 @@
   "name" : "activecollab/authentication",
   "type": "library",
   "description": "Authenticate user",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "/Users/ilija/Projects/Components/Cookies"
-    }
-  ],
   "license" : "MIT",
   "prefer-stable": true,
   "keywords": [ "authentication", "activecollab" ],
@@ -21,7 +15,6 @@
   "require" : {
     "php": ">=5.6.0",
     "activecollab/user" : "~1.0",
-    "activecollab/cookies" : "dev-master",
     "guzzlehttp/psr7" : "~1.2"
   },
   "require-dev" : {
