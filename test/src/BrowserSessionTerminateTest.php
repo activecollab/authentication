@@ -37,6 +37,8 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
         $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
+        $this->setCookie('sessid', $test_session_id);
+
         $browser_session_adapter = new BrowserSession($user_repository, $session_repository, $this->cookies);
 
         // ---------------------------------------------------
@@ -44,7 +46,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
         // ---------------------------------------------------
 
         $session = null;
-        $user = $browser_session_adapter->initialize($this->request->withCookieParams(['sessid' => $test_session_id]), $session);
+        $user = $browser_session_adapter->initialize($this->request, $session);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $user);
         $this->assertInstanceOf(Session::class, $session);
@@ -56,6 +58,6 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
         $browser_session_adapter->terminate($session);
 
         $this->setExpectedException(InvalidSession::class);
-        $browser_session_adapter->initialize($this->request->withCookieParams(['sessid' => $test_session_id]));
+        $browser_session_adapter->initialize($this->request);
     }
 }

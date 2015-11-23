@@ -20,9 +20,8 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testRequestCookie()
     {
-        $this->assertEquals('123', $this->request->withCookieParams([
-            'my_cookie' => '123',
-        ])->getCookieParams()['my_cookie']);
+        $this->setCookie('my_cookie', '123');
+        $this->assertEquals('123', $this->cookies->get($this->request, 'my_cookie'));
     }
 
     /**
@@ -38,9 +37,9 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testExceptionWhenSessionIsNotValid()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request->withCookieParams([
-            'sessid' => 'not a valid session ID',
-        ]));
+        $this->setCookie('sessid', 'not a valid session ID');
+
+        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request);
     }
 
     /**
@@ -51,14 +50,11 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
         $test_session_id = 's123';
 
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
-        $session_repository = new SessionRepository([
-            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
-        ]);
+        $this->setCookie('sessid', $test_session_id);
 
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
-            'sessid' => 's123',
-        ]));
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
     }
@@ -71,16 +67,13 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
         $test_session_id = 's123';
 
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
-        $session_repository = new SessionRepository([
-            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
-        ]);
+        $this->setCookie('sessid', $test_session_id);
 
         $session = null;
 
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
-            'sessid' => $test_session_id,
-        ]), $session);
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request, $session);
 
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
         $this->assertInstanceOf(SessionInterface::class, $session);
@@ -94,17 +87,13 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
         $test_session_id = 's123';
 
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
-        $session_repository = new SessionRepository([
-            $test_session_id => new Session($test_session_id, 'ilija.studen@activecollab.com'),
-        ]);
+        $this->setCookie('sessid', $test_session_id);
 
         $this->assertSame(0, $session_repository->getUsageById($test_session_id));
 
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request->withCookieParams([
-            'sessid' => $test_session_id,
-        ]));
-
+        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
         $this->assertInstanceOf(AuthenticatedUser::class, $user);
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));

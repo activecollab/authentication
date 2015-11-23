@@ -41,4 +41,13 @@ abstract class BrowserSessionTestCase extends RequestResponseTestCase
         $this->empty_sessions_repository = new SessionRepository();
         $this->cookies = new Cookies(new Adapter());
     }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    protected function setCookie($name, $value)
+    {
+        list($this->request, $this->response) = $this->cookies->set($this->request, $this->response, $name, $value);
+    }
 }

@@ -59,11 +59,7 @@ class BrowserSession extends Adapter
      */
     public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
     {
-        $cookie_params = $request->getCookieParams();
-
-        if (!empty($cookie_params[$this->session_cookie_name])) {
-            $session_id = $cookie_params[$this->session_cookie_name];
-
+        if ($session_id = $this->cookies->get($request, $this->session_cookie_name)) {
             $session = $this->sessions_repository->getById($session_id);
 
             if ($session instanceof SessionInterface) {
