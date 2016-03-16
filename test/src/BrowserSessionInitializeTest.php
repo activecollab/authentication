@@ -1,13 +1,19 @@
 <?php
 
+/*
+ * This file is part of the Active Collab Authentication project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
+use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 
 /**
@@ -16,7 +22,7 @@ use ActiveCollab\Authentication\Test\Session\Session;
 class BrowserSessionInitializeTest extends BrowserSessionTestCase
 {
     /**
-     * Test request cookies
+     * Test request cookies.
      */
     public function testRequestCookie()
     {
@@ -25,7 +31,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test initialization skips when there's no session cookie
+     * Test initialization skips when there's no session cookie.
      */
     public function testInitializationSkipWhenTheresNoSessionCookie()
     {
@@ -43,7 +49,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if we get authenticated user when we use a good token
+     * Test if we get authenticated user when we use a good token.
      */
     public function testAuthenticationWithGoodSessionId()
     {
@@ -60,7 +66,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if we get authenticated user when we use a good token
+     * Test if we get authenticated user when we use a good token.
      */
     public function testAuthenticationWithGoodSessionIdAlsoSetsSession()
     {
@@ -80,7 +86,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if session usage is recorded
+     * Test if session usage is recorded.
      */
     public function testAuthenticationRecordsSessionUsage()
     {

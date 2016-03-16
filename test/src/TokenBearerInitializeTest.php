@@ -1,12 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Active Collab Authentication project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearer;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Base\TokenBearerTestCase;
+use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 use ActiveCollab\Authentication\Token\TokenInterface;
 
@@ -16,7 +22,7 @@ use ActiveCollab\Authentication\Token\TokenInterface;
 class TokenBearerInitializeTest extends TokenBearerTestCase
 {
     /**
-     * Test if we can properly set header line using our stub request objects
+     * Test if we can properly set header line using our stub request objects.
      */
     public function testAuthorizationBearerTest()
     {
@@ -24,7 +30,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if adapter passes through when there's no authroization bearer header
+     * Test if adapter passes through when there's no authroization bearer header.
      */
     public function testInitializationSkipWhenTheresNoAuthroizationHeader()
     {
@@ -32,7 +38,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if adapter passes through when there's authroization bearer header, but it's not token bearer
+     * Test if adapter passes through when there's authroization bearer header, but it's not token bearer.
      */
     public function testInitializationSkipWhenAuthorizationIsNotTokenBearer()
     {
@@ -48,7 +54,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if we get authenticated user when we use a good token
+     * Test if we get authenticated user when we use a good token.
      */
     public function testAuthenticationWithGoodToken()
     {
@@ -63,7 +69,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if we get authenticated user when we use a good token
+     * Test if we get authenticated user when we use a good token.
      */
     public function testAuthenticationWithGoodTokenAlsoSetsToken()
     {
@@ -81,7 +87,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * Test if authentication with good token records usage
+     * Test if authentication with good token records usage.
      */
     public function testAuthenticationRecordsTokenUsage()
     {

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab Authentication project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -10,7 +16,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 interface RepositoryInterface
 {
     /**
-     * Find session by session ID
+     * Find session by session ID.
      *
      * @param  string                $session_id
      * @return SessionInterface|null
@@ -18,22 +24,22 @@ interface RepositoryInterface
     public function getById($session_id);
 
     /**
-     * Return number of times that session with the give ID was used
+     * Return number of times that session with the give ID was used.
      *
      * @param  SessionInterface|string $session_or_session_id
-     * @return integer
+     * @return int
      */
     public function getUsageById($session_or_session_id);
 
     /**
-     * Record that session with the given ID was used
+     * Record that session with the given ID was used.
      *
      * @param SessionInterface|string $session_or_session_id
      */
     public function recordUsage($session_or_session_id);
 
     /**
-     * Issue a new token
+     * Issue a new token.
      *
      * @param  AuthenticatedUserInterface $user
      * @param  \DateTimeInterface|null    $expires_at
@@ -42,7 +48,7 @@ interface RepositoryInterface
     public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
 
     /**
-     * Terminate a session
+     * Terminate a session.
      *
      * @param SessionInterface $session
      */
