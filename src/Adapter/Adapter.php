@@ -40,9 +40,10 @@ abstract class Adapter implements AdapterInterface
     /**
      * @param  UserRepositoryInterface    $repository
      * @param  array                      $credentials
+     * @param  bool                       $check_password
      * @return AuthenticatedUserInterface
      */
-    protected function getUserFromCredentials(UserRepositoryInterface $repository, array $credentials)
+    protected function getUserFromCredentials(UserRepositoryInterface $repository, array $credentials, $check_password = true)
     {
         $user = $repository->findByUsername($credentials['username']);
 
@@ -50,7 +51,7 @@ abstract class Adapter implements AdapterInterface
             throw new UserNotFound();
         }
 
-        if (!$user->isValidPassword($credentials['password'])) {
+        if ($check_password && !$user->isValidPassword($credentials['password'])) {
             throw new InvalidPassword();
         }
 

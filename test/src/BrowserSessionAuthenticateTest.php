@@ -81,6 +81,21 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
     }
 
     /**
+     * Test if good credentials without provided password authenticate the user.
+     */
+    public function testGoodCredentialsAuthenticateUserWithoutPassword()
+    {
+        $user_repository = new UserRepository([
+            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        ]);
+
+        $result = (new BrowserSession($user_repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'), false);
+
+        $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
+        $this->assertInstanceOf(SessionInterface::class, $result);
+    }
+
+    /**
      * Test if authentication result can be converted to a valid JSON response.
      */
     public function testAuthenticationResultToResponse()
