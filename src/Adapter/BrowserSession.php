@@ -86,9 +86,15 @@ class BrowserSession extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function authenticate(ServerRequestInterface $request)
+    public function authenticate(ServerRequestInterface $request, $checkPassword = true)
     {
-        return $this->sessions_repository->createSession($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request)));
+        return $this->sessions_repository->createSession(
+            $this->getUserFromCredentials(
+                $this->users_repository,
+                $this->getAuthenticationCredentialsFromRequest($request),
+                $checkPassword
+            )
+        );
     }
 
     /**

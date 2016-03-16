@@ -30,9 +30,10 @@ interface AdapterInterface
      * Authenticate with given credential agains authentication source.
      *
      * @param  ServerRequestInterface        $request
+     * @param  bool                          $checkPassword
      * @return AuthenticationResultInterface
      */
-    public function authenticate(ServerRequestInterface $request);
+    public function authenticate(ServerRequestInterface $request, $checkPassword = true);
 
     /**
      * Terminate an instance that was used to authenticate a user.

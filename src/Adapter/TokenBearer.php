@@ -74,11 +74,12 @@ class TokenBearer extends Adapter
      * Authenticate with given credential agains authentication source.
      *
      * @param  ServerRequestInterface        $request
+     * @param  bool                          $checkPassword
      * @return AuthenticationResultInterface
      */
-    public function authenticate(ServerRequestInterface $request)
+    public function authenticate(ServerRequestInterface $request, $checkPassword = true)
     {
-        return $this->tokens_repository->issueToken($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request)));
+        return $this->tokens_repository->issueToken($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request), $checkPassword));
     }
 
     /**
