@@ -91,7 +91,7 @@ class BrowserSession extends Adapter
         return $this->sessions_repository->createSession(
             $this->getUserFromCredentials(
                 $this->users_repository,
-                $this->getAuthenticationCredentialsFromRequest($request),
+                $this->getAuthenticationCredentialsFromRequest($request, $check_password),
                 $check_password
             )
         );
