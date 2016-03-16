@@ -24,13 +24,14 @@ abstract class Adapter implements AdapterInterface
      * Return authentication credentials from request.
      *
      * @param  ServerRequestInterface $request
+     * @param  bool                   $check_password
      * @return array
      */
-    protected function getAuthenticationCredentialsFromRequest(ServerRequestInterface $request)
+    protected function getAuthenticationCredentialsFromRequest(ServerRequestInterface $request, $check_password = true)
     {
         $credentials = $request->getParsedBody();
 
-        if (!is_array($credentials) || empty($credentials['username']) || empty($credentials['password'])) {
+        if (!is_array($credentials) || empty($credentials['username']) || ($check_password && empty($credentials['password']))) {
             throw new InvalidAuthenticateRequest();
         }
 
