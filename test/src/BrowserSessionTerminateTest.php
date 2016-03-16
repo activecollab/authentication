@@ -1,10 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Adapter\BrowserSession;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Exception\InvalidSession;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
@@ -12,7 +17,6 @@ use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use ActiveCollab\Authentication\Test\Token\Token;
-use GuzzleHttp\Psr7;
 
 /**
  * @package ActiveCollab\Authentication\Test
@@ -28,7 +32,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test session termination
+     * Test session termination.
      */
     public function testTerminateSession()
     {

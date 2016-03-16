@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\AuthenticatedUser;
 
 /**
@@ -8,7 +14,7 @@ namespace ActiveCollab\Authentication\AuthenticatedUser;
 interface RepositoryInterface
 {
     /**
-     * @param  integer                         $user_id
+     * @param  int                             $user_id
      * @return AuthenticatedUserInterface|null
      */
     public function findById($user_id);

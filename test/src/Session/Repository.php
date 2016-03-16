@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -32,7 +38,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Find session by session ID
+     * Find session by session ID.
      *
      * @param  string                $session_id
      * @return SessionInterface|null
@@ -68,11 +74,11 @@ class Repository implements RepositoryInterface
             $this->used_session[$session_id] = 0;
         }
 
-        $this->used_session[$session_id]++;
+        ++$this->used_session[$session_id];
     }
 
     /**
-     * Create a new session
+     * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
      * @param  \DateTimeInterface|null    $expires_at
@@ -91,7 +97,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * Terminate a session
+     * Terminate a session.
      *
      * @param SessionInterface $session
      */

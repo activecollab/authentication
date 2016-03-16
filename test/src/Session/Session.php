@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
@@ -41,7 +47,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * {@inheritdocs}
+     * {@inheritdoc}
      */
     public function getSessionId()
     {
@@ -57,7 +63,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * {@inheritdocs}
+     * {@inheritdoc}
      */
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
     {
@@ -65,7 +71,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * {@inheritdocs}
+     * {@inheritdoc}
      */
     public function jsonSerialize()
     {

@@ -1,9 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticationResultInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -12,7 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
 interface AdapterInterface
 {
     /**
-     * Initialize authentication layer and see if we have a user who's already logged in
+     * Initialize authentication layer and see if we have a user who's already logged in.
      *
      * @param  ServerRequestInterface     $request
      * @param  null                       $authenticated_with
@@ -21,7 +27,7 @@ interface AdapterInterface
     public function initialize(ServerRequestInterface $request, &$authenticated_with = null);
 
     /**
-     * Authenticate with given credential agains authentication source
+     * Authenticate with given credential agains authentication source.
      *
      * @param  ServerRequestInterface        $request
      * @return AuthenticationResultInterface
@@ -29,7 +35,7 @@ interface AdapterInterface
     public function authenticate(ServerRequestInterface $request);
 
     /**
-     * Terminate an instance that was used to authenticate a user
+     * Terminate an instance that was used to authenticate a user.
      *
      * @param AuthenticationResultInterface $authenticated_with
      */

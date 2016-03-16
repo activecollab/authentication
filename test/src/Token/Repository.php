@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -58,7 +64,7 @@ class Repository implements RepositoryInterface
             $this->used_tokens[$token_id] = 0;
         }
 
-        $this->used_tokens[$token_id]++;
+        ++$this->used_tokens[$token_id];
     }
 
     /**

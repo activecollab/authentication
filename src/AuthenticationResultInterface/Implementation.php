@@ -1,9 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\AuthenticationResultInterface;
 
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Psr7;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResultInterface

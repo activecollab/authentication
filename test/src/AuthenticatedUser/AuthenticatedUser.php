@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Test\AuthenticatedUser;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -23,16 +29,16 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     private $name, $email, $password;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $can_authenticate;
 
     /**
-     * @param integer $id
-     * @param string  $email
-     * @param string  $name
-     * @param string  $password
-     * @param boolean $can_authenticate
+     * @param int    $id
+     * @param string $email
+     * @param string $name
+     * @param string $password
+     * @param bool   $can_authenticate
      */
     public function __construct($id, $email, $name, $password, $can_authenticate = true)
     {
@@ -44,9 +50,9 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * Return user ID
+     * Return user ID.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -54,7 +60,7 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * Return email address of a given user
+     * Return email address of a given user.
      *
      * @return string
      */
@@ -64,7 +70,7 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * Return first name of this user
+     * Return first name of this user.
      *
      * @return string
      */
@@ -74,7 +80,7 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * Return user's password
+     * Return user's password.
      *
      * @return string
      */

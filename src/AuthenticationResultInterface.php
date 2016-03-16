@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -12,7 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 interface AuthenticationResultInterface extends \JsonSerializable
 {
     /**
-     * Get authenticated user from the repository
+     * Get authenticated user from the repository.
      *
      * @param  UserRepositoryInterface    $repository
      * @return AuthenticatedUserInterface

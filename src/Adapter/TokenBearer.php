@@ -1,14 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
+use ActiveCollab\Authentication\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Exception\InvalidToken;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\Adapter
@@ -65,7 +71,7 @@ class TokenBearer extends Adapter
     }
 
     /**
-     * Authenticate with given credential agains authentication source
+     * Authenticate with given credential agains authentication source.
      *
      * @param  ServerRequestInterface        $request
      * @return AuthenticationResultInterface
@@ -76,7 +82,7 @@ class TokenBearer extends Adapter
     }
 
     /**
-     * Terminate an instance that was used to authenticate a user
+     * Terminate an instance that was used to authenticate a user.
      *
      * @param AuthenticationResultInterface $authenticated_with
      */

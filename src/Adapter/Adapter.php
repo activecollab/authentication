@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * This file is part of the Active Collab ID project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -15,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class Adapter implements AdapterInterface
 {
     /**
-     * Return authentication credentials from request
+     * Return authentication credentials from request.
      *
      * @param  ServerRequestInterface $request
      * @return array
