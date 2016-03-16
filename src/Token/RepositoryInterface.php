@@ -1,9 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Active Collab Authentication project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
 namespace ActiveCollab\Authentication\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\Token\TokenInterface;
 
 /**
  * @package ActiveCollab\Authentication\Token
@@ -11,7 +16,7 @@ use ActiveCollab\Authentication\Token\TokenInterface;
 interface RepositoryInterface
 {
     /**
-     * Find session by session ID
+     * Find session by session ID.
      *
      * @param  string              $token_id
      * @return TokenInterface|null
@@ -19,22 +24,22 @@ interface RepositoryInterface
     public function getById($token_id);
 
     /**
-     * Return number of times that a token with the give ID was used
+     * Return number of times that a token with the give ID was used.
      *
      * @param  TokenInterface|string $token_or_token_id
-     * @return integer
+     * @return int
      */
     public function getUsageById($token_or_token_id);
 
     /**
-     * Record that token with the given ID was used
+     * Record that token with the given ID was used.
      *
      * @param TokenInterface|string $token_or_token_id
      */
     public function recordUsage($token_or_token_id);
 
     /**
-     * Issue a new token
+     * Issue a new token.
      *
      * @param  AuthenticatedUserInterface $user
      * @param  \DateTimeInterface|null    $expires_at
@@ -43,7 +48,7 @@ interface RepositoryInterface
     public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
 
     /**
-     * Terminate a token
+     * Terminate a token.
      *
      * @param TokenInterface $token
      */
