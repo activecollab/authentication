@@ -65,22 +65,24 @@ class BrowserSession extends Adapter
      */
     public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
     {
-        if ($session_id = $this->cookies->get($request, $this->session_cookie_name)) {
-            $session = $this->sessions_repository->getById($session_id);
+        $session_id = $this->cookies->get($request, $this->session_cookie_name);
 
-            if ($session instanceof SessionInterface) {
-                if ($user = $session->getAuthenticatedUser($this->users_repository)) {
-                    $this->sessions_repository->recordUsage($session);
-                    $authenticated_with = $session;
-
-                    return $user;
-                }
-            }
-
-            throw new InvalidSessionException();
+        if ($session_id) {
+            return null;
         }
 
-        return null;
+        $session = $this->sessions_repository->getById($session_id);
+
+        if ($session instanceof SessionInterface) {
+            if ($user = $session->getAuthenticatedUser($this->users_repository)) {
+                $this->sessions_repository->recordUsage($session);
+                $authenticated_with = $session;
+
+                return $user;
+            }
+        }
+
+        throw new InvalidSessionException();
     }
 
     /**
