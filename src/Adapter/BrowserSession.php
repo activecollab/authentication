@@ -25,12 +25,12 @@ class BrowserSession extends Adapter
     /**
      * @var UserRepositoryInterface
      */
-    private $users_repository;
+    private $user_repository;
 
     /**
      * @var SessionRepositoryInterface
      */
-    private $sessions_repository;
+    private $session_repository;
 
     /**
      * @var CookiesInterface
@@ -43,19 +43,19 @@ class BrowserSession extends Adapter
     private $session_cookie_name;
 
     /**
-     * @param UserRepositoryInterface    $users_repository
-     * @param SessionRepositoryInterface $sessions_repository
+     * @param UserRepositoryInterface    $user_repository
+     * @param SessionRepositoryInterface $session_repository
      * @param CookiesInterface           $cookies
      * @param string                     $session_cookie_name
      */
-    public function __construct(UserRepositoryInterface $users_repository, SessionRepositoryInterface $sessions_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid')
+    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid')
     {
         if (empty($session_cookie_name)) {
             throw new InvalidArgumentException('Session cookie name is required');
         }
 
-        $this->users_repository = $users_repository;
-        $this->sessions_repository = $sessions_repository;
+        $this->user_repository = $user_repository;
+        $this->session_repository = $session_repository;
         $this->cookies = $cookies;
         $this->session_cookie_name = $session_cookie_name;
     }
@@ -71,11 +71,11 @@ class BrowserSession extends Adapter
             return null;
         }
 
-        $session = $this->sessions_repository->getById($session_id);
+        $session = $this->session_repository->getById($session_id);
 
         if ($session instanceof SessionInterface) {
-            if ($user = $session->getAuthenticatedUser($this->users_repository)) {
-                $this->sessions_repository->recordUsage($session);
+            if ($user = $session->getAuthenticatedUser($this->user_repository)) {
+                $this->session_repository->recordUsage($session);
                 $authenticated_with = $session;
 
                 return $user;
@@ -90,9 +90,9 @@ class BrowserSession extends Adapter
      */
     public function authenticate(ServerRequestInterface $request, $check_password = true)
     {
-        return $this->sessions_repository->createSession(
+        return $this->session_repository->createSession(
             $this->getUserFromCredentials(
-                $this->users_repository,
+                $this->user_repository,
                 $this->getAuthenticationCredentialsFromRequest($request, $check_password),
                 $check_password
             )
@@ -105,7 +105,7 @@ class BrowserSession extends Adapter
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
         if ($authenticated_with instanceof SessionInterface) {
-            $this->sessions_repository->terminateSession($authenticated_with);
+            $this->session_repository->terminateSession($authenticated_with);
         } else {
             throw new InvalidArgumentException('Instance is not a browser session');
         }

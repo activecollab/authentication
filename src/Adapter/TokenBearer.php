@@ -24,21 +24,21 @@ class TokenBearer extends Adapter
     /**
      * @var UserRepositoryInterface
      */
-    private $users_repository;
+    private $user_repository;
 
     /**
      * @var TokenRepositoryInterface
      */
-    private $tokens_repository;
+    private $token_repository;
 
     /**
-     * @param UserRepositoryInterface  $users_repository
-     * @param TokenRepositoryInterface $tokens_repository
+     * @param UserRepositoryInterface  $user_repository
+     * @param TokenRepositoryInterface $token_repository
      */
-    public function __construct(UserRepositoryInterface $users_repository, TokenRepositoryInterface $tokens_repository)
+    public function __construct(UserRepositoryInterface $user_repository, TokenRepositoryInterface $token_repository)
     {
-        $this->users_repository = $users_repository;
-        $this->tokens_repository = $tokens_repository;
+        $this->user_repository = $user_repository;
+        $this->token_repository = $token_repository;
     }
 
     /**
@@ -51,13 +51,13 @@ class TokenBearer extends Adapter
         if (!empty($authorization) && substr($authorization, 0, 7) === 'Bearer ') {
             $token_id = trim(substr($authorization, 7));
 
-            if (empty($token_id)) {
+            if ($token_id === null || $token_id === '') {
                 throw new InvalidTokenException();
             }
 
-            if ($token = $this->tokens_repository->getById($token_id)) {
-                if ($user = $token->getAuthenticatedUser($this->users_repository)) {
-                    $this->tokens_repository->recordUsage($token);
+            if ($token = $this->token_repository->getById($token_id)) {
+                if ($user = $token->getAuthenticatedUser($this->user_repository)) {
+                    $this->token_repository->recordUsage($token);
                     $authenticated_with = $token;
 
                     return $user;
@@ -79,7 +79,11 @@ class TokenBearer extends Adapter
      */
     public function authenticate(ServerRequestInterface $request, $check_password = true)
     {
-        return $this->tokens_repository->issueToken($this->getUserFromCredentials($this->users_repository, $this->getAuthenticationCredentialsFromRequest($request), $check_password));
+        return $this->token_repository->issueToken($this->getUserFromCredentials(
+            $this->user_repository,
+            $this->getAuthenticationCredentialsFromRequest($request),
+            $check_password
+        ));
     }
 
     /**
@@ -90,7 +94,7 @@ class TokenBearer extends Adapter
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
         if ($authenticated_with instanceof TokenInterface) {
-            $this->tokens_repository->terminateToken($authenticated_with);
+            $this->token_repository->terminateToken($authenticated_with);
         } else {
             throw new InvalidArgumentException('Instance is not a browser session');
         }
