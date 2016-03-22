@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class TokenBearerAuthenticateTest extends TokenBearerTestCase
 {
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticateRequestException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      */
     public function testInvalidRequestThrowsAnException()
     {

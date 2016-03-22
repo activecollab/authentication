@@ -10,7 +10,7 @@ namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequestException;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,7 +32,7 @@ abstract class Adapter implements AdapterInterface
         $credentials = $request->getParsedBody();
 
         if (!is_array($credentials) || empty($credentials['username']) || ($check_password && empty($credentials['password']))) {
-            throw new InvalidAuthenticateRequestException();
+            throw new InvalidAuthenticationRequestException();
         }
 
         return $credentials;

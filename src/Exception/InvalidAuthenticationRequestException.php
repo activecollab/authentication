@@ -13,7 +13,7 @@ use Exception as PhpException;
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-class InvalidAuthenticateRequestException extends RuntimeException
+class InvalidAuthenticationRequestException extends RuntimeException
 {
     /**
      * {@inheritdoc}

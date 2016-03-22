@@ -26,7 +26,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
 {
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticateRequestException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      */
     public function testInvalidRequestThrowsAnException()
     {
