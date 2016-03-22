@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\AuthenticationResult;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,10 +21,10 @@ interface AuthenticationResultInterface extends JsonSerializable
     /**
      * Get authenticated user from the repository.
      *
-     * @param  UserRepositoryInterface    $repository
+     * @param  RepositoryInterface        $repository
      * @return AuthenticatedUserInterface
      */
-    public function getAuthenticatedUser(UserRepositoryInterface $repository);
+    public function getAuthenticatedUser(RepositoryInterface $repository);
 
     /**
      * @param  ResponseInterface $response

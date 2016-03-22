@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
@@ -39,12 +39,12 @@ abstract class Adapter implements AdapterInterface
     }
 
     /**
-     * @param  UserRepositoryInterface    $repository
+     * @param  RepositoryInterface        $repository
      * @param  array                      $credentials
      * @param  bool                       $check_password
      * @return AuthenticatedUserInterface
      */
-    protected function getUserFromCredentials(UserRepositoryInterface $repository, array $credentials, $check_password = true)
+    protected function getUserFromCredentials(RepositoryInterface $repository, array $credentials, $check_password = true)
     {
         $user = $repository->findByUsername($credentials['username']);
 
