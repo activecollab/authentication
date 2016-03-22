@@ -39,7 +39,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSession
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSessionException
      */
     public function testExceptionWhenSessionIsNotValid()
     {

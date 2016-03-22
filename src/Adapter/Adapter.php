@@ -10,9 +10,9 @@ namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest;
-use ActiveCollab\Authentication\Exception\InvalidPassword;
-use ActiveCollab\Authentication\Exception\UserNotFound;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticateRequestException;
+use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -32,7 +32,7 @@ abstract class Adapter implements AdapterInterface
         $credentials = $request->getParsedBody();
 
         if (!is_array($credentials) || empty($credentials['username']) || ($check_password && empty($credentials['password']))) {
-            throw new InvalidAuthenticateRequest();
+            throw new InvalidAuthenticateRequestException();
         }
 
         return $credentials;
@@ -49,15 +49,15 @@ abstract class Adapter implements AdapterInterface
         $user = $repository->findByUsername($credentials['username']);
 
         if (!$user) {
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
 
         if ($check_password && !$user->isValidPassword($credentials['password'])) {
-            throw new InvalidPassword();
+            throw new InvalidPasswordException();
         }
 
         if (!$user->canAuthenticate()) {
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
 
         return $user;

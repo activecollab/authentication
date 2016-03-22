@@ -46,7 +46,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidToken
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidTokenException
      */
     public function testExceptionWhenTokenIsNotValid()
     {

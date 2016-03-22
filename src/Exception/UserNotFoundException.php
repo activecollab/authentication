@@ -8,15 +8,17 @@
 
 namespace ActiveCollab\Authentication\Exception;
 
+use Exception as PhpException;
+
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-class InvalidToken extends RuntimeException
+class UserNotFoundException extends RuntimeException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'Authorization token is not valid', $code = 0, \Exception $previous = null)
+    public function __construct($message = 'User not found', $code = 0, PhpException $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

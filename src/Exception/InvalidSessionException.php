@@ -8,15 +8,17 @@
 
 namespace ActiveCollab\Authentication\Exception;
 
+use Exception as PhpException;
+
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-class InvalidPassword extends RuntimeException
+class InvalidSessionException extends RuntimeException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'Password not valid', $code = 0, \Exception $previous = null)
+    public function __construct($message = 'Session ID is not valid', $code = 0, PhpException $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

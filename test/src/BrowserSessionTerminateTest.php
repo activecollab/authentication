@@ -10,7 +10,7 @@ namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\Exception\InvalidSession;
+use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
@@ -61,7 +61,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
 
         $browser_session_adapter->terminate($session);
 
-        $this->setExpectedException(InvalidSession::class);
+        $this->setExpectedException(InvalidSessionException::class);
         $browser_session_adapter->initialize($this->request);
     }
 }

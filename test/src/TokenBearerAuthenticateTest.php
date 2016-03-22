@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class TokenBearerAuthenticateTest extends TokenBearerTestCase
 {
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticateRequestException
      */
     public function testInvalidRequestThrowsAnException()
     {
@@ -33,7 +33,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFound
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      */
     public function testUserNotFoundThrowsAnException()
     {
@@ -41,9 +41,9 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPassword
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPasswordException
      */
-    public function testInvalidPasswordThrowsAnException()
+    public function testInvalidPasswordExceptionThrowsAnException()
     {
         $repository = new UserRepository([
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
@@ -53,7 +53,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFound
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      */
     public function testUserCantAuthenticateThrowsAnException()
     {

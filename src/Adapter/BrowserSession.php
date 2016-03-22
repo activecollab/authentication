@@ -10,7 +10,7 @@ namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
-use ActiveCollab\Authentication\Exception\InvalidSession;
+use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Cookies\CookiesInterface;
@@ -77,7 +77,7 @@ class BrowserSession extends Adapter
                 }
             }
 
-            throw new InvalidSession();
+            throw new InvalidSessionException();
         }
 
         return null;

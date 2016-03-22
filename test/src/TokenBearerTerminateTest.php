@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearer;
-use ActiveCollab\Authentication\Exception\InvalidToken;
+use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Base\TokenBearerTestCase;
@@ -59,7 +59,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
 
         $token_bearer_adapter->terminate($token);
 
-        $this->setExpectedException(InvalidToken::class);
+        $this->setExpectedException(InvalidTokenException::class);
         $token_bearer_adapter->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
     }
 }
