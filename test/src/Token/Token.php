@@ -37,8 +37,8 @@ class Token implements TokenInterface
     private $expires_at;
 
     /**
-     * @param string                  $token
-     * @param string                  $user_id
+     * @param string                 $token
+     * @param string                 $user_id
      * @param DateTimeInterface|null $expires_at
      */
     public function __construct($token, $user_id, DateTimeInterface $expires_at = null)

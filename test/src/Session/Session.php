@@ -37,8 +37,8 @@ class Session implements SessionInterface
     private $expires_at;
 
     /**
-     * @param string                  $session_id
-     * @param string                  $user_id
+     * @param string                 $session_id
+     * @param string                 $user_id
      * @param DateTimeInterface|null $expires_at
      */
     public function __construct($session_id, $user_id, DateTimeInterface $expires_at = null)

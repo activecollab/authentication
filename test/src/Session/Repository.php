@@ -29,7 +29,6 @@ class Repository implements RepositoryInterface
      */
     private $used_session = [];
 
-
     /**
      * @param Session[] $sessions
      */
@@ -95,7 +94,7 @@ class Repository implements RepositoryInterface
      * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param  DateTimeInterface|null    $expires_at
+     * @param  DateTimeInterface|null     $expires_at
      * @return SessionInterface
      */
     public function createSession(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null)
