@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Base;
+namespace ActiveCollab\Authentication\Test\TestCase;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
@@ -17,7 +17,7 @@ use ActiveCollab\Cookies\Cookies;
 use ActiveCollab\Cookies\CookiesInterface;
 
 /**
- * @package ActiveCollab\Authentication\Test\Base
+ * @package ActiveCollab\Authentication\Test\TestCase
  */
 abstract class BrowserSessionTestCase extends RequestResponseTestCase
 {

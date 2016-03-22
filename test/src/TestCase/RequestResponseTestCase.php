@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Base;
+namespace ActiveCollab\Authentication\Test\TestCase;
 
 use Pimple\Container;
 use Slim\CallableResolver;
@@ -19,7 +19,7 @@ use Slim\Http\Response;
 use Slim\Http\Uri;
 
 /**
- * @package ActiveCollab\Authentication\Test\Base
+ * @package ActiveCollab\Authentication\Test\TestCase
  */
 abstract class RequestResponseTestCase extends \PHPUnit_Framework_TestCase
 {

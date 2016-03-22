@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Base;
+namespace ActiveCollab\Authentication\Test\TestCase;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
@@ -14,7 +14,7 @@ use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 
 /**
- * @package ActiveCollab\Authentication\Test\Base
+ * @package ActiveCollab\Authentication\Test\TestCase
  */
 abstract class TokenBearerTestCase extends RequestResponseTestCase
 {

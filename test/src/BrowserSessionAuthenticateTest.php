@@ -13,7 +13,7 @@ use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterfa
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
+use ActiveCollab\Authentication\Test\TestCase\BrowserSessionTestCase;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use GuzzleHttp\Psr7;
