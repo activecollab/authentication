@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**

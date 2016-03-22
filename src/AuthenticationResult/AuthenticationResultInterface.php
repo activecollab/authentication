@@ -6,16 +6,17 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication;
+namespace ActiveCollab\Authentication\AuthenticationResult;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
+use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * @package ActiveCollab\Authentication
+ * @package ActiveCollab\Authentication\AuthenticationResult
  */
-interface AuthenticationResultInterface extends \JsonSerializable
+interface AuthenticationResultInterface extends JsonSerializable
 {
     /**
      * Get authenticated user from the repository.

@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Token;
 
-use ActiveCollab\Authentication\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 
 /**
  * @package ActiveCollab\Authentication\Token

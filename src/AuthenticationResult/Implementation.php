@@ -6,13 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\AuthenticationResultInterface;
+namespace ActiveCollab\Authentication\AuthenticationResult;
 
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * @package ActiveCollab\Authentication\AuthenticationResultInterface
+ * @package ActiveCollab\Authentication\AuthenticationResult
  */
 trait Implementation
 {
