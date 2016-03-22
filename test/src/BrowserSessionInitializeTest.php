@@ -35,7 +35,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testInitializationSkipWhenTheresNoSessionCookie()
     {
-        $this->assertNull((new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request));
+        $this->assertNull((new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request));
     }
 
     /**
@@ -45,7 +45,7 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     {
         $this->setCookie('sessid', 'not a valid session ID');
 
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request);
+        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
     }
 
     /**

@@ -57,7 +57,7 @@ class TokenBearer extends Adapter
 
             if ($token = $this->token_repository->getById($token_id)) {
                 if ($user = $token->getAuthenticatedUser($this->user_repository)) {
-                    $this->token_repository->recordUsage($token);
+                    $this->token_repository->recordUsageByToken($token);
                     $authenticated_with = $token;
 
                     return $user;

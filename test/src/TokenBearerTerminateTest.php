@@ -28,7 +28,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
      */
     public function testTerminteNonSessionRaisesAnException()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
+        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
     }
 
     /**

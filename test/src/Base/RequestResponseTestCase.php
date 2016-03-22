@@ -19,7 +19,7 @@ use Slim\Http\Response;
 use Slim\Http\Uri;
 
 /**
- * @package ActiveCollab\JobsQueue\Test
+ * @package ActiveCollab\Authentication\Test\Base
  */
 abstract class RequestResponseTestCase extends \PHPUnit_Framework_TestCase
 {

@@ -14,19 +14,19 @@ use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 
 /**
- * @package ActiveCollab\Authentication\Test
+ * @package ActiveCollab\Authentication\Test\Base
  */
 abstract class TokenBearerTestCase extends RequestResponseTestCase
 {
     /**
      * @var UserRepositoryInterface
      */
-    protected $empty_users_repository;
+    protected $empty_user_repository;
 
     /**
      * @var TokenRepositoryInterface
      */
-    protected $empty_tokens_repository;
+    protected $empty_token_repository;
 
     /**
      * Set up test environment.
@@ -35,7 +35,7 @@ abstract class TokenBearerTestCase extends RequestResponseTestCase
     {
         parent::setUp();
 
-        $this->empty_users_repository = new UserRepository();
-        $this->empty_tokens_repository = new TokenRepository();
+        $this->empty_user_repository = new UserRepository();
+        $this->empty_token_repository = new TokenRepository();
     }
 }

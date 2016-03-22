@@ -11,6 +11,7 @@ namespace ActiveCollab\Authentication\Test\Token;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Token\RepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
+use DateTimeInterface;
 
 /**
  * @package ActiveCollab\Authentication\Test\Token
@@ -21,6 +22,11 @@ class Repository implements RepositoryInterface
      * @var Token[]
      */
     private $tokens;
+
+    /**
+     * @var array
+     */
+    private $used_tokens = [];
 
     /**
      * @param array $tokens
@@ -39,27 +45,26 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @var array
-     */
-    private $used_tokens = [];
-
-    /**
      * {@inheritdoc}
      */
-    public function getUsageById($token_or_token_id)
+    public function getUsageById($token_id)
     {
-        $token_id = $token_or_token_id instanceof TokenInterface ? $token_or_token_id->getTokenId() : $token_or_token_id;
-
         return empty($this->used_tokens[$token_id]) ? 0 : $this->used_tokens[$token_id];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function recordUsage($token_or_token_id)
+    public function getUsageByToken(TokenInterface $token)
     {
-        $token_id = $token_or_token_id instanceof TokenInterface ? $token_or_token_id->getTokenid() : $token_or_token_id;
+        return $this->getUsageById($token->getTokenId());
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function recordUsageById($token_id)
+    {
         if (empty($this->used_tokens[$token_id])) {
             $this->used_tokens[$token_id] = 0;
         }
@@ -70,7 +75,15 @@ class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
+    public function recordUsageByToken(TokenInterface $token)
+    {
+        $this->recordUsageById($token->getTokenId());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function issueToken(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null)
     {
         $token = isset($this->tokens[$user->getEmail()]) ? $this->tokens[$user->getEmail()] : sha1(time());
 

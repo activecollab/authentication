@@ -11,6 +11,8 @@ namespace ActiveCollab\Authentication\Test\Session;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use DateTimeInterface;
+use JsonSerializable;
 
 /**
  * @package ActiveCollab\Authentication\Test\Session
@@ -37,9 +39,9 @@ class Session implements SessionInterface
     /**
      * @param string                  $session_id
      * @param string                  $user_id
-     * @param \DateTimeInterface|null $expires_at
+     * @param DateTimeInterface|null $expires_at
      */
-    public function __construct($session_id, $user_id, \DateTimeInterface $expires_at = null)
+    public function __construct($session_id, $user_id, DateTimeInterface $expires_at = null)
     {
         $this->session_id = $session_id;
         $this->user_id = $user_id;
@@ -75,12 +77,12 @@ class Session implements SessionInterface
      */
     public function jsonSerialize()
     {
-        if ($this->expires_at instanceof \JsonSerializable) {
+        $expires_at = null;
+
+        if ($this->expires_at instanceof JsonSerializable) {
             $expires_at = $this->expires_at->jsonSerialize();
-        } elseif ($this->expires_at instanceof \DateTimeInterface) {
+        } elseif ($this->expires_at instanceof DateTimeInterface) {
             $expires_at = $this->expires_at->getTimestamp();
-        } else {
-            $expires_at = null;
         }
 
         return ['session_id' => $this->session_id, 'user_id' => $this->user_id, 'expires_at' => $expires_at];

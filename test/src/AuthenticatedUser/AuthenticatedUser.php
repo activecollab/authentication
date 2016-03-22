@@ -26,7 +26,17 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     /**
      * @var string
      */
-    private $name, $email, $password;
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $password;
 
     /**
      * @var bool

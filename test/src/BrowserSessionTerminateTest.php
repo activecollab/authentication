@@ -28,7 +28,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
      */
     public function testTerminteNonSessionRaisesAnException()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->terminate(new Token('123', 'ilija.studen@activecollab.com'));
+        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->terminate(new Token('123', 'ilija.studen@activecollab.com'));
     }
 
     /**

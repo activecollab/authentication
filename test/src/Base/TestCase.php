@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Test\Base;
 
 /**
- * @package ActiveCollab\JobsQueue\Test
+ * @package ActiveCollab\Authentication\Test\Base
  */
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

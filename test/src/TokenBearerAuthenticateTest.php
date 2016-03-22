@@ -29,7 +29,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
      */
     public function testInvalidRequestThrowsAnException()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->authenticate($this->prepareAuthorizationRequest('', ''));
+        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->authenticate($this->prepareAuthorizationRequest('', ''));
     }
 
     /**
@@ -37,7 +37,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
      */
     public function testUserNotFoundThrowsAnException()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->authenticate($this->prepareAuthorizationRequest('not found', '123'));
+        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->authenticate($this->prepareAuthorizationRequest('not found', '123'));
     }
 
     /**
@@ -49,7 +49,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        (new TokenBearer($repository, $this->empty_tokens_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', 'not 123'));
+        (new TokenBearer($repository, $this->empty_token_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', 'not 123'));
     }
 
     /**
@@ -61,7 +61,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123', false),
         ]);
 
-        (new TokenBearer($repository, $this->empty_tokens_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
+        (new TokenBearer($repository, $this->empty_token_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
     }
 
     /**
@@ -73,7 +73,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $result = (new TokenBearer($user_repository, $this->empty_tokens_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
+        $result = (new TokenBearer($user_repository, $this->empty_token_repository))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(TokenInterface::class, $result);

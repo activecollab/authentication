@@ -11,6 +11,7 @@ namespace ActiveCollab\Authentication\Test\Session;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use DateTimeInterface;
 use InvalidArgumentException;
 
 /**
@@ -22,6 +23,12 @@ class Repository implements RepositoryInterface
      * @var SessionInterface[]
      */
     private $sessions = [];
+
+    /**
+     * @var array
+     */
+    private $used_session = [];
+
 
     /**
      * @param Session[] $sessions
@@ -49,27 +56,26 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @var array
-     */
-    private $used_session = [];
-
-    /**
      * {@inheritdoc}
      */
-    public function getUsageById($session_or_session_id)
+    public function getUsageById($session_id)
     {
-        $session_id = $session_or_session_id instanceof SessionInterface ? $session_or_session_id->getSessionId() : $session_or_session_id;
-
         return empty($this->used_session[$session_id]) ? 0 : $this->used_session[$session_id];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function recordUsage($session_or_session_id)
+    public function getUsageBySession(SessionInterface $session)
     {
-        $session_id = $session_or_session_id instanceof SessionInterface ? $session_or_session_id->getSessionId() : $session_or_session_id;
+        return $this->getUsageById($session->getSessionId());
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function recordUsageById($session_id)
+    {
         if (empty($this->used_session[$session_id])) {
             $this->used_session[$session_id] = 0;
         }
@@ -78,17 +84,25 @@ class Repository implements RepositoryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function recordUsageBySession(SessionInterface $session)
+    {
+        $this->recordUsageById($session->getSessionId());
+    }
+
+    /**
      * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param  \DateTimeInterface|null    $expires_at
+     * @param  DateTimeInterface|null    $expires_at
      * @return SessionInterface
      */
-    public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null)
+    public function createSession(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null)
     {
         /** @var Session $session */
         foreach ($this->sessions as $session) {
-            if ($session->getUserId() == $user->getEmail()) {
+            if ($session->getUserId() === $user->getEmail()) {
                 return $session;
             }
         }
@@ -104,7 +118,7 @@ class Repository implements RepositoryInterface
     public function terminateSession(SessionInterface $session)
     {
         foreach ($this->sessions as $k => $v) {
-            if ($session->getSessionId() == $v->getSessionId()) {
+            if ($session->getSessionId() === $v->getSessionId()) {
                 unset($this->sessions[$k]);
             }
         }

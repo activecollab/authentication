@@ -34,7 +34,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testInitializationSkipWhenTheresNoAuthroizationHeader()
     {
-        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request));
+        $this->assertNull((new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request));
     }
 
     /**
@@ -42,7 +42,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testInitializationSkipWhenAuthorizationIsNotTokenBearer()
     {
-        $this->assertNull((new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
+        $this->assertNull((new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
     }
 
     /**
@@ -50,7 +50,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
      */
     public function testExceptionWhenTokenIsNotValid()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
+        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
     }
 
     /**
