@@ -27,7 +27,7 @@ interface AdapterInterface
     public function initialize(ServerRequestInterface $request, &$authenticated_with = null);
 
     /**
-     * Authenticate with given credential agains authentication source.
+     * Authenticate with given credential against authentication source.
      *
      * @param  ServerRequestInterface        $request
      * @param  bool                          $check_password

@@ -58,7 +58,7 @@ interface RepositoryInterface
      * Issue a new token.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param  DateTimeInterface|null    $expires_at
+     * @param  DateTimeInterface|null     $expires_at
      * @return TokenInterface
      */
     public function issueToken(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null);
