@@ -67,7 +67,7 @@ class BrowserSession extends Adapter
     {
         $session_id = $this->cookies->get($request, $this->session_cookie_name);
 
-        if ($session_id) {
+        if (!$session_id) {
             return null;
         }
 
