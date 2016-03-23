@@ -9,9 +9,10 @@
 namespace ActiveCollab\Authentication\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use DateTimeInterface;
 
 /**
- * @package ActiveCollab\Authentication\Token
+ * @package ActiveCollab\Authentication\Session
  */
 interface RepositoryInterface
 {
@@ -24,28 +25,43 @@ interface RepositoryInterface
     public function getById($session_id);
 
     /**
-     * Return number of times that session with the give ID was used.
+     * Return number of times that session with the given ID was used.
      *
-     * @param  SessionInterface|string $session_or_session_id
+     * @param  string $session_id
      * @return int
      */
-    public function getUsageById($session_or_session_id);
+    public function getUsageById($session_id);
+
+    /**
+     * Return number of times that session with the given ID was used.
+     *
+     * @param  SessionInterface $session
+     * @return int
+     */
+    public function getUsageBySession(SessionInterface $session);
 
     /**
      * Record that session with the given ID was used.
      *
-     * @param SessionInterface|string $session_or_session_id
+     * @param string $session_id
      */
-    public function recordUsage($session_or_session_id);
+    public function recordUsageById($session_id);
+
+    /**
+     * Record that session with the given ID was used.
+     *
+     * @param SessionInterface $session
+     */
+    public function recordUsageBySession(SessionInterface $session);
 
     /**
      * Issue a new token.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param  \DateTimeInterface|null    $expires_at
+     * @param  DateTimeInterface|null     $expires_at
      * @return SessionInterface
      */
-    public function createSession(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
+    public function createSession(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null);
 
     /**
      * Terminate a session.
@@ -53,8 +69,4 @@ interface RepositoryInterface
      * @param SessionInterface $session
      */
     public function terminateSession(SessionInterface $session);
-
-//    public function extendSession();
-//
-//    public function destroySession();
 }

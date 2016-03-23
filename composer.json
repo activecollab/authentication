@@ -24,7 +24,7 @@
     "require-dev": {
         "fabpot/php-cs-fixer": "^1.0",
         "phpunit/phpunit": "~5",
-        "slim/slim": "3.0.0-RC2"
+        "slim/slim": "~3.2"
     },
     "minimum-stability": "dev",
     "autoload": {

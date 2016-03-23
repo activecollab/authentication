@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Session;
 
-use ActiveCollab\Authentication\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 
 /**
  * @package ActiveCollab\Authentication\Session

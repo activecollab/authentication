@@ -8,15 +8,17 @@
 
 namespace ActiveCollab\Authentication\Exception;
 
+use Exception as PhpException;
+
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-class UserNotFound extends RuntimeException
+class InvalidPasswordException extends RuntimeException
 {
     /**
      * {@inheritdoc}
      */
-    public function __construct($message = 'User not found', $code = 0, \Exception $previous = null)
+    public function __construct($message = 'Password not valid', $code = 0, PhpException $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

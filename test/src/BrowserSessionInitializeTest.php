@@ -12,7 +12,7 @@ use ActiveCollab\Authentication\Adapter\BrowserSession;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
+use ActiveCollab\Authentication\Test\TestCase\BrowserSessionTestCase;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 
@@ -35,17 +35,17 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testInitializationSkipWhenTheresNoSessionCookie()
     {
-        $this->assertNull((new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request));
+        $this->assertNull((new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request));
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSession
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSessionException
      */
     public function testExceptionWhenSessionIsNotValid()
     {
         $this->setCookie('sessid', 'not a valid session ID');
 
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->initialize($this->request);
+        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
     }
 
     /**

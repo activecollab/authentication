@@ -9,11 +9,11 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
-use ActiveCollab\Authentication\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Base\BrowserSessionTestCase;
+use ActiveCollab\Authentication\Test\TestCase\BrowserSessionTestCase;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use GuzzleHttp\Psr7;
@@ -26,35 +26,35 @@ use Psr\Http\Message\ServerRequestInterface;
 class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
 {
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticateRequest
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      */
     public function testInvalidRequestThrowsAnException()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('', ''));
+        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('', ''));
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFound
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      */
     public function testUserNotFoundThrowsAnException()
     {
-        (new BrowserSession($this->empty_users_repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('not found', '123'));
+        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('not found', '123'));
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPassword
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPasswordException
      */
-    public function testInvalidPasswordThrowsAnException()
+    public function testInvalidPasswordExceptionThrowsAnException()
     {
         $repository = new UserRepository([
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        (new BrowserSession($repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', 'not 123'));
+        (new BrowserSession($repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', 'not 123'));
     }
 
     /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFound
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      */
     public function testUserCantAuthenticateThrowsAnException()
     {
@@ -62,7 +62,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123', false),
         ]);
 
-        (new BrowserSession($repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
+        (new BrowserSession($repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
     }
 
     /**
@@ -74,7 +74,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $result = (new BrowserSession($user_repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
+        $result = (new BrowserSession($user_repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'));
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);
@@ -89,7 +89,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
             'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
         ]);
 
-        $result = (new BrowserSession($user_repository, $this->empty_sessions_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'), false);
+        $result = (new BrowserSession($user_repository, $this->empty_session_repository, $this->cookies))->authenticate($this->prepareAuthorizationRequest('ilija.studen@activecollab.com', '123'), false);
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);

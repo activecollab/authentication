@@ -9,10 +9,10 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearer;
-use ActiveCollab\Authentication\Exception\InvalidToken;
+use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Base\TokenBearerTestCase;
+use ActiveCollab\Authentication\Test\TestCase\TokenBearerTestCase;
 use ActiveCollab\Authentication\Test\Session\Session;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
@@ -28,7 +28,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
      */
     public function testTerminteNonSessionRaisesAnException()
     {
-        (new TokenBearer($this->empty_users_repository, $this->empty_tokens_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
+        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
     }
 
     /**
@@ -59,7 +59,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
 
         $token_bearer_adapter->terminate($token);
 
-        $this->setExpectedException(InvalidToken::class);
+        $this->setExpectedException(InvalidTokenException::class);
         $token_bearer_adapter->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
     }
 }

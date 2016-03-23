@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -20,14 +20,14 @@ interface AdapterInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
-     * @param  ServerRequestInterface     $request
-     * @param  null                       $authenticated_with
-     * @return AuthenticatedUserInterface
+     * @param  ServerRequestInterface          $request
+     * @param  null                            $authenticated_with
+     * @return AuthenticatedUserInterface|null
      */
     public function initialize(ServerRequestInterface $request, &$authenticated_with = null);
 
     /**
-     * Authenticate with given credential agains authentication source.
+     * Authenticate with given credential against authentication source.
      *
      * @param  ServerRequestInterface        $request
      * @param  bool                          $check_password

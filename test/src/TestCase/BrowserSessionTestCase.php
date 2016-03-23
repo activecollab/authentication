@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Base;
+namespace ActiveCollab\Authentication\Test\TestCase;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
@@ -17,19 +17,19 @@ use ActiveCollab\Cookies\Cookies;
 use ActiveCollab\Cookies\CookiesInterface;
 
 /**
- * @package ActiveCollab\Authentication\Test
+ * @package ActiveCollab\Authentication\Test\TestCase
  */
 abstract class BrowserSessionTestCase extends RequestResponseTestCase
 {
     /**
      * @var UserRepositoryInterface
      */
-    protected $empty_users_repository;
+    protected $empty_user_repository;
 
     /**
      * @var SessionRepositoryInterface
      */
-    protected $empty_sessions_repository;
+    protected $empty_session_repository;
 
     /**
      * @var CookiesInterface
@@ -43,8 +43,8 @@ abstract class BrowserSessionTestCase extends RequestResponseTestCase
     {
         parent::setUp();
 
-        $this->empty_users_repository = new UserRepository();
-        $this->empty_sessions_repository = new SessionRepository();
+        $this->empty_user_repository = new UserRepository();
+        $this->empty_session_repository = new SessionRepository();
         $this->cookies = new Cookies(new Adapter());
     }
 

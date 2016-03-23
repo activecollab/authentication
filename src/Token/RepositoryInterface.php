@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use DateTimeInterface;
 
 /**
  * @package ActiveCollab\Authentication\Token
@@ -24,28 +25,43 @@ interface RepositoryInterface
     public function getById($token_id);
 
     /**
-     * Return number of times that a token with the give ID was used.
+     * Return number of times that a token with the given ID was used.
      *
-     * @param  TokenInterface|string $token_or_token_id
+     * @param  string $token_id
      * @return int
      */
-    public function getUsageById($token_or_token_id);
+    public function getUsageById($token_id);
+
+    /**
+     * Return number of times that a token with the given ID was used.
+     *
+     * @param  TokenInterface $token
+     * @return int
+     */
+    public function getUsageByToken(TokenInterface $token);
 
     /**
      * Record that token with the given ID was used.
      *
-     * @param TokenInterface|string $token_or_token_id
+     * @param string $token_id
      */
-    public function recordUsage($token_or_token_id);
+    public function recordUsageById($token_id);
+
+    /**
+     * Record that token with the given ID was used.
+     *
+     * @param TokenInterface $token
+     */
+    public function recordUsageByToken(TokenInterface $token);
 
     /**
      * Issue a new token.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param  \DateTimeInterface|null    $expires_at
+     * @param  DateTimeInterface|null     $expires_at
      * @return TokenInterface
      */
-    public function issueToken(AuthenticatedUserInterface $user, \DateTimeInterface $expires_at = null);
+    public function issueToken(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null);
 
     /**
      * Terminate a token.

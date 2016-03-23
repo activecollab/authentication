@@ -8,9 +8,11 @@
 
 namespace ActiveCollab\Authentication\Exception;
 
+use RuntimeException as PhpRuntimeException;
+
 /**
  * @package ActiveCollab\Authentication\Exception
  */
-abstract class RuntimeException extends \RuntimeException implements ExceptionInterface
+abstract class RuntimeException extends PhpRuntimeException implements ExceptionInterface
 {
 }

@@ -11,7 +11,7 @@ namespace ActiveCollab\Authentication\AuthenticatedUser;
 use ActiveCollab\User\UserInterface;
 
 /**
- * @package ActiveCollab\Authentication
+ * @package ActiveCollab\Authentication\AuthenticatedUser
  */
 interface AuthenticatedUserInterface extends UserInterface
 {

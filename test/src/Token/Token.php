@@ -9,8 +9,10 @@
 namespace ActiveCollab\Authentication\Test\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\AuthenticationResultInterface\Implementation as AuthenticationResultInterfaceImplementation;
+use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Token\TokenInterface;
+use DateTimeInterface;
+use JsonSerializable;
 
 /**
  * @package ActiveCollab\Authentication\Test\Token
@@ -30,16 +32,16 @@ class Token implements TokenInterface
     private $user_id;
 
     /**
-     * @var \DateTimeInterface
+     * @var DateTimeInterface
      */
     private $expires_at;
 
     /**
-     * @param string                  $token
-     * @param string                  $user_id
-     * @param \DateTimeInterface|null $expires_at
+     * @param string                 $token
+     * @param string                 $user_id
+     * @param DateTimeInterface|null $expires_at
      */
-    public function __construct($token, $user_id, \DateTimeInterface $expires_at = null)
+    public function __construct($token, $user_id, DateTimeInterface $expires_at = null)
     {
         $this->token = $token;
         $this->user_id = $user_id;
@@ -67,12 +69,12 @@ class Token implements TokenInterface
      */
     public function jsonSerialize()
     {
-        if ($this->expires_at instanceof \JsonSerializable) {
+        $expires_at = null;
+
+        if ($this->expires_at instanceof JsonSerializable) {
             $expires_at = $this->expires_at->jsonSerialize();
-        } elseif ($this->expires_at instanceof \DateTimeInterface) {
+        } elseif ($this->expires_at instanceof DateTimeInterface) {
             $expires_at = $this->expires_at->getTimestamp();
-        } else {
-            $expires_at = null;
         }
 
         return ['token' => $this->token, 'user_id' => $this->user_id, 'expires_at' => $expires_at];
