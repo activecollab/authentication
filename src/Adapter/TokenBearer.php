@@ -92,7 +92,7 @@ class TokenBearer extends Adapter
         if ($authenticated_with instanceof TokenInterface) {
             $this->tokens_repository->terminateToken($authenticated_with);
         } else {
-            throw new InvalidArgumentException('Instance is not a browser session');
+            throw new InvalidArgumentException('Instance is not a token');
         }
     }
 }
