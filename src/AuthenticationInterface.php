@@ -30,5 +30,5 @@ interface AuthenticationInterface
      * @param  RequestInterface           $request
      * @return AuthenticatedUserInterface
      */
-    public function authenticate(RequestInterface $request);
+    public function authorize(RequestInterface $request);
 }
