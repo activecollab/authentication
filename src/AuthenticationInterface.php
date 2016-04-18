@@ -28,7 +28,8 @@ interface AuthenticationInterface
      * Authenticate with given credential agains authentication source.
      *
      * @param  RequestInterface           $request
+     * @param  array                      $credentials
      * @return AuthenticatedUserInterface
      */
-    public function authorize(RequestInterface $request);
+    public function authorize(RequestInterface $request, array $credentials = []);
 }
