@@ -8,6 +8,7 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
@@ -19,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class TokenBearer extends Adapter
+class TokenBearer implements AdapterInterface
 {
     /**
      * @var UserRepositoryInterface
@@ -44,57 +45,46 @@ class TokenBearer extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
+    public function initialize(ServerRequestInterface $request)
     {
         $authorization = $request->getHeaderLine('Authorization');
 
-        if (!empty($authorization) && substr($authorization, 0, 7) === 'Bearer ') {
-            $token_id = trim(substr($authorization, 7));
+        if (empty($authorization) || substr($authorization, 0, 7) !== 'Bearer ') {
+            return null;
+        }
 
-            if ($token_id === null || $token_id === '') {
-                throw new InvalidTokenException();
-            }
+        $token_id = trim(substr($authorization, 7));
 
-            if ($token = $this->token_repository->getById($token_id)) {
-                if ($user = $token->getAuthenticatedUser($this->user_repository)) {
-                    $this->token_repository->recordUsageByToken($token);
-                    $authenticated_with = $token;
-
-                    return $user;
-                }
-            }
-
+        if ($token_id === null || $token_id === '') {
             throw new InvalidTokenException();
         }
 
-        return null;
+        if ($token = $this->token_repository->getById($token_id)) {
+            if ($user = $token->getAuthenticatedUser($this->user_repository)) {
+                $this->token_repository->recordUsageByToken($token);
+
+                return $user;
+            }
+        }
+
+        throw new InvalidTokenException();
     }
 
     /**
-     * Authenticate with given credential agains authentication source.
-     *
-     * @param  ServerRequestInterface        $request
-     * @param  bool                          $check_password
-     * @return AuthenticationResultInterface
+     * {@inheritdoc}
      */
-    public function authenticate(ServerRequestInterface $request, $check_password = true)
+    public function authenticate(AuthenticatedUserInterface $authenticated_user)
     {
-        return $this->token_repository->issueToken($this->getUserFromCredentials(
-            $this->user_repository,
-            $this->getAuthenticationCredentialsFromRequest($request),
-            $check_password
-        ));
+        return $this->token_repository->issueToken($authenticated_user);
     }
 
     /**
-     * Terminate an instance that was used to authenticate a user.
-     *
-     * @param AuthenticationResultInterface $authenticated_with
+     * {@inheritdoc}
      */
-    public function terminate(AuthenticationResultInterface $authenticated_with)
+    public function terminate(AuthenticationResultInterface $authentication_result)
     {
-        if ($authenticated_with instanceof TokenInterface) {
-            $this->token_repository->terminateToken($authenticated_with);
+        if ($authentication_result instanceof TokenInterface) {
+            $this->token_repository->terminateToken($authentication_result);
         } else {
             throw new InvalidArgumentException('Instance is not a token');
         }

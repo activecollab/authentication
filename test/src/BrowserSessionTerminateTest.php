@@ -9,8 +9,6 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
@@ -38,30 +36,16 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
     {
         $test_session_id = 's123';
 
+        $session = new Session($test_session_id, 123);
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
         $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
 
-        $this->setCookie('sessid', $test_session_id);
-
         $browser_session_adapter = new BrowserSession($user_repository, $session_repository, $this->cookies);
 
-        // ---------------------------------------------------
-        //  Successufl authentication
-        // ---------------------------------------------------
-
-        $session = null;
-        $user = $browser_session_adapter->initialize($this->request, $session);
-
-        $this->assertInstanceOf(AuthenticatedUserInterface::class, $user);
-        $this->assertInstanceOf(Session::class, $session);
-
-        // ---------------------------------------------------
-        //  Terminate
-        // ---------------------------------------------------
+        $this->assertInstanceOf(Session::class, $session_repository->getById($test_session_id));
 
         $browser_session_adapter->terminate($session);
 
-        $this->setExpectedException(InvalidSessionException::class);
-        $browser_session_adapter->initialize($this->request);
+        $this->assertNull($session_repository->getById($test_session_id));
     }
 }

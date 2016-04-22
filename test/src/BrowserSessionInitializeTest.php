@@ -66,26 +66,6 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test if we get authenticated user when we use a good token.
-     */
-    public function testAuthenticationWithGoodSessionIdAlsoSetsSession()
-    {
-        $test_session_id = 's123';
-
-        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
-        $session_repository = new SessionRepository([new Session($test_session_id, 'ilija.studen@activecollab.com')]);
-
-        $this->setCookie('sessid', $test_session_id);
-
-        $session = null;
-
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request, $session);
-
-        $this->assertInstanceOf(AuthenticatedUser::class, $user);
-        $this->assertInstanceOf(SessionInterface::class, $session);
-    }
-
-    /**
      * Test if session usage is recorded.
      */
     public function testAuthenticationRecordsSessionUsage()
