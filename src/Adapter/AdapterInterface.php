@@ -21,24 +21,22 @@ interface AdapterInterface
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
      * @param  ServerRequestInterface          $request
-     * @param  null                            $authenticated_with
      * @return AuthenticatedUserInterface|null
      */
-    public function initialize(ServerRequestInterface $request, &$authenticated_with = null);
+    public function initialize(ServerRequestInterface $request);
 
     /**
-     * Authenticate with given credential against authentication source.
+     * Authenticate user against authentication source.
      *
-     * @param  ServerRequestInterface        $request
-     * @param  bool                          $check_password
+     * @param  AuthenticatedUserInterface    $authenticated_user
      * @return AuthenticationResultInterface
      */
-    public function authenticate(ServerRequestInterface $request, $check_password = true);
+    public function authenticate(AuthenticatedUserInterface $authenticated_user);
 
     /**
      * Terminate an instance that was used to authenticate a user.
      *
-     * @param AuthenticationResultInterface $authenticated_with
+     * @param AuthenticationResultInterface $authentication_result
      */
-    public function terminate(AuthenticationResultInterface $authenticated_with);
+    public function terminate(AuthenticationResultInterface $authentication_result);
 }
