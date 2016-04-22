@@ -6,14 +6,14 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Authentication;
+namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\GoogleAuthorizer;
 use Exception;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @package ActiveCollab\Authentication\Test\Authentication
+ * @package ActiveCollab\Authentication\Test
  */
 class GoogleAuthorizerTest extends PHPUnit_Framework_TestCase
 {
