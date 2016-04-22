@@ -13,7 +13,7 @@ use Exception;
 use Google_Client;
 
 /**
- * @package ActiveCollab\Authorizer
+ * @package ActiveCollab\Authentication\Authorizer
  */
 class GoogleAuthorizer implements AuthorizerInterface
 {

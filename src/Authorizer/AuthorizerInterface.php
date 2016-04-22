@@ -8,6 +8,9 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
+/**
+ * @package ActiveCollab\Authentication\Authorizer
+ */
 interface AuthorizerInterface
 {
     /**
@@ -20,6 +23,7 @@ interface AuthorizerInterface
 
     /**
      * Send an event to the real user database provider when user is logged in.
+     *
      * @param  array      $payload
      * @return mixed|null
      */
@@ -27,6 +31,7 @@ interface AuthorizerInterface
 
     /**
      * Send an event to the real user database provider when user is logged out.
+     *
      * @param  array      $payload
      * @return mixed|null
      */
