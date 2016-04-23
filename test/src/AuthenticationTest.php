@@ -116,6 +116,17 @@ class AuthenticationTest extends RequestResponseTestCase
         $authentication->initialize($this->request);
     }
 
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Authorizer object is not configured
+     */
+    public function testForNotConfiguredAuthorizerExceptionIsThrown()
+    {
+        $authentication = new Authentication([new TokenBearer($this->user_repository, $this->token_repository)], null);
+
+        $authentication->authorize($this->request, ['username' => 'john@doe.com']);
+    }
+
     public function testUserIsAuthorized()
     {
         $authentication = new Authentication(

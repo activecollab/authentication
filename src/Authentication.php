@@ -29,10 +29,10 @@ class Authentication implements AuthenticationInterface
     private $authorizer;
 
     /**
-     * @param array               $adapters
-     * @param AuthorizerInterface $authorizer
+     * @param array                    $adapters
+     * @param AuthorizerInterface|null $authorizer
      */
-    public function __construct(array $adapters, AuthorizerInterface $authorizer)
+    public function __construct(array $adapters, AuthorizerInterface $authorizer = null)
     {
         foreach ($adapters as $adapter) {
             if (!($adapter instanceof AdapterInterface)) {
@@ -41,6 +41,14 @@ class Authentication implements AuthenticationInterface
         }
 
         $this->adapters = $adapters;
+        $this->authorizer = $authorizer;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAuthorizer(AuthorizerInterface $authorizer)
+    {
         $this->authorizer = $authorizer;
     }
 
@@ -82,6 +90,10 @@ class Authentication implements AuthenticationInterface
      */
     public function authorize(RequestInterface $request, array $credentials = [])
     {
+        if (!$this->authorizer) {
+            throw new RuntimeException('Authorizer object is not configured');
+        }
+
         if (!$this->authorizer->verifyCredentials($credentials)) {
             throw new InvalidCredentialsException();
         }
