@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
@@ -54,7 +55,7 @@ class Authentication implements AuthenticationInterface
         foreach ($this->adapters as $adapter) {
             try {
                 $result = $adapter->initialize($request);
-                if ($result) {
+                if ($result instanceof AuthenticatedUserInterface) {
                     $results['adapter'][] = $adapter;
                     $results['result'][] = $result;
                 }

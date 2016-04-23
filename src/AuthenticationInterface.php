@@ -19,8 +19,8 @@ interface AuthenticationInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
-     * @param  RequestInterface                $request
-     * @return AuthenticatedUserInterface|null
+     * @param  RequestInterface $request
+     * @return RequestInterface
      */
     public function initialize(RequestInterface $request);
 
