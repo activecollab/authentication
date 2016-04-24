@@ -62,9 +62,11 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
         $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
 
-        $user = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
+        $authenticated_parameters = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
+        $this->assertInstanceOf(Token::class, $authenticated_parameters->authentication_result);
+        $this->assertInstanceOf(TokenBearer::class, $authenticated_parameters->adapter);
     }
 
     /**
@@ -79,8 +81,10 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
 
         $this->assertSame(0, $token_repository->getUsageById($test_token));
 
-        $user = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
-        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $authenticated_parameters = (new TokenBearer($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
+        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
+        $this->assertInstanceOf(Token::class, $authenticated_parameters->authentication_result);
+        $this->assertInstanceOf(TokenBearer::class, $authenticated_parameters->adapter);
 
         $this->assertSame(1, $token_repository->getUsageById($test_token));
     }

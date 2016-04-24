@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
@@ -58,31 +57,28 @@ class Authentication implements AuthenticationInterface
     public function initialize(RequestInterface $request)
     {
         $exception = null;
-        $results = ['adapter' => [], 'result' => []];
+        $results = ['authenticated_parameters' => []];
 
         foreach ($this->adapters as $adapter) {
             try {
                 $result = $adapter->initialize($request);
-                if ($result instanceof AuthenticatedUserInterface) {
-                    $results['adapter'][] = $adapter;
-                    $results['result'][] = $result;
+                if ($result instanceof AuthenticatedParameters) {
+                    $results['authenticated_parameters'][] = $result;
                 }
             } catch (Exception $e) {
                 $exception = $e;
             }
         }
 
-        if (empty($results['adapter']) && $exception) {
+        if (empty($results['authenticated_parameters']) && $exception) {
             throw $exception;
         }
 
-        if (count($results['adapter']) > 1) {
+        if (count($results['authenticated_parameters']) > 1) {
             throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
         }
 
-        return $request
-            ->withAttribute('authentication_adapter', $results['adapter'][0])
-            ->withAttribute('authenticated_user', $results['result'][0]);
+        return $request->withAttribute('authenticated_parameters', $results['authenticated_parameters'][0]);
     }
 
     /**
@@ -98,8 +94,8 @@ class Authentication implements AuthenticationInterface
             throw new InvalidCredentialsException();
         }
 
-        $adapter = $request->getAttribute('authentication_adapter');
+        $authenticated_parameters = $request->getAttribute('authenticated_parameters');
 
-        return $adapter->authenticate($request->getAttribute('authenticated_user'));
+        return $authenticated_parameters->adapter->authenticate($authenticated_parameters->authenticated_user);
     }
 }

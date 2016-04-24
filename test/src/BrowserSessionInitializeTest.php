@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSession;
-use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
@@ -60,9 +59,11 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->setCookie('sessid', $test_session_id);
 
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+        $authenticated_parameters = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
+        $this->assertInstanceOf(Session::class, $authenticated_parameters->authentication_result);
+        $this->assertInstanceOf(BrowserSession::class, $authenticated_parameters->adapter);
     }
 
     /**
@@ -79,8 +80,10 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->assertSame(0, $session_repository->getUsageById($test_session_id));
 
-        $user = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
-        $this->assertInstanceOf(AuthenticatedUser::class, $user);
+        $authenticated_parameters = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
+        $this->assertInstanceOf(Session::class, $authenticated_parameters->authentication_result);
+        $this->assertInstanceOf(BrowserSession::class, $authenticated_parameters->adapter);
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }

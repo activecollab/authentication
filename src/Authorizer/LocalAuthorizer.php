@@ -10,8 +10,8 @@ namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
-use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
 /**
  * @package ActiveCollab\Authentication\Authorizer

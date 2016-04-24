@@ -8,6 +8,7 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\AuthenticatedParameters;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
@@ -78,7 +79,7 @@ class BrowserSession implements AdapterInterface
             if ($user = $session->getAuthenticatedUser($this->user_repository)) {
                 $this->session_repository->recordUsageBySession($session);
 
-                return $user;
+                return new AuthenticatedParameters($user, $session, $this);
             }
         }
 

@@ -9,8 +9,8 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\GoogleAuthorizer;
-use Exception;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
+use Exception;
 
 /**
  * @package ActiveCollab\Authentication\Test
