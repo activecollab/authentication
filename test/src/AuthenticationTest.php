@@ -114,8 +114,8 @@ class AuthenticationTest extends RequestResponseTestCase
 
         $authentication = new Authentication([$token_bearer]);
         $request = $authentication->initialize($this->request);
-        $authentication_result = $authentication->authorize($this->authorizer, $token_bearer, ['username' => 'john@doe.com']);
+        $authenticated_with = $authentication->authorize($this->authorizer, $token_bearer, ['username' => 'john@doe.com']);
 
-        $this->assertInstanceOf(AuthenticationResultInterface::class, $authentication_result);
+        $this->assertInstanceOf(AuthenticationResultInterface::class, $authenticated_with);
     }
 }

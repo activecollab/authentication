@@ -78,7 +78,7 @@ class BrowserSession implements AdapterInterface
             if ($user = $session->getAuthenticatedUser($this->user_repository)) {
                 $this->session_repository->recordUsageBySession($session);
 
-                return ['authenticated_user' => $user, 'authentication_result' => $session];
+                return ['authenticated_user' => $user, 'authenticated_with' => $session];
             }
         }
 
@@ -96,10 +96,10 @@ class BrowserSession implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(AuthenticationResultInterface $authentication_result)
+    public function terminate(AuthenticationResultInterface $authenticated_with)
     {
-        if ($authentication_result instanceof SessionInterface) {
-            $this->session_repository->terminateSession($authentication_result);
+        if ($authenticated_with instanceof SessionInterface) {
+            $this->session_repository->terminateSession($authenticated_with);
         } else {
             throw new InvalidArgumentException('Instance is not a browser session');
         }

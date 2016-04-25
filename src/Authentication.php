@@ -42,14 +42,14 @@ class Authentication implements AuthenticationInterface
     public function initialize(RequestInterface $request)
     {
         $exception = null;
-        $results = ['authenticated_user' => [], 'authentication_result' => []];
+        $results = ['authenticated_user' => [], 'authenticated_with' => []];
 
         foreach ($this->adapters as $adapter) {
             try {
                 $result = $adapter->initialize($request);
                 if ($result) {
                     $results['authenticated_user'][] = $result['authenticated_user'];
-                    $results['authentication_result'][] = $result['authentication_result'];
+                    $results['authenticated_with'][] = $result['authenticated_with'];
                 }
             } catch (Exception $e) {
                 $exception = $e;
@@ -70,7 +70,7 @@ class Authentication implements AuthenticationInterface
 
         return $request
             ->withAttribute('authenticated_user', $results['authenticated_user'][0])
-            ->withAttribute('authentication_result', $results['authentication_result'][0]);
+            ->withAttribute('authenticated_with', $results['authenticated_with'][0]);
     }
 
     /**

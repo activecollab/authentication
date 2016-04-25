@@ -21,7 +21,7 @@ interface AdapterInterface
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
      * @param  ServerRequestInterface $request
-     * @return array|null             Example:['authenticated_user' => AuthenticatedUserInterface, 'authentication_result' => AuthenticationResultInterface];
+     * @return array|null             Example:['authenticated_user' => AuthenticatedUserInterface, 'authenticated_with' => AuthenticationResultInterface];
      */
     public function initialize(ServerRequestInterface $request);
 
@@ -36,7 +36,7 @@ interface AdapterInterface
     /**
      * Terminate an instance that was used to authenticate a user.
      *
-     * @param AuthenticationResultInterface $authentication_result
+     * @param AuthenticationResultInterface $authenticated_with
      */
-    public function terminate(AuthenticationResultInterface $authentication_result);
+    public function terminate(AuthenticationResultInterface $authenticated_with);
 }

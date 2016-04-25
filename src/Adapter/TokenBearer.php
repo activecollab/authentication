@@ -63,7 +63,7 @@ class TokenBearer implements AdapterInterface
             if ($user = $token->getAuthenticatedUser($this->user_repository)) {
                 $this->token_repository->recordUsageByToken($token);
 
-                return ['authenticated_user' => $user, 'authentication_result' => $token];
+                return ['authenticated_user' => $user, 'authenticated_with' => $token];
             }
         }
 
@@ -81,10 +81,10 @@ class TokenBearer implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function terminate(AuthenticationResultInterface $authentication_result)
+    public function terminate(AuthenticationResultInterface $authenticated_with)
     {
-        if ($authentication_result instanceof TokenInterface) {
-            $this->token_repository->terminateToken($authentication_result);
+        if ($authenticated_with instanceof TokenInterface) {
+            $this->token_repository->terminateToken($authenticated_with);
         } else {
             throw new InvalidArgumentException('Instance is not a token');
         }
