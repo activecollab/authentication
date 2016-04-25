@@ -8,7 +8,9 @@
 
 namespace ActiveCollab\Authentication;
 
+use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -19,16 +21,18 @@ interface AuthenticationInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
-     * @param  RequestInterface                $request
-     * @return AuthenticatedUserInterface|null
+     * @param  RequestInterface $request
+     * @return RequestInterface
      */
     public function initialize(RequestInterface $request);
 
     /**
-     * Authenticate with given credential agains authentication source.
+     * Authorize and authenticate with given credentials against authorization/authentication source.
      *
-     * @param  RequestInterface           $request
+     * @param  AuthorizerInterface        $authorizer
+     * @param  AdapterInterface           $adapter
+     * @param  array                      $credentials
      * @return AuthenticatedUserInterface
      */
-    public function authenticate(RequestInterface $request);
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials);
 }

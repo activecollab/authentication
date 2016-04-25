@@ -8,6 +8,7 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Exception\InvalidSessionException;
@@ -20,7 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class BrowserSession extends Adapter
+class BrowserSession implements AdapterInterface
 {
     /**
      * @var UserRepositoryInterface
@@ -63,7 +64,7 @@ class BrowserSession extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function initialize(ServerRequestInterface $request, &$authenticated_with = null)
+    public function initialize(ServerRequestInterface $request)
     {
         $session_id = $this->cookies->get($request, $this->session_cookie_name);
 
@@ -76,9 +77,8 @@ class BrowserSession extends Adapter
         if ($session instanceof SessionInterface) {
             if ($user = $session->getAuthenticatedUser($this->user_repository)) {
                 $this->session_repository->recordUsageBySession($session);
-                $authenticated_with = $session;
 
-                return $user;
+                return ['authenticated_user' => $user, 'authenticated_with' => $session];
             }
         }
 
@@ -88,15 +88,9 @@ class BrowserSession extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function authenticate(ServerRequestInterface $request, $check_password = true)
+    public function authenticate(AuthenticatedUserInterface $authenticated_user)
     {
-        return $this->session_repository->createSession(
-            $this->getUserFromCredentials(
-                $this->user_repository,
-                $this->getAuthenticationCredentialsFromRequest($request, $check_password),
-                $check_password
-            )
-        );
+        return $this->session_repository->createSession($authenticated_user);
     }
 
     /**
