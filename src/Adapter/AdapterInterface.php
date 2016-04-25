@@ -20,8 +20,8 @@ interface AdapterInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
-     * @param  ServerRequestInterface                                   $request
-     * @return ActiveCollab\Authentication\AuthenticatedParameters|null
+     * @param  ServerRequestInterface $request
+     * @return array|null             Example:['authenticated_user' => AuthenticatedUserInterface, 'authentication_result' => AuthenticationResultInterface];
      */
     public function initialize(ServerRequestInterface $request);
 

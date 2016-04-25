@@ -59,11 +59,10 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->setCookie('sessid', $test_session_id);
 
-        $authenticated_parameters = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+        $results = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
-        $this->assertInstanceOf(Session::class, $authenticated_parameters->authentication_result);
-        $this->assertInstanceOf(BrowserSession::class, $authenticated_parameters->adapter);
+        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
+        $this->assertInstanceOf(Session::class, $results['authentication_result']);
     }
 
     /**
@@ -80,10 +79,10 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->assertSame(0, $session_repository->getUsageById($test_session_id));
 
-        $authenticated_parameters = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
-        $this->assertInstanceOf(AuthenticatedUser::class, $authenticated_parameters->authenticated_user);
-        $this->assertInstanceOf(Session::class, $authenticated_parameters->authentication_result);
-        $this->assertInstanceOf(BrowserSession::class, $authenticated_parameters->adapter);
+        $results = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
+        $this->assertInstanceOf(Session::class, $results['authentication_result']);
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }

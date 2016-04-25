@@ -8,7 +8,6 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\AuthenticatedParameters;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
@@ -64,7 +63,7 @@ class TokenBearer implements AdapterInterface
             if ($user = $token->getAuthenticatedUser($this->user_repository)) {
                 $this->token_repository->recordUsageByToken($token);
 
-                return new AuthenticatedParameters($user, $token, $this);
+                return ['authenticated_user' => $user, 'authentication_result' => $token];
             }
         }
 
