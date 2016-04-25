@@ -8,8 +8,10 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\RuntimeException;
-use Exception;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Google_Client;
 
 /**
@@ -17,6 +19,13 @@ use Google_Client;
  */
 class GoogleAuthorizer implements AuthorizerInterface
 {
+    use CredentialFieldsCheckTrait;
+
+    /**
+     * @var RepositoryInterface
+     */
+    private $user_repository;
+
     /**
      * @var Google_Client
      */
@@ -28,13 +37,21 @@ class GoogleAuthorizer implements AuthorizerInterface
     private $client_id;
 
     /**
-     * @param Google_Client $google_client
-     * @param string        $client_id
+     * @var array
      */
-    public function __construct(Google_Client $google_client, $client_id)
+    private $user_profile;
+
+    /**
+     * @param RepositoryInterface $user_repository
+     * @param Google_Client       $google_client
+     * @param string              $client_id
+     */
+    public function __construct(RepositoryInterface $user_repository, Google_Client $google_client, $client_id)
     {
+        $this->user_repository = $user_repository;
         $this->google_client = $google_client;
         $this->client_id = $client_id;
+        $this->user_profile = [];
     }
 
     /**
@@ -45,33 +62,28 @@ class GoogleAuthorizer implements AuthorizerInterface
      */
     public function verifyCredentials(array $credentials)
     {
+        $this->verifyRequiredFields($credentials, ['token', 'username']);
+
         $token = $credentials['token'];
         $username = $credentials['username'];
 
-        $result = ['is_error' => true, 'payload' => null];
+        $payload = $this->google_client->verifyIdToken($token)->getAttributes()['payload'];
+        $this->verifyGoogleProfile($payload, $username);
 
-        try {
-            $payload = $this->google_client->verifyIdToken($token)->getAttributes()['payload'];
+        $user = $this->user_repository->findByUsername($username);
+        $this->verifyUser($user);
 
-            if ($this->client_id !== $payload['aud']) {
-                throw new RuntimeException('Unrecognized google_client.');
-            }
+        $this->user_profile = $payload;
 
-            if (!in_array($payload['iss'], $this->getDomains())) {
-                throw new RuntimeException('Wrong issuer.');
-            }
+        return $user;
+    }
 
-            if ($username !== $payload['email']) {
-                throw new RuntimeException('Email is not verified by Google.');
-            }
-
-            $result['is_error'] = false;
-            $result['payload'] = $payload;
-        } catch (Exception $e) {
-            $result['payload'] = $e->getMessage();
-        }
-
-        return $result;
+    /**
+     * @return array
+     */
+    public function getUserProfile()
+    {
+        return $this->user_profile;
     }
 
     /**
@@ -86,6 +98,35 @@ class GoogleAuthorizer implements AuthorizerInterface
      */
     public function onLogout(array $payload)
     {
+    }
+
+    /**
+     * @param array  $payload
+     * @param string $username
+     */
+    private function verifyGoogleProfile(array $payload, $username)
+    {
+        if ($this->client_id !== $payload['aud']) {
+            throw new RuntimeException('Unrecognized google_client');
+        }
+
+        if (!in_array($payload['iss'], $this->getDomains())) {
+            throw new RuntimeException('Wrong issuer');
+        }
+
+        if ($username !== $payload['email']) {
+            throw new RuntimeException('Email is not verified by Google');
+        }
+    }
+
+    /**
+     * @param AuthenticatedUserInterface|null $user
+     */
+    private function verifyUser(AuthenticatedUserInterface $user = null)
+    {
+        if (!$user || !$user->canAuthenticate()) {
+            throw new UserNotFoundException();
+        }
     }
 
     /**

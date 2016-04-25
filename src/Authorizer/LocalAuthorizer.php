@@ -8,8 +8,8 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
-use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
@@ -18,6 +18,8 @@ use ActiveCollab\Authentication\Exception\UserNotFoundException;
  */
 class LocalAuthorizer implements AuthorizerInterface
 {
+    use CredentialFieldsCheckTrait;
+
     /**
      * @var RepositoryInterface
      */
@@ -39,25 +41,13 @@ class LocalAuthorizer implements AuthorizerInterface
      */
     public function verifyCredentials(array $credentials)
     {
-        if ($this->isEmpty($credentials, 'username') || $this->isEmpty($credentials, 'password')) {
-            throw new InvalidAuthenticationRequestException();
-        }
+        $this->verifyRequiredFields($credentials, ['username', 'password']);
 
         $user = $this->user_repository->findByUsername($credentials['username']);
 
-        if (!$user) {
-            throw new UserNotFoundException();
-        }
+        $this->verifyUser($user, $credentials['password']);
 
-        if (!$user->isValidPassword($credentials['password'])) {
-            throw new InvalidPasswordException();
-        }
-
-        if (!$user->canAuthenticate()) {
-            throw new UserNotFoundException();
-        }
-
-        return ['is_error' => false, 'payload' => $user];
+        return $user;
     }
 
     /**
@@ -75,12 +65,21 @@ class LocalAuthorizer implements AuthorizerInterface
     }
 
     /**
-     * @param  array  $credentials
-     * @param  string $field
-     * @return bool
+     * @param AuthenticatedUserInterface|null $user
+     * @param string                          $password
      */
-    private function isEmpty(array $credentials, $field)
+    private function verifyUser(AuthenticatedUserInterface $user = null, $password)
     {
-        return isset($credentials[$field]) ? $credentials[$field] === '' : true;
+        if (!$user) {
+            throw new UserNotFoundException();
+        }
+
+        if (!$user->isValidPassword($password)) {
+            throw new InvalidPasswordException();
+        }
+
+        if (!$user->canAuthenticate()) {
+            throw new UserNotFoundException();
+        }
     }
 }

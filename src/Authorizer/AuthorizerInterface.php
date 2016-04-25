@@ -16,10 +16,10 @@ interface AuthorizerInterface
     /**
      * Perform user credentials verification against the real user database provider.
      *
-     * @param  array      $payload
-     * @return mixed|null
+     * @param  array                           $credentials
+     * @return AuthenticatedUserInterface|null
      */
-    public function verifyCredentials(array $payload);
+    public function verifyCredentials(array $credentials);
 
     /**
      * Send an event to the real user database provider when user is logged in.

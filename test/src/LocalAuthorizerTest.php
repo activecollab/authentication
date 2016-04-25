@@ -30,6 +30,16 @@ class LocalAuthorizerTest extends TestCase
         $local_authorizer->verifyCredentials($credentials);
     }
 
+    public function providerInvalidCredentials()
+    {
+        return [
+            [['username' => null, 'password' => null]],
+            [['username' => '', 'password' => '']],
+            [['username' => 'john@doe.com', 'password' => '']],
+            [['username' => '', 'password' => 'password']],
+        ];
+    }
+
     /**
      * @expectedException ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
@@ -73,19 +83,8 @@ class LocalAuthorizerTest extends TestCase
             'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', true),
         ]));
 
-        $result = $local_authorizer->verifyCredentials(['username' => 'john@doe.com', 'password' => 'password']);
+        $user = $local_authorizer->verifyCredentials(['username' => 'john@doe.com', 'password' => 'password']);
 
-        $this->assertSame(1, $result['payload']->getId());
-        $this->assertFalse($result['is_error']);
-    }
-
-    public function providerInvalidCredentials()
-    {
-        return [
-            [['username' => null, 'password' => null]],
-            [['username' => '', 'password' => '']],
-            [['username' => 'john@doe.com', 'password' => '']],
-            [['username' => '', 'password' => 'password']],
-        ];
+        $this->assertSame(1, $user->getId());
     }
 }
