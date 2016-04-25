@@ -8,6 +8,7 @@
 
 namespace ActiveCollab\Authentication;
 
+use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -26,18 +27,12 @@ interface AuthenticationInterface
     public function initialize(RequestInterface $request);
 
     /**
-     * Set Authorizer object.
+     * Authorize and authenticate with given credentials against authorization/authentication source.
      *
-     * @param AuthorizerInterface $authorizer
-     */
-    public function setAuthorizer(AuthorizerInterface $authorizer);
-
-    /**
-     * Authenticate with given credential agains authentication source.
-     *
-     * @param  RequestInterface           $request
+     * @param  AuthorizerInterface        $authorizer
+     * @param  AdapterInterface           $adapter
      * @param  array                      $credentials
      * @return AuthenticatedUserInterface
      */
-    public function authorize(RequestInterface $request, array $credentials = []);
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials);
 }

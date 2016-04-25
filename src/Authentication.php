@@ -11,7 +11,7 @@ namespace ActiveCollab\Authentication;
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
-use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
+use Exception;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 
@@ -23,15 +23,9 @@ class Authentication implements AuthenticationInterface
     private $adapters;
 
     /**
-     * @var AuthorizerInterface
+     * @param array $adapters
      */
-    private $authorizer;
-
-    /**
-     * @param array                    $adapters
-     * @param AuthorizerInterface|null $authorizer
-     */
-    public function __construct(array $adapters, AuthorizerInterface $authorizer = null)
+    public function __construct(array $adapters)
     {
         foreach ($adapters as $adapter) {
             if (!($adapter instanceof AdapterInterface)) {
@@ -40,15 +34,6 @@ class Authentication implements AuthenticationInterface
         }
 
         $this->adapters = $adapters;
-        $this->authorizer = $authorizer;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAuthorizer(AuthorizerInterface $authorizer)
-    {
-        $this->authorizer = $authorizer;
     }
 
     /**
@@ -57,45 +42,44 @@ class Authentication implements AuthenticationInterface
     public function initialize(RequestInterface $request)
     {
         $exception = null;
-        $results = ['authenticated_parameters' => []];
+        $results = ['authenticated_user' => [], 'authentication_result' => []];
 
         foreach ($this->adapters as $adapter) {
             try {
                 $result = $adapter->initialize($request);
-                if ($result instanceof AuthenticatedParameters) {
-                    $results['authenticated_parameters'][] = $result;
+                if ($result) {
+                    $results['authenticated_user'][] = $result['authenticated_user'];
+                    $results['authentication_result'][] = $result['authentication_result'];
                 }
             } catch (Exception $e) {
                 $exception = $e;
             }
         }
 
-        if (empty($results['authenticated_parameters']) && $exception) {
-            throw $exception;
+        if (empty($results['authenticated_user'])) {
+            if ($exception) {
+                throw $exception;
+            }
+
+            return $request;
         }
 
-        if (count($results['authenticated_parameters']) > 1) {
+        if (count($results['authenticated_user']) > 1) {
             throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
         }
 
-        return $request->withAttribute('authenticated_parameters', $results['authenticated_parameters'][0]);
+        return $request
+            ->withAttribute('authenticated_user', $results['authenticated_user'][0])
+            ->withAttribute('authentication_result', $results['authentication_result'][0]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function authorize(RequestInterface $request, array $credentials = [])
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials)
     {
-        if (!$this->authorizer) {
-            throw new RuntimeException('Authorizer object is not configured');
-        }
+        $user = $authorizer->verifyCredentials($credentials);
 
-        if (!$this->authorizer->verifyCredentials($credentials)) {
-            throw new InvalidCredentialsException();
-        }
-
-        $authenticated_parameters = $request->getAttribute('authenticated_parameters');
-
-        return $authenticated_parameters->adapter->authenticate($authenticated_parameters->authenticated_user);
+        return $adapter->authenticate($user);
     }
 }

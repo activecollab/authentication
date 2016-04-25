@@ -55,14 +55,13 @@ class AuthenticationTest extends RequestResponseTestCase
     {
         parent::setUp();
 
-        $this->authorizer = new Authorizer();
-        $this->user_repository = new UserRepository([
-            'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John Doe', '123'),
-        ]);
+        $authenticated_user = new AuthenticatedUser(1, 'john@doe.com', 'John Doe', '123');
+        $this->authorizer = new Authorizer($authenticated_user);
+        $this->user_repository = new UserRepository(['john@doe.com' => $authenticated_user]);
         $this->empty_user_repository = new UserRepository();
         $this->token_repository = new TokenRepository([
-            '123' => new Token(123, 'john@doe.com'), ]
-        );
+            '123' => new Token(123, 'john@doe.com'),
+        ]);
         $this->empty_token_repository = new TokenRepository();
         $this->authenticated_user = new AuthenticatedUser(1, 'john@doe.com', 'John Doe', '123');
         $this->request = $this->request->withHeader('Authorization', 'Bearer 123');
@@ -74,21 +73,14 @@ class AuthenticationTest extends RequestResponseTestCase
      */
     public function testForInvalidAdapterExceptionIsThrown()
     {
-        new Authentication([new stdClass()], $this->authorizer);
+        new Authentication([new stdClass()]);
     }
 
-    /**
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidCredentialsException
-     * @expectedExceptionMessage Invalid credentials provided
-     */
-    public function testForInvalidCredentialsExceptionIsThrown()
+    public function testAdaptersNotInitializedReturnsRequest()
     {
-        $authentication = new Authentication(
-            [new TokenBearer($this->user_repository, $this->token_repository)],
-            $this->authorizer
-        );
+        $request = (new Authentication([]))->initialize($this->request);
 
-        $authentication->authorize($this->request, ['username' => 'john@doe123.com']);
+        $this->assertSame($request, $this->request);
     }
 
     /**
@@ -99,7 +91,7 @@ class AuthenticationTest extends RequestResponseTestCase
     {
         $token_bearer = new TokenBearer($this->empty_user_repository, $this->empty_token_repository);
 
-        (new Authentication([$token_bearer], $this->authorizer))->initialize($this->request);
+        (new Authentication([$token_bearer]))->initialize($this->request);
     }
 
     /**
@@ -116,27 +108,13 @@ class AuthenticationTest extends RequestResponseTestCase
         $authentication->initialize($this->request);
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Authorizer object is not configured
-     */
-    public function testForNotConfiguredAuthorizerExceptionIsThrown()
-    {
-        $authentication = new Authentication([new TokenBearer($this->user_repository, $this->token_repository)], null);
-
-        $authentication->authorize($this->request, ['username' => 'john@doe.com']);
-    }
-
     public function testUserIsAuthorized()
     {
-        $authentication = new Authentication(
-            [new TokenBearer($this->user_repository, $this->token_repository)],
-            $this->authorizer
-        );
+        $token_bearer = new TokenBearer($this->user_repository, $this->token_repository);
 
+        $authentication = new Authentication([$token_bearer]);
         $request = $authentication->initialize($this->request);
-
-        $authentication_result = $authentication->authorize($request, ['username' => 'john@doe.com']);
+        $authentication_result = $authentication->authorize($this->authorizer, $token_bearer, ['username' => 'john@doe.com']);
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $authentication_result);
     }
