@@ -69,11 +69,10 @@ class GoogleAuthorizer implements AuthorizerInterface
 
         $payload = $this->google_client->verifyIdToken($token)->getAttributes()['payload'];
         $this->verifyGoogleProfile($payload, $username);
+        $this->user_profile = $payload;
 
         $user = $this->user_repository->findByUsername($username);
         $this->verifyUser($user);
-
-        $this->user_profile = $payload;
 
         return $user;
     }
