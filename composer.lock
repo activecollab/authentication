@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "89aef7cb53a11abb87cd4958b80c413d",
-    "content-hash": "2c12e1d6d815f3d32338c86ef6990e69",
+    "hash": "06a563148ee7a8c61b5b09c8ed0971ab",
+    "content-hash": "3515a723546e3dc77af57c630b063809",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -2107,9 +2107,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.6.0"
