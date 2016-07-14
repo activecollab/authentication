@@ -16,13 +16,13 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "activecollab/user": "^2.0.0",
+        "activecollab/user": "^3.0",
         "activecollab/cookies": "~0.1",
         "guzzlehttp/psr7": "~1.2",
         "google/apiclient": "^1.1"
     },
     "require-dev": {
-        "fabpot/php-cs-fixer": "^1.0",
+        "friendsofphp/php-cs-fixer": "^1.0",
         "phpunit/phpunit": "^5.0",
         "slim/slim": "~3.2"
     },
