@@ -19,4 +19,9 @@ interface SessionInterface extends AuthenticationResultInterface
      * @return string
      */
     public function getSessionId();
+
+    /**
+     * @return string
+     */
+    public function getSessionTtl();
 }
