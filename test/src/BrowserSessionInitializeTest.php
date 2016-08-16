@@ -86,4 +86,22 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }
+
+    /**
+     * Test session ttl expiration
+     */
+    public function testAuthenticationSessionTtlDuration() 
+    {
+        $test_session_id = 's123';
+
+        $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
+        $session = new Session($test_session_id, 'ilija.studen@activecollab.com');
+
+        // Check Default
+        $this->assertEquals(Session::SESSION_TTL, $session->getSessionTtl());
+
+        // Check if extended
+        $session->setIsExtendedSession(true);
+        $this->assertEquals(Session::EXTENDED_SESSION_TTL, $session->getSessionTtl());
+    }
 }

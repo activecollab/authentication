@@ -21,6 +21,9 @@ class Session implements SessionInterface
 {
     use AuthenticationResultInterfaceImplementation;
 
+    const SESSION_TTL = 1800;
+    const EXTENDED_SESSION_TTL = 1209600;
+
     /**
      * @var string
      */
@@ -35,6 +38,11 @@ class Session implements SessionInterface
      * @var \DateTimeInterface
      */
     private $expires_at;
+
+    /**
+     * @var boolean
+     */
+    public $is_extended_session;
 
     /**
      * @param string                 $session_id
@@ -70,6 +78,34 @@ class Session implements SessionInterface
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
     {
         return $repository->findByUsername($this->user_id);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSessionTtl()
+    {
+        return $this->getIsExtendedSession() ? self::EXTENDED_SESSION_TTL : self::SESSION_TTL;
+    }
+
+    /**
+     * Return value if is_extened_session field.
+     *
+     * @return bool
+     */
+    public function getIsExtendedSession() {
+        return $this->is_extended_session;
+    }
+
+    /**
+     * Set value of is_extended_value field.
+     *
+     * @param $value
+     * @return $this
+     */
+    public function setIsExtendedSession($value) {
+        $this->is_extended_session = $value;
+        return $this;
     }
 
     /**
