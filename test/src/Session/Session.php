@@ -40,7 +40,7 @@ class Session implements SessionInterface
     private $expires_at;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $is_extended_session;
 
@@ -93,18 +93,21 @@ class Session implements SessionInterface
      *
      * @return bool
      */
-    public function getIsExtendedSession() {
+    public function getIsExtendedSession()
+    {
         return $this->is_extended_session;
     }
 
     /**
      * Set value of is_extended_value field.
      *
-     * @param $value
+     * @param  bool  $value
      * @return $this
      */
-    public function setIsExtendedSession($value) {
-        $this->is_extended_session = $value;
+    public function &setIsExtendedSession($value)
+    {
+        $this->is_extended_session = (bool) $value;
+
         return $this;
     }
 
