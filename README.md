@@ -7,3 +7,5 @@ Authentication library builds on top of `activecollab/user` package. There are t
 1. Unidentified visitors - Visitors that we know nothing bout,
 1. Identified visitors - People that we identified when they provided their email address,
 1. Users with accounts - People with actual accounts in our application.
+
+Only users with accounts in our application can be authenticated.
