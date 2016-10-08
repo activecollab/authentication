@@ -23,7 +23,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testPasswordNeedsToBeString()
     {
-        (new PasswordStrengthValidator())->isPasswordValid(1234567, new PasswordPolicy());
+        (new PasswordStrengthValidator())->validate(1234567, new PasswordPolicy());
     }
 
     /**
@@ -32,7 +32,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testEmptyPasswordIsInvalid()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('', new PasswordPolicy());
+        (new PasswordStrengthValidator())->validate('', new PasswordPolicy());
     }
 
     /**
@@ -41,7 +41,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testPasswordIsTrimmedWhenTestedIfItIsEmpty()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('     ', new PasswordPolicy());
+        (new PasswordStrengthValidator())->validate('     ', new PasswordPolicy());
     }
 
     /**
@@ -49,7 +49,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testWeakPasswordOk()
     {
-        $this->assertTrue((new PasswordStrengthValidator())->isPasswordValid('weak', new PasswordPolicy()));
+        $this->assertTrue((new PasswordStrengthValidator())->validate('weak', new PasswordPolicy()));
     }
 
     /**
@@ -57,7 +57,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testStrongPasswordOk()
     {
-        $this->assertTrue((new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true)));
+        $this->assertTrue((new PasswordStrengthValidator())->validate('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true)));
     }
 
     /**
@@ -67,7 +67,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testLengthValidation()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('short', new PasswordPolicy(15));
+        (new PasswordStrengthValidator())->validate('short', new PasswordPolicy(15));
     }
 
     /**
@@ -77,7 +77,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testNoNumbers()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('short', new PasswordPolicy(0, true));
+        (new PasswordStrengthValidator())->validate('short', new PasswordPolicy(0, true));
     }
 
     /**
@@ -87,7 +87,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testNoMixetCase()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('flat', new PasswordPolicy(0, false, true));
+        (new PasswordStrengthValidator())->validate('flat', new PasswordPolicy(0, false, true));
     }
 
     /**
@@ -97,7 +97,7 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testNoSymbols()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('flat', new PasswordPolicy(0, false, false, true));
+        (new PasswordStrengthValidator())->validate('flat', new PasswordPolicy(0, false, false, true));
     }
 
     /**
@@ -107,6 +107,6 @@ class PasswordStrengthValidatorTest extends TestCase
      */
     public function testCombination()
     {
-        (new PasswordStrengthValidator())->isPasswordValid('flat', new PasswordPolicy(15, true, true, true));
+        (new PasswordStrengthValidator())->validate('flat', new PasswordPolicy(15, true, true, true));
     }
 }

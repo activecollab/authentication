@@ -23,7 +23,7 @@ class PasswordGeneratorTest extends TestCase
      */
     public function testMinPasswordLength()
     {
-        (new PasswordStrengthValidator())->generateValidPassword(8, new PasswordPolicy());
+        (new PasswordStrengthValidator())->generateValid(8, new PasswordPolicy());
     }
 
     /**
@@ -32,7 +32,7 @@ class PasswordGeneratorTest extends TestCase
      */
     public function testPasswordLengthCantBeShorterThanPolicyLength()
     {
-        (new PasswordStrengthValidator())->generateValidPassword(18, new PasswordPolicy(32));
+        (new PasswordStrengthValidator())->generateValid(18, new PasswordPolicy(32));
     }
 
     /**
@@ -43,13 +43,13 @@ class PasswordGeneratorTest extends TestCase
         $validator = new PasswordStrengthValidator();
         $policy = new PasswordPolicy(32, true, true, true);
 
-        $password = $validator->generateValidPassword(32, $policy);
+        $password = $validator->generateValid(32, $policy);
 
         $this->assertInternalType('string', $password);
         $this->assertNotEmpty($password);
         $this->assertFalse(ctype_alnum($password));
 
-        $this->assertTrue($validator->isPasswordValid($password, $policy));
+        $this->assertTrue($validator->validate($password, $policy));
     }
 
     /**
@@ -60,12 +60,12 @@ class PasswordGeneratorTest extends TestCase
         $validator = new PasswordStrengthValidator();
         $policy = new PasswordPolicy(32, true, true, false);
 
-        $password = $validator->generateValidPassword(32, $policy);
+        $password = $validator->generateValid(32, $policy);
 
         $this->assertInternalType('string', $password);
         $this->assertNotEmpty($password);
         $this->assertTrue(ctype_alnum($password));
 
-        $this->assertTrue($validator->isPasswordValid($password, $policy));
+        $this->assertTrue($validator->validate($password, $policy));
     }
 }

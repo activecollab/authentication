@@ -26,7 +26,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
      * @param  PasswordPolicyInterface $policy
      * @return bool
      */
-    public function isPasswordValid($password, PasswordPolicyInterface $policy)
+    public function validate($password, PasswordPolicyInterface $policy)
     {
         if (!is_string($password)) {
             throw new InvalidPasswordException('Password is not a string');
@@ -66,7 +66,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
     /**
      * {@inheritdoc}
      */
-    public function generateValidPassword($length, PasswordPolicyInterface $policy)
+    public function generateValid($length, PasswordPolicyInterface $policy)
     {
         if ($length < 16) {
             throw new LogicException('Minimal password length that this utility can generate is 16 characters');
@@ -89,7 +89,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
             try {
                 $password = $generator->generateString($length, $characters);
 
-                if ($this->isPasswordValid($password, $policy)) {
+                if ($this->validate($password, $policy)) {
                     return $password;
                 }
             } catch (InvalidPasswordException $e) {

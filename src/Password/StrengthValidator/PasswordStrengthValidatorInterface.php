@@ -27,7 +27,7 @@ interface PasswordStrengthValidatorInterface
      * @param  PasswordPolicyInterface $policy
      * @return bool
      */
-    public function isPasswordValid($password, PasswordPolicyInterface $policy);
+    public function validate($password, PasswordPolicyInterface $policy);
 
     /**
      * Generate a new password of the required strength and length.
@@ -36,5 +36,5 @@ interface PasswordStrengthValidatorInterface
      * @param  PasswordPolicyInterface $policy
      * @return string
      */
-    public function generateValidPassword($length, PasswordPolicyInterface $policy);
+    public function generateValid($length, PasswordPolicyInterface $policy);
 }
