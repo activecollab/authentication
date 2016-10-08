@@ -19,8 +19,9 @@ use ActiveCollab\Authentication\Test\TestCase\TestCase;
 class LocalAuthorizerTest extends TestCase
 {
     /**
+     * @param array $credentials
      * @dataProvider providerInvalidCredentials
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      * @expectedExceptionMessage Authentication request data not valid
      */
     public function testInvalidCredentialsThrowsException($credentials)
@@ -41,7 +42,7 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\UserNotFoundException
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
      */
     public function testUserNotFoundThrowsException()
@@ -52,7 +53,7 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidPasswordException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPasswordException
      * @expectedExceptionMessage Password not valid
      */
     public function testInvalidPasswordThrowsException()
@@ -65,7 +66,7 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\UserNotFoundException
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
      */
     public function testUserCanNotAuthenticateThrowsException()

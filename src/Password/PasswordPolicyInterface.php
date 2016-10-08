@@ -8,9 +8,10 @@
 
 namespace ActiveCollab\Authentication\Password;
 
-use JsonSerializable;
-
-interface PasswordPolicyInterface extends JsonSerializable
+/**
+ * @package ActiveCollab\Authentication\Password
+ */
+interface PasswordPolicyInterface
 {
     // Password hashing mechanism
     const HASHED_WITH_SHA1 = 'sha1';
@@ -22,9 +23,9 @@ interface PasswordPolicyInterface extends JsonSerializable
     const PASSWORD_HAS_NO_SYMBOLS = 3;
 
     /**
-     * Return min password length. If this function returns null, system will not check password length.
+     * Return min password length. If this function returns 0, system will not check password length.
      *
-     * @return mixed
+     * @return int
      */
     public function getMinLength();
 

@@ -11,8 +11,13 @@ namespace ActiveCollab\Authentication\Password;
 /**
  * @package ActiveCollab\Authentication\Password
  */
-interface PasswordStrenghtValidatorInterface
+interface PasswordStrengthValidatorInterface
 {
+    const TOO_SHORT = 1;
+    const NO_NUMBERS = 2;
+    const NO_MIXED_CASE = 4;
+    const NO_SYMBOLS = 8;
+
     /**
      * Return true if password meets the criteria set by the password policy.
      *
