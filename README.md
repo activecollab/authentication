@@ -49,6 +49,8 @@ $policy = new PasswordPolicy(32, true, true, true);
 $password = $validator->generateValidPassword(32, $policy); 
 ```
 
+Password generator uses letters and numbers by default, unless symbols are required by the provided password policy.
+
 Note that generator may throw an exeception if it fails to prepare a password in 10000 tries.
 
 ## To Do
