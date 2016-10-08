@@ -12,7 +12,7 @@ Only users with accounts in our application can be authenticated.
 
 ## Working with Passwords
 
-### Hashing Passwords
+### Hashing and Validating Passwords
 
 Passwords can be hashed using one of the three mechanisms:
 
@@ -20,7 +20,7 @@ Passwords can be hashed using one of the three mechanisms:
 1. Using PBKDF2
 1. Using SHA1
 
-Later two are there for compatibility resons only, so you can transition your hashed passwords to PHP's password management system if you have not done that already. Password manager's `needsRehash()` method will always recommend rehashing for PBKDF2 and SHA1 hashed passwords.
+Later two are there for compatibility reasons only, so you can transition your hashed passwords to PHP's password management system if you have not done that already. Password manager's `needsRehash()` method will always recommend rehashing for PBKDF2 and SHA1 hashed passwords.
 
 Example:
 
@@ -40,8 +40,6 @@ Library offers a way to check if password needs to be rehashed, usually after yo
 
 ```php
 $manager = new PasswordManager('global salt, if needed');
-
-$hash = $manager->hash('easy to remember, hard to guess');
 
 if ($manager->verify($user_provided_password, $hash_from_storage, PasswordManagerInterface::HASHED_WITH_PHP)) {
     if ($manager->needsRehash($hash_from_storage, PasswordManagerInterface::HASHED_WITH_PHP)) {
@@ -79,7 +77,7 @@ Here's an example where all rules are enforced:
 (new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true));
 ```
 
-## Generating Passwords
+### Generating Random Passwords
 
 Password strength validator can also be used to prepare new passwords that meed the requirements of provided policies:
 
