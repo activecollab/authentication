@@ -23,11 +23,14 @@ Policy can enforce following rules:
 1. Password is longer than N characters
 1. Password needs to contain at least one number
 1. Password needs to contain mixed case (uppercase and lowercase) letters
-1. Password needs to contain at least one of the following symols: `,.;:!$\%^&~@#*`
+1. Password needs to contain at least one of the following symbols: `,.;:!$\%^&~@#*`
 
 Here's an example where all rules are enforced:
 
 ```php
-(new PasswordStrengthValidator())->isPasswordValid('weak', new PasswordPolicy(32, true, true, true)); // Will return FALSE
+// Weak password, not accepted
+(new PasswordStrengthValidator())->isPasswordValid('weak', new PasswordPolicy(32, true, true, true));
+ 
+// Strong password, accepted
 (new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true)); // Will return TRUE
 ```
