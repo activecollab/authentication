@@ -16,9 +16,10 @@
     ],
     "require": {
         "php": ">=5.6.0",
+        "ext-mbstring": "*",
         "activecollab/user": "^3.0",
         "activecollab/cookies": "~0.1",
-        "guzzlehttp/psr7": "~1.2",
+        "guzzlehttp/psr7": "^1.2",
         "google/apiclient": "^1.1"
     },
     "require-dev": {

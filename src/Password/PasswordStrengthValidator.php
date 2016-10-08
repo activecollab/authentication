@@ -36,7 +36,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
 
         $errors = 0;
 
-        if ($policy->getMinLength() && strlen($password) < $policy->getMinLength()) {
+        if ($policy->getMinLength() && mb_strlen($password) < $policy->getMinLength()) {
             $errors += PasswordStrengthValidatorInterface::TOO_SHORT;
         }
 
