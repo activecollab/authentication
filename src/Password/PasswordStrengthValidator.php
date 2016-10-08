@@ -76,12 +76,17 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         }
 
         $generator = (new RandomLibFactory())->getMediumStrengthGenerator();
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+
+        if ($policy->requireSymbols()) {
+            $characters .= ',.;:!$%^&';
+        }
 
         $counter = 0;
 
         while (++$counter < 10000) {
             try {
-                $password = $generator->generateString($length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.;:!$%^&');
+                $password = $generator->generateString($length, $characters);
 
                 if ($this->isPasswordValid($password, $policy)) {
                     return $password;

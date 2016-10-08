@@ -36,9 +36,9 @@ class PasswordGeneratorTest extends TestCase
     }
 
     /**
-     * Test valid password generation.
+     * Test valid password generation (with symbols).
      */
-    public function testSuccessfulPasswordGenereation()
+    public function testSuccessfulPasswordGenereationWithSimbols()
     {
         $validator = new PasswordStrengthValidator();
         $policy = new PasswordPolicy(32, true, true, true);
@@ -47,6 +47,24 @@ class PasswordGeneratorTest extends TestCase
 
         $this->assertInternalType('string', $password);
         $this->assertNotEmpty($password);
+        $this->assertFalse(ctype_alnum($password));
+
+        $this->assertTrue($validator->isPasswordValid($password, $policy));
+    }
+
+    /**
+     * Test valid password generation (without symbols).
+     */
+    public function testSuccessfulPasswordGenereationWithoutSimbols()
+    {
+        $validator = new PasswordStrengthValidator();
+        $policy = new PasswordPolicy(32, true, true, false);
+
+        $password = $validator->generateValidPassword(32, $policy);
+
+        $this->assertInternalType('string', $password);
+        $this->assertNotEmpty($password);
+        $this->assertTrue(ctype_alnum($password));
 
         $this->assertTrue($validator->isPasswordValid($password, $policy));
     }
