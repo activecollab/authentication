@@ -45,7 +45,7 @@ Password strength validator can also be used to prepare new passwords that meed 
 $validator = new PasswordStrengthValidator();
 $policy = new PasswordPolicy(32, true, true, true);
 
-// Prepare 32 characters long that mixes case, numbers and symbols
+// Prepare 32 characters long password that mixes case, numbers and symbols
 $password = $validator->generateValidPassword(32, $policy); 
 ```
 
