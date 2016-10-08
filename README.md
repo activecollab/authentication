@@ -21,9 +21,9 @@ All passwords are validated against password policies. By default, policy will a
 Policy can enforce following rules:
 
 1. Password is longer than N characters
-1. Password needs to contain at least one number
-1. Password needs to contain mixed case (uppercase and lowercase) letters
-1. Password needs to contain at least one of the following symbols: `,.;:!$\%^&~@#*`
+1. Password contains at least one number
+1. Password contains mixed case (uppercase and lowercase) letters
+1. Password contains at least one of the following symbols: `,.;:!$\%^&~@#*`
 
 Here's an example where all rules are enforced:
 
