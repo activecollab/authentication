@@ -23,7 +23,7 @@ class PasswordManager implements PasswordManagerInterface
     /**
      * @param string $global_salt
      */
-    public function __construct($global_salt)
+    public function __construct($global_salt = '')
     {
         $this->global_salt = (string) $global_salt;
     }

@@ -12,6 +12,30 @@ Only users with accounts in our application can be authenticated.
 
 ## Working with Passwords
 
+### Hashing Passwords
+
+Passwords can be hashed using one of the three mechanisms:
+
+1. PHP's built in `password_*` functions. This is default and recommended method
+1. Using PBKDF2
+1. Using SHA1
+
+Later two are there for compatibility resons only, so you can transition your hashed passwords to PHP's password management system if you have not done that already. Password manager's `needsRehash()` method will always recommend rehashing for PBKDF2 and SHA1 hashed passwords.
+
+Example:
+
+```php
+$manager = new PasswordManager('global salt, if needed');
+
+$hash = $manager->hash('easy to remember, hard to guess');
+
+if ($manager->verify('easy to remember, hard to guess', $hash, PasswordManagerInterface::HASHED_WITH_PHP)) {
+    print "All good\n";
+} else {
+    print "Not good\n";
+}
+```
+
 ### Password Policy
 
 All passwords are validated against password policies. By default, policy will accept any non-empty string:
