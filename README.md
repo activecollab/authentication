@@ -36,6 +36,24 @@ if ($manager->verify('easy to remember, hard to guess', $hash, PasswordManagerIn
 }
 ```
 
+Library offers a way to check if password needs to be rehashed, usually after you successfully checked if password that user provided is correct one:
+
+```php
+$manager = new PasswordManager('global salt, if needed');
+
+$hash = $manager->hash('easy to remember, hard to guess');
+
+if ($manager->verify($user_provided_password, $hash_from_storage, PasswordManagerInterface::HASHED_WITH_PHP)) {
+    if ($manager->needsRehash($hash_from_storage, PasswordManagerInterface::HASHED_WITH_PHP)) {
+        // Update hash in our data storage
+    }
+    
+    // Proceed with user authentication
+} else {
+    print "Invalid password\n";
+}
+```
+
 ### Password Policy
 
 All passwords are validated against password policies. By default, policy will accept any non-empty string:
