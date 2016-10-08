@@ -10,7 +10,9 @@ Authentication library builds on top of `activecollab/user` package. There are t
 
 Only users with accounts in our application can be authenticated.
 
-## Password Policy
+## Working with Passwords
+
+### Password Policy
 
 All passwords are validated against password policies. By default, policy will accept any non-empty string:
 
@@ -34,3 +36,7 @@ Here's an example where all rules are enforced:
 // Strong password, accepted
 (new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true));
 ```
+
+## To Do
+
+1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords
