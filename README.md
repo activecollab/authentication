@@ -32,5 +32,5 @@ Here's an example where all rules are enforced:
 (new PasswordStrengthValidator())->isPasswordValid('weak', new PasswordPolicy(32, true, true, true));
  
 // Strong password, accepted
-(new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true)); // Will return TRUE
+(new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true));
 ```
