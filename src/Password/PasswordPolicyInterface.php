@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Policy;
+namespace ActiveCollab\Authentication\Password;
 
 use JsonSerializable;
 
@@ -22,32 +22,30 @@ interface PasswordPolicyInterface extends JsonSerializable
     const PASSWORD_HAS_NO_SYMBOLS = 3;
 
     /**
-     * @param  string $value
-     * @return bool
+     * Return min password length. If this function returns null, system will not check password length.
+     *
+     * @return mixed
      */
-    public function isHashedWithSha1($value);
+    public function getMinLength();
 
     /**
-     * @param  string $value
+     * Returns true if system requires that passwords contain numbers.
+     *
      * @return bool
      */
-    public function isHashedWithPbkdf2($value);
+    public function requireNumbers();
 
     /**
-     * @param  string $value
+     * Returns true if system requires that passwords contain numbers.
+     *
      * @return bool
      */
-    public function isToShort($value);
+    public function requireMixedCase();
 
     /**
-     * @param  string $value
+     * Returns true if system requires that passwords contain symbols.
+     *
      * @return bool
      */
-    public function isWithoutNumbers($value);
-
-    /**
-     * @param  string $value
-     * @return bool
-     */
-    public function isWithoutSymbols($value);
+    public function requireSymbols();
 }
