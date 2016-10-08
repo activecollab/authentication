@@ -16,8 +16,8 @@ interface AuthorizerInterface
     /**
      * Perform user credentials verification against the real user database provider.
      *
-     * @param  array                           $credentials
-     * @return AuthenticatedUserInterface|null
+     * @param  array                                                                          $credentials
+     * @return \ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface|null
      */
     public function verifyCredentials(array $credentials);
 

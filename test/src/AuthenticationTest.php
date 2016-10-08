@@ -13,7 +13,7 @@ use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
-use ActiveCollab\Authentication\Test\Authorizer\Authorizer;
+use ActiveCollab\Authentication\Test\Fixtures\Authorizer;
 use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
