@@ -6,9 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Fixtures;
-
-use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
+namespace ActiveCollab\Authentication\Password\Policy;
 
 /**
  * @package ActiveCollab\Authentication\Test\Fixtures
