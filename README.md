@@ -37,6 +37,20 @@ Here's an example where all rules are enforced:
 (new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true));
 ```
 
+## Generating Passwords
+
+Password strength validator can also be used to prepare new passwords that meed the requirements of provided policies:
+
+```php
+$validator = new PasswordStrengthValidator();
+$policy = new PasswordPolicy(32, true, true, true);
+
+// Prepare 32 characters long that mixes case, numbers and symbols
+$password = $validator->generateValidPassword(32, $policy); 
+```
+
+Note that generator may throw an exeception if it fails to prepare a password in 10000 tries.
+
 ## To Do
 
 1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords

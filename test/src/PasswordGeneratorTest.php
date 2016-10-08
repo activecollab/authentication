@@ -1,0 +1,53 @@
+<?php
+
+/*
+ * This file is part of the Active Collab Authentication project.
+ *
+ * (c) A51 doo <info@activecollab.com>. All rights reserved.
+ */
+
+namespace ActiveCollab\Authentication\Test;
+
+use ActiveCollab\Authentication\Password\PasswordStrengthValidator;
+use ActiveCollab\Authentication\Test\Fixtures\PasswordPolicy;
+use ActiveCollab\Authentication\Test\TestCase\TestCase;
+
+/**
+ * @package ActiveCollab\Authentication\Test
+ */
+class PasswordGeneratorTest extends TestCase
+{
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Minimal password length that this utility can generate is 16 characters
+     */
+    public function testMinPasswordLength()
+    {
+        (new PasswordStrengthValidator())->generateValidPassword(8, new PasswordPolicy());
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Password policy requires longer password
+     */
+    public function testPasswordLengthCantBeShorterThanPolicyLength()
+    {
+        (new PasswordStrengthValidator())->generateValidPassword(18, new PasswordPolicy(32));
+    }
+
+    /**
+     * Test valid password generation.
+     */
+    public function testSuccessfulPasswordGenereation()
+    {
+        $validator = new PasswordStrengthValidator();
+        $policy = new PasswordPolicy(32, true, true, true);
+
+        $password = $validator->generateValidPassword(32, $policy);
+
+        $this->assertInternalType('string', $password);
+        $this->assertNotEmpty($password);
+
+        $this->assertTrue($validator->isPasswordValid($password, $policy));
+    }
+}

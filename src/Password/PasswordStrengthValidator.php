@@ -9,6 +9,9 @@
 namespace ActiveCollab\Authentication\Password;
 
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use RandomLib\Factory as RandomLibFactory;
+use LogicException;
+use RuntimeException;
 
 /**
  * @package ActiveCollab\Authentication\Password
@@ -57,5 +60,37 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateValidPassword($length, PasswordPolicyInterface $policy)
+    {
+        if ($length < 16) {
+            throw new LogicException('Minimal password length that this utility can generate is 16 characters');
+        }
+
+        if ($length < $policy->getMinLength()) {
+            throw new LogicException('Password policy requires longer password');
+        }
+
+        $generator = (new RandomLibFactory())->getMediumStrengthGenerator();
+
+        $counter = 0;
+
+        while (++$counter < 10000) {
+            try {
+                $password = $generator->generateString($length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.;:!$%^&');
+
+                if ($this->isPasswordValid($password, $policy)) {
+                    return $password;
+                }
+            } catch (InvalidPasswordException $e) {
+
+            }
+        }
+
+        throw new RuntimeException('Failed to generate new password in 1000 iterations');
     }
 }
