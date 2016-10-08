@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Test\Fixtures;
 
-use ActiveCollab\Authentication\Password\PasswordPolicyInterface;
+use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 
 /**
  * @package ActiveCollab\Authentication\Test\Fixtures

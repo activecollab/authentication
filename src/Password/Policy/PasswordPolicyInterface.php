@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Password;
+namespace ActiveCollab\Authentication\Password\Policy;
 
 /**
  * @package ActiveCollab\Authentication\Password

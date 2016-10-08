@@ -6,11 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Password;
+namespace ActiveCollab\Authentication\Password\StrengthValidator;
 
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
-use RandomLib\Factory as RandomLibFactory;
+use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 use LogicException;
+use RandomLib\Factory as RandomLibFactory;
 use RuntimeException;
 
 /**
