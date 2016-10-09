@@ -11,7 +11,7 @@ namespace ActiveCollab\Authentication\Password\Policy;
 /**
  * @package ActiveCollab\Authentication\Password
  */
-interface PasswordPolicyInterface
+interface PasswordPolicyInterface extends \JsonSerializable
 {
     /**
      * Return min password length. If this function returns 0, system will not check password length.
