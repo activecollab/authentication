@@ -93,6 +93,15 @@ Password generator uses letters and numbers by default, unless symbols are requi
 
 Note that generator may throw an exeception if it fails to prepare a password in 10000 tries.
 
+## Login Policy
+
+Login Policy is used by adapters to publish their log in page settings. These settings include:
+
+1. Format of username fields. Email and username are supported,
+1. Whether "Remember Me" option for extended sessions is supported by the adapter,
+1. Whether passwords can be changed by the user,
+1. Log in, log out, password reset and update profile URL-s. These URL-s are used by adapters which are off-site, so application that uses these adapters can redirect users to correct pages. 
+
 ## To Do
 
 1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords
