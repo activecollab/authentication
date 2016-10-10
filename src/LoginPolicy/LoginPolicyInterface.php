@@ -6,10 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Policy;
+namespace ActiveCollab\Authentication\LoginPolicy;
 
 use JsonSerializable;
 
+/**
+ * @package ActiveCollab\Authentication\LoginPolicy
+ */
 interface LoginPolicyInterface extends JsonSerializable
 {
     const USERNAME_FORMAT_TEXT = 'text';
@@ -23,21 +26,9 @@ interface LoginPolicyInterface extends JsonSerializable
     public function getUsernameFormat();
 
     /**
-     * Check is text username format.
-     *
-     * @return bool
-     */
-    public function isUsernameTextFormat();
-
-    /**
-     * Check is email username format.
-     *
-     * @return bool
-     */
-    public function isUsernameEmailFormat();
-
-    /**
      * Enable Remember Me feature to support extended sessions.
+     *
+     * @return bool
      */
     public function rememberExtendsSession();
 
@@ -60,26 +51,26 @@ interface LoginPolicyInterface extends JsonSerializable
      *
      * @return string|null
      */
-    public function getLoginUrl();
+    public function getExternalLoginUrl();
 
     /**
      * Get logout URL.
      *
      * @return string
      */
-    public function getLogoutUrl();
+    public function getExternalLogoutUrl();
 
     /**
      * Get change password URL.
      *
      * @return string|null
      */
-    public function getChangePasswordUrl();
+    public function getExternalChangePasswordUrl();
 
     /**
      * Get update profile URL.
      *
      * @return string|null
      */
-    public function getUpdateProfileUrl();
+    public function getExternalUpdateProfileUrl();
 }
