@@ -100,7 +100,7 @@ Login Policy is used by adapters to publish their log in page settings. These se
 1. Format of username fields. Supported values are `email` and `username`,
 1. Whether "Remember Me" option for extended sessions is supported by the adapter,
 1. Whether passwords can be changed by the user,
-1. Log in, log out, password reset and update profile URL-s. These URL-s are used by adapters which are off-site, so application that uses these adapters can redirect users to correct pages. 
+1. Log in, log out, password reset and update profile URL-s. These URL-s are used by adapters which implement off-site authentication, so application that uses these adapters can redirect users to correct pages. 
 
 ## To Do
 
