@@ -8,6 +8,8 @@
 
 namespace ActiveCollab\Authentication\LoginPolicy;
 
+use InvalidArgumentException;
+
 /**
  * @package ActiveCollab\Authentication\LoginPolicy
  */
@@ -56,25 +58,27 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * LoginPolicy constructor.
      *
-     * @param string $username_format
-     * @param bool   $remember_extends_session
-     * @param bool   $password_change_enabled
-     * @param bool   $password_recovery_enabled
-     * @param string $external_login_url
-     * @param string $external_logout_url
-     * @param string $external_change_password_url
-     * @param string $external_update_profile_url
+     * @param string      $username_format
+     * @param bool        $remember_extends_session
+     * @param bool        $password_change_enabled
+     * @param bool        $password_recovery_enabled
+     * @param string|null $external_login_url
+     * @param string|null $external_logout_url
+     * @param string|null $external_change_password_url
+     * @param string|null $external_update_profile_url
      */
-    public function __construct($username_format, $remember_extends_session, $password_change_enabled, $password_recovery_enabled, $external_login_url, $external_logout_url, $external_change_password_url, $external_update_profile_url)
+    public function __construct($username_format = self::USERNAME_FORMAT_TEXT, $remember_extends_session = true, $password_change_enabled = true, $password_recovery_enabled = true, $external_login_url = null, $external_logout_url = null, $external_change_password_url = null, $external_update_profile_url = null)
     {
-        $this->username_format = $username_format;
-        $this->remember_extends_session = (bool) $remember_extends_session;
-        $this->password_change_enabled = (bool) $password_change_enabled;
-        $this->password_recovery_enabled = (bool) $password_recovery_enabled;
-        $this->external_login_url = $external_login_url;
-        $this->external_logout_url = $external_logout_url;
-        $this->external_change_password_url = $external_change_password_url;
-        $this->external_update_profile_url = $external_update_profile_url;
+        $this->setUsernameFormat($username_format);
+
+        $this->setRememberExtendsSession($remember_extends_session);
+        $this->setIsPasswordChangeEnabled($password_change_enabled);
+        $this->setIsPasswordRecoveryEnabled($password_recovery_enabled);
+
+        $this->setExternalLoginUrl($external_login_url);
+        $this->setExternalLogoutUrl($external_logout_url);
+        $this->setExternalChangePasswordUrl($external_change_password_url);
+        $this->setExternalUpdateProfileUrl($external_update_profile_url);
     }
 
     /**
@@ -88,9 +92,33 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
+    public function &setUsernameFormat($value)
+    {
+        if (in_array($value, self::VALID_USERNAME_FORMATS)) {
+            $this->username_format = $value;
+        } else {
+            throw new InvalidArgumentException('Username format is not valid');
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function rememberExtendsSession()
     {
         return $this->remember_extends_session;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setRememberExtendsSession($value)
+    {
+        $this->remember_extends_session = (bool) $value;
+
+        return $this;
     }
 
     /**
@@ -104,9 +132,29 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
+    public function &setIsPasswordChangeEnabled($value)
+    {
+        $this->password_change_enabled = (bool) $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isPasswordRecoveryEnabled()
     {
         return $this->password_recovery_enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setIsPasswordRecoveryEnabled($value)
+    {
+        $this->password_recovery_enabled = (bool) $value;
+
+        return $this;
     }
 
     /**
@@ -120,9 +168,29 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
+    public function &setExternalLoginUrl($value)
+    {
+        $this->external_login_url = $this->getValidExternalUrlValue($value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getExternalLogoutUrl()
     {
         return $this->external_logout_url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setExternalLogoutUrl($value)
+    {
+        $this->external_logout_url = $this->getValidExternalUrlValue($value);
+
+        return $this;
     }
 
     /**
@@ -136,9 +204,44 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
+    public function &setExternalChangePasswordUrl($value)
+    {
+        $this->external_change_password_url = $this->getValidExternalUrlValue($value);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getExternalUpdateProfileUrl()
     {
         return $this->external_update_profile_url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setExternalUpdateProfileUrl($value)
+    {
+        $this->external_update_profile_url = $this->getValidExternalUrlValue($value);
+
+        return $this;
+    }
+
+    /**
+     * Validate and return acceptable URL value.
+     *
+     * @param  string|null $url
+     * @return string|null
+     */
+    private function getValidExternalUrlValue($url)
+    {
+        if ($url === null || (is_string($url) && filter_var($url, FILTER_VALIDATE_URL))) {
+            return $url;
+        }
+
+        throw new InvalidArgumentException('URL is not valid');
     }
 
     /**
