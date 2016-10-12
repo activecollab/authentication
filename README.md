@@ -2,6 +2,17 @@
 
 [![Build Status](https://travis-ci.org/activecollab/authentication.svg?branch=master)](https://travis-ci.org/activecollab/authentication)
 
+Table of Contents
+=================
+
+  * [Authentication Library](#authentication-library)
+    * [Working with Passwords](#working-with-passwords)
+      * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
+      * [Password Policy](#password-policy)
+      * [Generating Random Passwords](#generating-random-passwords)
+    * [Login Policy](#login-policy)
+    * [To Do](#to-do)
+
 Authentication library builds on top of `activecollab/user` package. There are three types of visitors that we recognize:
 
 1. Unidentified visitors - Visitors that we know nothing bout,
