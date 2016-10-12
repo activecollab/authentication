@@ -77,6 +77,8 @@ Here's an example where all rules are enforced:
 (new PasswordStrengthValidator())->isPasswordValid('BhkXuemYY#WMdU;QQd4QpXpcEjbw2XHP', new PasswordPolicy(32, true, true, true));
 ```
 
+Password policy implements `\JsonSerializable` interface, and can be safely encoded to JSON using `json_encode()`.
+
 ### Generating Random Passwords
 
 Password strength validator can also be used to prepare new passwords that meed the requirements of provided policies:
@@ -100,7 +102,23 @@ Login Policy is used by adapters to publish their log in page settings. These se
 1. Format of username fields. Supported values are `email` and `username`,
 1. Whether "Remember Me" option for extended sessions is supported by the adapter,
 1. Whether passwords can be changed by the user,
-1. Log in, log out, password reset and update profile URL-s. These URL-s are used by adapters which implement off-site authentication, so application that uses these adapters can redirect users to correct pages. 
+1. Log in, log out, password reset and update profile URL-s. These URL-s are used by adapters which implement off-site authentication, so application that uses these adapters can redirect users to correct pages.
+
+This example shows how different settings can be configured using setter calls. All these settings can also be set when you construct new `LoginPolicy` instance:
+
+```php
+$login_policy = (new LoginPolicy())
+    ->setUsernameFormat(LoginPolicyInterface::USERNAME_FORMAT_EMAIL)
+    ->setRememberExtendsSession(true)
+    ->setIsPasswordChangeEnabled(true)
+    ->setIsPasswordRecoveryEnabled(true)
+    ->setExternalLoginUrl('http://idp.example.com/login')
+    ->setExternalLogoutUrl('http://idp.example.com/logout')
+    ->setExternalChangePasswordUrl('http://idp.example.com/change-password')
+    ->setExternalUpdateProfileUrl('http://idp.example.com/update-profile');
+```
+
+Login policy implements `\JsonSerializable` interface, and can be safely encoded to JSON using `json_encode()`.
 
 ## To Do
 
