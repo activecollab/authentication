@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.org/activecollab/authentication.svg?branch=master)](https://travis-ci.org/activecollab/authentication)
 
-Table of Contents
-=================
+Table of Contents:
 
   * [Authentication Library](#authentication-library)
     * [Working with Passwords](#working-with-passwords)
@@ -12,6 +11,8 @@ Table of Contents
       * [Generating Random Passwords](#generating-random-passwords)
     * [Login Policy](#login-policy)
     * [To Do](#to-do)
+    
+## Who are Authenticated Users?
 
 Authentication library builds on top of `activecollab/user` package. There are three types of visitors that we recognize:
 
