@@ -4,13 +4,13 @@
 
 Table of Contents:
 
-  * [Authentication Library](#authentication-library)
-    * [Working with Passwords](#working-with-passwords)
-      * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
-      * [Password Policy](#password-policy)
-      * [Generating Random Passwords](#generating-random-passwords)
-    * [Login Policy](#login-policy)
-    * [To Do](#to-do)
+* [Who are Authenticated Users](#who-are-authenticated-users)
+* [Working with Passwords](#working-with-passwords)
+  * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
+  * [Password Policy](#password-policy)
+  * [Generating Random Passwords](#generating-random-passwords)
+* [Login Policy](#login-policy)
+* [To Do](#to-do)
     
 ## Who are Authenticated Users?
 
