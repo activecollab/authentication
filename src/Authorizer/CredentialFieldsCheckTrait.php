@@ -17,7 +17,7 @@ trait CredentialFieldsCheckTrait
 {
     /**
      * @param array $credentials
-     * @param  array fields
+     * @param array $fields
      */
     private function verifyRequiredFields(array $credentials, array $fields)
     {
