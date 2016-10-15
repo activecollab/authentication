@@ -24,7 +24,7 @@ Only users with accounts in our application can be authenticated.
 
 ### Accessing Users
 
-When integrating this package, you need to write a class that implements `ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface` interface. Implementation of this interface will let the library find users by their ID and username.
+Write a class that implements `ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface` when integrating this package. Implementation of this interface will let the library find users by their ID and username.
 
 ## Working with Passwords
 
