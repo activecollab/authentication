@@ -24,7 +24,32 @@ Only users with accounts in our application can be authenticated.
 
 ### Accessing Users
 
-Write a class that implements `ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface` when integrating this package. Implementation of this interface will let the library find users by their ID and username.
+Write a class that implements `ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface` when integrating this package. Implementation of this interface will let the library find users by their ID and username:
+
+```php
+<?php
+
+namespace MyApp;
+
+class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function findById($user_id)
+    {
+        // Find and return user by ID
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findByUsername($username)
+    {
+        // Find and return user by username (can be an email address as well)
+    }
+}
+```
 
 ## Working with Passwords
 
