@@ -55,7 +55,7 @@ interface RepositoryInterface
     public function recordUsageBySession(SessionInterface $session);
 
     /**
-     * Issue a new token.
+     * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
      * @param  DateTimeInterface|null     $expires_at

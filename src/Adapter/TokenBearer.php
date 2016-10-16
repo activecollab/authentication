@@ -47,6 +47,10 @@ class TokenBearer implements AdapterInterface
      */
     public function initialize(ServerRequestInterface $request)
     {
+        if (!$request->hasHeader('Authorization')) {
+            return null;
+        }
+
         $authorization = $request->getHeaderLine('Authorization');
 
         if (empty($authorization) || substr($authorization, 0, 7) !== 'Bearer ') {
