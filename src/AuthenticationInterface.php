@@ -35,4 +35,9 @@ interface AuthenticationInterface
      * @return AuthenticatedUserInterface
      */
     public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials);
+
+    /**
+     * @return AdapterInterface[]
+     */
+    public function getAdapters();
 }

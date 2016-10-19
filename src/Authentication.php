@@ -82,4 +82,12 @@ class Authentication implements AuthenticationInterface
 
         return $adapter->authenticate($user);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdapters()
+    {
+        return $this->adapters;
+    }
 }
