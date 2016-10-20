@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b39d12ab345a7a93c5d9c4e1b6f290b0",
-    "content-hash": "43fa8bc58db067ba66bd00cc67b570ea",
+    "hash": "4747e08a014bc9b7562e233849d9ae17",
+    "content-hash": "4cb361f0c672b9a33fc1db57f314d5a5",
     "packages": [
         {
             "name": "activecollab/cookies",
-            "version": "0.10.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/cookies.git",
-                "reference": "50b07f17406bc14dce6b94d0bc00618b6c48b8da"
+                "reference": "538639c62dba9efd30c55e818d11fefc983cc9b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/cookies/zipball/50b07f17406bc14dce6b94d0bc00618b6c48b8da",
-                "reference": "50b07f17406bc14dce6b94d0bc00618b6c48b8da",
+                "url": "https://api.github.com/repos/activecollab/cookies/zipball/538639c62dba9efd30c55e818d11fefc983cc9b4",
+                "reference": "538639c62dba9efd30c55e818d11fefc983cc9b4",
                 "shasum": ""
             },
             "require": {
                 "dflydev/fig-cookies": "~1.0",
-                "ext-mcrypt": "*",
+                "ext-openssl": "*",
                 "php": ">=5.6.0"
             },
             "require-dev": {
@@ -52,7 +52,7 @@
                 "activecollab",
                 "cookies"
             ],
-            "time": "2016-04-26 07:53:20"
+            "time": "2016-10-20 12:15:12"
         },
         {
             "name": "activecollab/humannameparser",
