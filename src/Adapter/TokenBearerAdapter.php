@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class TokenBearerAdapter implements AdapterInterface
+class TokenBearerAdapter extends Adapter
 {
     /**
      * @var UserRepositoryInterface

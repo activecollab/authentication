@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
+use ActiveCollab\Authentication\Adapter\InitializationResult\InitializationResult;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
@@ -61,8 +62,10 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $results = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Session::class, $results['authenticated_with']);
+        $this->assertInstanceOf(InitializationResult::class, $results);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Session::class, $results->getAuthenticatedWith());
     }
 
     /**
@@ -81,8 +84,10 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $results = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Session::class, $results['authenticated_with']);
+        $this->assertInstanceOf(InitializationResult::class, $results);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Session::class, $results->getAuthenticatedWith());
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }

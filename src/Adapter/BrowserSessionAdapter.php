@@ -8,20 +8,23 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
+use ActiveCollab\Authentication\Adapter\InitializationResult\InitializationResult;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\Adapter
  */
-class BrowserSessionAdapter implements AdapterInterface
+class BrowserSessionAdapter extends Adapter
 {
     /**
      * @var UserRepositoryInterface
@@ -78,11 +81,19 @@ class BrowserSessionAdapter implements AdapterInterface
             if ($user = $session->getAuthenticatedUser($this->user_repository)) {
                 $this->session_repository->recordUsageBySession($session);
 
-                return ['authenticated_user' => $user, 'authenticated_with' => $session];
+                return new InitializationResult($user, $session);
             }
         }
 
         throw new InvalidSessionException();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishInitialization(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, array $additional_arguments = [])
+    {
+        return parent::finishInitialization($request, $response, $authenticated_user, $authenticated_with, $additional_arguments);
     }
 
     /**
