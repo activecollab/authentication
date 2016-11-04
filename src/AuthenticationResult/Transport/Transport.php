@@ -96,6 +96,27 @@ class Transport implements TransportInterface
     }
 
     /**
+     * Return response payload.
+     *
+     * @return mixed
+     */
+    public function getResponsePayload()
+    {
+        return isset($this->additional_arguments['_response_payload']) ? $this->additional_arguments['_response_payload'] : null;
+    }
+
+    /**
+     * Set response payload.
+     *
+     * @param  mixed $payload
+     * @return $this
+     */
+    public function &setResponsePayload($payload)
+    {
+        return $this->addArgument('_response_payload', $payload);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isEmpty()

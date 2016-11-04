@@ -51,6 +51,21 @@ interface TransportInterface
     public function &addArgument($arg_name, $arg_value);
 
     /**
+     * Return response payload.
+     *
+     * @return mixed
+     */
+    public function getResponsePayload();
+
+    /**
+     * Set response payload.
+     *
+     * @param  mixed $payload
+     * @return $this
+     */
+    public function &setResponsePayload($payload);
+
+    /**
      * @return bool
      */
     public function isEmpty();
