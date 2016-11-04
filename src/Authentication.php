@@ -9,12 +9,16 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
+/**
+ * @package ActiveCollab\Authentication
+ */
 class Authentication implements AuthenticationInterface
 {
     /**
@@ -39,38 +43,37 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function initialize(RequestInterface $request)
+    public function initialize(ServerRequestInterface $request)
     {
-        $exception = null;
-        $results = ['authenticated_user' => [], 'authenticated_with' => []];
+        $last_exception = null;
+        $results = [];
 
+        /** @var AdapterInterface $adapter */
         foreach ($this->adapters as $adapter) {
             try {
-                $result = $adapter->initialize($request);
-                if ($result) {
-                    $results['authenticated_user'][] = $result['authenticated_user'];
-                    $results['authenticated_with'][] = $result['authenticated_with'];
+                $initialization_result = $adapter->initialize($request);
+
+                if ($initialization_result instanceof Transport && !$initialization_result->isEmpty()) {
+                    $results[] = $initialization_result;
                 }
             } catch (Exception $e) {
-                $exception = $e;
+                $last_exception = $e;
             }
         }
 
-        if (empty($results['authenticated_user'])) {
-            if ($exception) {
-                throw $exception;
+        if (empty($results)) {
+            if ($last_exception) {
+                throw $last_exception;
             }
 
             return $request;
         }
 
-        if (count($results['authenticated_user']) > 1) {
+        if (count($results) > 1) {
             throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
         }
 
-        return $request
-            ->withAttribute('authenticated_user', $results['authenticated_user'][0])
-            ->withAttribute('authenticated_with', $results['authenticated_with'][0]);
+        return $results[0];
     }
 
     /**

@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\TestCase\TokenBearerTestCase;
@@ -63,9 +64,10 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
         $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
 
         $results = (new TokenBearerAdapter($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
+        $this->assertInstanceOf(TransportInterface::class, $results);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Token::class, $results['authenticated_with']);
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Token::class, $results->getAuthenticatedWith());
     }
 
     /**
@@ -82,8 +84,10 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
 
         $results = (new TokenBearerAdapter($user_repository, $token_repository))->initialize($this->request->withHeader('Authorization', "Bearer {$test_token}"));
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Token::class, $results['authenticated_with']);
+        $this->assertInstanceOf(TransportInterface::class, $results);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Token::class, $results->getAuthenticatedWith());
 
         $this->assertSame(1, $token_repository->getUsageById($test_token));
     }

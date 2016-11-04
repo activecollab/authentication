@@ -8,7 +8,6 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\Adapter\InitializationResult\InitializationResultInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
@@ -23,22 +22,20 @@ interface AdapterInterface
     /**
      * Initialize authentication layer and see if we have a user who's already logged in.
      *
-     * @param  ServerRequestInterface        $request
-     * @return InitializationResultInterface
+     * @param  ServerRequestInterface $request
+     * @return TransportInterface
      */
     public function initialize(ServerRequestInterface $request);
 
     /**
      * Finish initialization once adapter which did the authentication is known (and is the only one).
      *
-     * @param  ServerRequestInterface        $request
-     * @param  ResponseInterface             $response
-     * @param  AuthenticatedUserInterface    $authenticated_user
-     * @param  AuthenticationResultInterface $authenticated_with
-     * @param  array                         $additional_arguments
-     * @return TransportInterface
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  TransportInterface     $transport
+     * @return array
      */
-    public function finishInitialization(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, array $additional_arguments = []);
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport);
 
     /**
      * Authenticate user against authentication source.

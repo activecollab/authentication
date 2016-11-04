@@ -8,10 +8,9 @@
 
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
+use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport
@@ -19,29 +18,31 @@ use Psr\Http\Message\ServerRequestInterface;
 interface TransportInterface
 {
     /**
-     * @return ServerRequestInterface
+     * Return adapter which produced this initialization result.
+     *
+     * @return AdapterInterface
      */
-    public function getRequest();
+    public function getAdapter();
 
     /**
-     * @return ResponseInterface
-     */
-    public function getResponse();
-
-    /**
-     * @return AuthenticatedUserInterface
+     * @return AuthenticatedUserInterface|null
      */
     public function getAuthenticatedUser();
 
     /**
-     * @return AuthenticationResultInterface
+     * @return AuthenticationResultInterface|null
      */
     public function getAuthenticatedWith();
 
     /**
-     * Return an array of any additional arguments that system whats to transport alongside the main four arguments.
+     * Return an array of any additional arguments that adapter wants to pass alogside authorization results.
      *
      * @return array
      */
     public function getAdditionalArguments();
+
+    /**
+     * @return bool
+     */
+    public function isEmpty();
 }

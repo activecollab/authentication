@@ -8,10 +8,9 @@
 
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
+use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport
@@ -19,14 +18,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class Transport implements TransportInterface
 {
     /**
-     * @var ServerRequestInterface
+     * @var AdapterInterface
      */
-    private $request;
-
-    /**
-     * @var ResponseInterface
-     */
-    private $response;
+    private $adapter;
 
     /**
      * @var AuthenticatedUserInterface
@@ -46,39 +40,29 @@ class Transport implements TransportInterface
     /**
      * Transport constructor.
      *
-     * @param ServerRequestInterface        $request
-     * @param ResponseInterface             $response
-     * @param AuthenticatedUserInterface    $authenticated_user
-     * @param AuthenticationResultInterface $authenticated_with
-     * @param array                         $additional_arguments
+     * @param AdapterInterface                   $adapter
+     * @param AuthenticatedUserInterface|null    $authenticated_user
+     * @param AuthenticationResultInterface|null $authenticated_with
+     * @param array                              $additional_arguments
      */
-    public function __construct(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments = [])
+    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, array $additional_arguments = [])
     {
-        $this->request = $request;
-        $this->response = $response;
+        $this->adapter = $adapter;
         $this->authenticated_user = $authenticated_user;
         $this->authenticated_with = $authenticated_with;
         $this->additional_arguments = $additional_arguments;
     }
 
     /**
-     * @return ServerRequestInterface
+     * {@inheritdoc}
      */
-    public function getRequest()
+    public function getAdapter()
     {
-        return $this->request;
+        return $this->adapter;
     }
 
     /**
-     * @return ResponseInterface
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return AuthenticatedUserInterface
+     * {@inheritdoc}
      */
     public function getAuthenticatedUser()
     {
@@ -86,7 +70,7 @@ class Transport implements TransportInterface
     }
 
     /**
-     * @return AuthenticationResultInterface
+     * {@inheritdoc}
      */
     public function getAuthenticatedWith()
     {
@@ -94,12 +78,18 @@ class Transport implements TransportInterface
     }
 
     /**
-     * Return an array of any additional arguments that system whats to transport alongside the main four arguments.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAdditionalArguments()
     {
         return $this->additional_arguments;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEmpty()
+    {
+        return empty($this->authenticated_user) && empty($this->authenticated_with);
     }
 }
