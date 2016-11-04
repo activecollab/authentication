@@ -88,6 +88,16 @@ class Transport implements TransportInterface
     /**
      * {@inheritdoc}
      */
+    public function &addArgument($arg_name, $arg_value)
+    {
+        $this->additional_arguments[$arg_name] = $arg_value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isEmpty()
     {
         return empty($this->authenticated_user) && empty($this->authenticated_with);

@@ -42,6 +42,15 @@ interface TransportInterface
     public function getAdditionalArguments();
 
     /**
+     * Add argument to the list of additional arguments.
+     *
+     * @param  string $arg_name
+     * @param  mixed  $arg_value
+     * @return $this
+     */
+    public function &addArgument($arg_name, $arg_value);
+
+    /**
      * @return bool
      */
     public function isEmpty();
