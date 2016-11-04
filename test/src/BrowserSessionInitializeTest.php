@@ -93,9 +93,9 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
     }
 
     /**
-     * Test session ttl expiration
+     * Test session ttl expiration.
      */
-    public function testAuthenticationSessionTtlDuration() 
+    public function testAuthenticationSessionTtlDuration()
     {
         $test_session_id = 's123';
 

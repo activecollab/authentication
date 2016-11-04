@@ -66,7 +66,7 @@ class Authentication implements AuthenticationInterface
                 throw $last_exception;
             }
 
-            return $request;
+            return null;
         }
 
         if (count($results) > 1) {

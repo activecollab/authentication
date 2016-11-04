@@ -11,8 +11,8 @@ namespace ActiveCollab\Authentication\Test;
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
-use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
+use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 
