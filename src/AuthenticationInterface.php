@@ -13,6 +13,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -27,6 +28,16 @@ interface AuthenticationInterface
      * @return TransportInterface|null
      */
     public function initialize(ServerRequestInterface $request);
+
+    /**
+     * Finalize authentication and apply data from the transport to the response (and optionally request).
+     *
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  TransportInterface     $authentication_result
+     * @return array
+     */
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $authentication_result);
 
     /**
      * Authorize and authenticate with given credentials against authorization/authentication source.

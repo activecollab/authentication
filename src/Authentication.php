@@ -10,11 +10,14 @@ namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+use LogicException;
 
 /**
  * @package ActiveCollab\Authentication
@@ -74,6 +77,18 @@ class Authentication implements AuthenticationInterface
         }
 
         return $results[0];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $authentication_result)
+    {
+        if ($authentication_result->isEmpty()) {
+            throw new LogicException('Finalization is not possible with an empty authentication result');
+        }
+
+        return $authentication_result->getAdapter()->finalize($request, $response, $authentication_result->getAuthenticatedUser(), $authentication_result->getAuthenticatedWith(), $authentication_result->getAdditionalArguments());
     }
 
     /**

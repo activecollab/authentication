@@ -30,12 +30,14 @@ interface AdapterInterface
     /**
      * Finish initialization once adapter which did the authentication is known (and is the only one).
      *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  TransportInterface     $transport
+     * @param  ServerRequestInterface        $request
+     * @param  ResponseInterface             $response
+     * @param  AuthenticatedUserInterface    $authenticated_user
+     * @param  AuthenticationResultInterface $authenticated_with
+     * @param  array                         $additional_arguments
      * @return array
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport);
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments);
 
     /**
      * Authenticate user against authentication source.

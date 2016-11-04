@@ -8,7 +8,8 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,8 +21,12 @@ abstract class Adapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport)
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments)
     {
+        $request = $request
+            ->withAttribute('authenticated_user', $authenticated_user)
+            ->withAttribute('authenticated_with', $authenticated_with);
+
         return [$request, $response];
     }
 }

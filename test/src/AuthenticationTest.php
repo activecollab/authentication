@@ -68,7 +68,7 @@ class AuthenticationTest extends RequestResponseTestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Invalid object type provided
      */
     public function testForInvalidAdapterExceptionIsThrown()
@@ -76,15 +76,13 @@ class AuthenticationTest extends RequestResponseTestCase
         new Authentication([new stdClass()]);
     }
 
-    public function testAdaptersNotInitializedReturnsRequest()
+    public function testAdaptersNotInitializedReturnsNull()
     {
-        $request = (new Authentication([]))->initialize($this->request);
-
-        $this->assertSame($request, $this->request);
+        $this->assertNull((new Authentication([]))->initialize($this->request));
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidTokenException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidTokenException
      * @expectedExceptionMessage Authorization token is not valid
      */
     public function testFailedAdapterInitializationThrowsException()
@@ -95,7 +93,7 @@ class AuthenticationTest extends RequestResponseTestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      * @expectedExceptionMessage You can not be authenticated with more than one authentication method
      */
     public function testMultipleAdapterSuccessfullyInitializedThrowsException()
