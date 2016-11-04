@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\Adapter\TokenBearer;
+use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\TestCase\TokenBearerTestCase;
@@ -33,7 +33,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
         ]);
         $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
 
-        $result = (new TokenBearer($user_repository, $token_repository))->authenticate($user);
+        $result = (new TokenBearerAdapter($user_repository, $token_repository))->authenticate($user);
 
         $this->assertInstanceOf(TokenInterface::class, $result);
     }

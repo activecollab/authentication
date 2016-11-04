@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\Adapter\BrowserSession;
+use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
@@ -33,7 +33,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
         ]);
         $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
 
-        $result = (new BrowserSession($user_repository, $session_repository, $this->cookies))->authenticate($user);
+        $result = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->authenticate($user);
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);

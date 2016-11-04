@@ -8,7 +8,7 @@
 
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\Adapter\TokenBearer;
+use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
@@ -89,7 +89,7 @@ class AuthenticationTest extends RequestResponseTestCase
      */
     public function testFailedAdapterInitializationThrowsException()
     {
-        $token_bearer = new TokenBearer($this->empty_user_repository, $this->empty_token_repository);
+        $token_bearer = new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository);
 
         (new Authentication([$token_bearer]))->initialize($this->request);
     }
@@ -101,7 +101,7 @@ class AuthenticationTest extends RequestResponseTestCase
     public function testMultipleAdapterSuccessfullyInitializedThrowsException()
     {
         $authentication = new Authentication(
-            [new TokenBearer($this->user_repository, $this->token_repository), new TokenBearer($this->user_repository, $this->token_repository)],
+            [new TokenBearerAdapter($this->user_repository, $this->token_repository), new TokenBearerAdapter($this->user_repository, $this->token_repository)],
             $this->authorizer
         );
 
@@ -110,7 +110,7 @@ class AuthenticationTest extends RequestResponseTestCase
 
     public function testUserIsAuthorized()
     {
-        $token_bearer = new TokenBearer($this->user_repository, $this->token_repository);
+        $token_bearer = new TokenBearerAdapter($this->user_repository, $this->token_repository);
 
         $authentication = new Authentication([$token_bearer]);
         $request = $authentication->initialize($this->request);
