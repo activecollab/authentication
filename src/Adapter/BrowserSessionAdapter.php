@@ -17,6 +17,7 @@ use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepository
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -84,6 +85,22 @@ class BrowserSessionAdapter extends Adapter
         }
 
         throw new InvalidSessionException();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments)
+    {
+        if (!$authenticated_with instanceof SessionInterface) {
+            throw new InvalidArgumentException('Only user sessions are supported');
+        }
+
+        list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
+            'ttl' => $authenticated_with->getSessionTtl(),
+        ]);
+
+        return parent::finalize($request, $response, $authenticated_user, $authenticated_with, $additional_arguments);
     }
 
     /**
