@@ -95,6 +95,8 @@ class BrowserSessionAdapter extends Adapter
         if (!$authenticated_with instanceof SessionInterface) {
             throw new InvalidArgumentException('Only user sessions are supported');
         }
+        
+        $authenticated_with->extendSession();
 
         list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
             'ttl' => $authenticated_with->getSessionTtl(),
