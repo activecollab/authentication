@@ -97,8 +97,9 @@ class Authentication implements AuthenticationInterface
     public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials)
     {
         $user = $authorizer->verifyCredentials($credentials);
+        $authenticated_with = $adapter->authenticate($user);
 
-        return $adapter->authenticate($user);
+        return new Transport($adapter, $user, $authenticated_with);
     }
 
     /**

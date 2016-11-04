@@ -11,6 +11,7 @@ namespace ActiveCollab\Authentication\Test;
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Fixtures\Authorizer;
@@ -111,9 +112,10 @@ class AuthenticationTest extends RequestResponseTestCase
         $token_bearer = new TokenBearerAdapter($this->user_repository, $this->token_repository);
 
         $authentication = new Authentication([$token_bearer]);
-        $request = $authentication->initialize($this->request);
-        $authenticated_with = $authentication->authorize($this->authorizer, $token_bearer, ['username' => 'john@doe.com']);
+        $authentication->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticationResultInterface::class, $authenticated_with);
+        $authentication_result = $authentication->authorize($this->authorizer, $token_bearer, ['username' => 'john@doe.com']);
+
+        $this->assertInstanceOf(TransportInterface::class, $authentication_result);
     }
 }
