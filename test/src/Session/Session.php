@@ -126,4 +126,12 @@ class Session implements SessionInterface
 
         return ['session_id' => $this->session_id, 'user_id' => $this->user_id, 'expires_at' => $expires_at];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function extendSession($reference_timestamp = null)
+    {
+        
+    }
 }
