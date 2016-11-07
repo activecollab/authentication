@@ -54,6 +54,21 @@ interface AuthenticationInterface
     public function getAdapters();
 
     /**
+     * Return name of request attribute where execution result is stored.
+     *
+     * @return string
+     */
+    public function getExecutionResultAttributeName();
+
+    /**
+     * Set name of request attribute where execution result is stored.
+     *
+     * @param  string $value
+     * @return $this
+     */
+    public function &setExecutionResultAttributeName($value);
+
+    /**
      * Authentication can be used as a PSR-7 middleware.
      *
      * @param  ServerRequestInterface $request

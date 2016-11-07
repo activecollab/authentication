@@ -115,6 +115,34 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
+     * @var string
+     */
+    private $execution_result_attribute_name;
+
+    /**
+     * Return name of request attribute where execution result is stored.
+     *
+     * @return string
+     */
+    public function getExecutionResultAttributeName()
+    {
+        return $this->execution_result_attribute_name;
+    }
+
+    /**
+     * Set name of request attribute where execution result is stored.
+     *
+     * @param  string $value
+     * @return $this
+     */
+    public function &setExecutionResultAttributeName($value)
+    {
+        $this->execution_result_attribute_name = $value;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
@@ -127,6 +155,17 @@ class Authentication implements AuthenticationInterface
 
         if ($next) {
             $response = $next($request, $response);
+        }
+
+        // In case we find an execution result that is encapsulated authentication result, finalize it.
+        // This situation happens when log in action is called for example, and result fo authorisation is returned and
+        // stored as a request attribute.
+        if ($this->getExecutionResultAttributeName()) {
+            $exec_result = $request->getAttribute($this->getExecutionResultAttributeName());
+
+            if ($exec_result instanceof TransportInterface && !$exec_result->isEmpty() && !$exec_result->isFinalized()) {
+                $response = $exec_result->finalize($request, $response)[1];
+            }
         }
 
         return $response;
