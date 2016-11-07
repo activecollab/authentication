@@ -52,14 +52,6 @@ interface TransportInterface
     public function &setPayload($value);
 
     /**
-     * Set response payload.
-     *
-     * @param  mixed $payload
-     * @return $this
-     */
-    public function &setResponsePayload($payload);
-
-    /**
      * @return bool
      */
     public function isEmpty();
