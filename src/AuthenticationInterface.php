@@ -78,7 +78,7 @@ interface AuthenticationInterface
      * @param  callable|null          $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
+    public function __invoke(ServerRequestInterface &$request, ResponseInterface $response, callable $next = null);
 
     /**
      * Return authenticated in user.
@@ -104,7 +104,7 @@ interface AuthenticationInterface
      * @param  AuthenticationResultInterface $value
      * @return $this
      */
-    protected function &setAuthenticatedWith(AuthenticationResultInterface $value);
+    public function &setAuthenticatedWith(AuthenticationResultInterface $value);
 
     /**
      * @param callable|null $value

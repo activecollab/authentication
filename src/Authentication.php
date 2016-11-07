@@ -164,7 +164,7 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(ServerRequestInterface &$request, ResponseInterface $response, callable $next = null)
     {
         $auth_result = $this->initializeAdapters($request);
 
@@ -264,7 +264,7 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    protected function &setAuthenticatedWith(AuthenticationResultInterface $value)
+    public function &setAuthenticatedWith(AuthenticationResultInterface $value)
     {
         $this->authenticated_with = $value;
 
