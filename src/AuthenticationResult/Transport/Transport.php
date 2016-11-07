@@ -36,9 +36,9 @@ class Transport implements TransportInterface
     private $authenticated_with;
 
     /**
-     * @var array
+     * @var mixed
      */
-    private $additional_arguments;
+    private $payload;
 
     /**
      * Transport constructor.
@@ -46,14 +46,14 @@ class Transport implements TransportInterface
      * @param AdapterInterface                   $adapter
      * @param AuthenticatedUserInterface|null    $authenticated_user
      * @param AuthenticationResultInterface|null $authenticated_with
-     * @param array                              $additional_arguments
+     * @param mixed                              $payload
      */
-    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, array $additional_arguments = [])
+    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, $payload = null)
     {
         $this->adapter = $adapter;
         $this->authenticated_user = $authenticated_user;
         $this->authenticated_with = $authenticated_with;
-        $this->additional_arguments = $additional_arguments;
+        $this->payload = $payload;
     }
 
     /**
@@ -83,40 +83,19 @@ class Transport implements TransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdditionalArguments()
+    public function getPayload()
     {
-        return $this->additional_arguments;
+        return $this->payload;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function &addArgument($arg_name, $arg_value)
+    public function &setPayload($value)
     {
-        $this->additional_arguments[$arg_name] = $arg_value;
+        $this->payload = $value;
 
         return $this;
-    }
-
-    /**
-     * Return response payload.
-     *
-     * @return mixed
-     */
-    public function getResponsePayload()
-    {
-        return isset($this->additional_arguments['_response_payload']) ? $this->additional_arguments['_response_payload'] : null;
-    }
-
-    /**
-     * Set response payload.
-     *
-     * @param  mixed $payload
-     * @return $this
-     */
-    public function &setResponsePayload($payload)
-    {
-        return $this->addArgument('_response_payload', $payload);
     }
 
     /**
@@ -149,7 +128,7 @@ class Transport implements TransportInterface
             throw new LogicException('Authentication already finalized');
         }
 
-        $result = $this->getAdapter()->finalize($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getAdditionalArguments());
+        $result = $this->getAdapter()->finalize($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getPayload());
         $this->is_finalized = true;
 
         return $result;

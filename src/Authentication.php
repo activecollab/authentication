@@ -30,6 +30,11 @@ class Authentication implements AuthenticationInterface
     private $adapters;
 
     /**
+     * @var string
+     */
+    private $execution_result_attribute_name;
+
+    /**
      * @param array $adapters
      */
     public function __construct(array $adapters)
@@ -92,7 +97,7 @@ class Authentication implements AuthenticationInterface
             throw new LogicException('Finalization is not possible with an empty authentication result');
         }
 
-        return $authentication_result->getAdapter()->finalize($request, $response, $authentication_result->getAuthenticatedUser(), $authentication_result->getAuthenticatedWith(), $authentication_result->getAdditionalArguments());
+        return $authentication_result->getAdapter()->finalize($request, $response, $authentication_result->getAuthenticatedUser(), $authentication_result->getAuthenticatedWith(), $authentication_result->getPayload());
     }
 
     /**
@@ -113,11 +118,6 @@ class Authentication implements AuthenticationInterface
     {
         return $this->adapters;
     }
-
-    /**
-     * @var string
-     */
-    private $execution_result_attribute_name;
 
     /**
      * Return name of request attribute where execution result is stored.

@@ -34,10 +34,10 @@ interface AdapterInterface
      * @param  ResponseInterface             $response
      * @param  AuthenticatedUserInterface    $authenticated_user
      * @param  AuthenticationResultInterface $authenticated_with
-     * @param  array                         $additional_arguments
+     * @param  mixed                         $payload
      * @return array
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments);
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, $payload = null);
 
     /**
      * Authenticate user against authentication source.

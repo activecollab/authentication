@@ -37,27 +37,19 @@ interface TransportInterface
     public function getAuthenticatedWith();
 
     /**
-     * Return an array of any additional arguments that adapter wants to pass alogside authorization results.
-     *
-     * @return array
-     */
-    public function getAdditionalArguments();
-
-    /**
-     * Add argument to the list of additional arguments.
-     *
-     * @param  string $arg_name
-     * @param  mixed  $arg_value
-     * @return $this
-     */
-    public function &addArgument($arg_name, $arg_value);
-
-    /**
-     * Return response payload.
+     * Return a possible response payload after successful authorization.
      *
      * @return mixed
      */
-    public function getResponsePayload();
+    public function getPayload();
+
+    /**
+     * Set authorization response payload, if neededs.
+     *
+     * @param  mixed $value
+     * @return $this
+     */
+    public function &setPayload($value);
 
     /**
      * Set response payload.

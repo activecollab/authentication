@@ -90,7 +90,7 @@ class BrowserSessionAdapter extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, array $additional_arguments)
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, $payload = null)
     {
         if (!$authenticated_with instanceof SessionInterface) {
             throw new InvalidArgumentException('Only user sessions are supported');
@@ -102,7 +102,7 @@ class BrowserSessionAdapter extends Adapter
             'ttl' => $authenticated_with->getSessionTtl(),
         ]);
 
-        return parent::finalize($request, $response, $authenticated_user, $authenticated_with, $additional_arguments);
+        return parent::finalize($request, $response, $authenticated_user, $authenticated_with, $payload);
     }
 
     /**
