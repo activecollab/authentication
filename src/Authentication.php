@@ -14,10 +14,11 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
+use InvalidArgumentException;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
-use LogicException;
 
 /**
  * @package ActiveCollab\Authentication
@@ -28,6 +29,11 @@ class Authentication implements AuthenticationInterface
      * @var array
      */
     private $adapters;
+
+    /**
+     * @var string
+     */
+    private $request_key_for_encapsulated_result = 'encapsulated_authentication_result';
 
     /**
      * @param array $adapters
@@ -41,6 +47,29 @@ class Authentication implements AuthenticationInterface
         }
 
         $this->adapters = $adapters;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestKeyForEncapsulatedResult()
+    {
+        return $this->request_key_for_encapsulated_result;
+    }
+
+    /**
+     * @param  string $value
+     * @return $this
+     */
+    public function &setRequestKeyForEncapsulatedResult($value)
+    {
+        if (empty($value)) {
+            throw new InvalidArgumentException('Value cannot be empty');
+        }
+
+        $this->request_key_for_encapsulated_result = $value;
+
+        return $this;
     }
 
     /**
@@ -108,5 +137,69 @@ class Authentication implements AuthenticationInterface
     public function getAdapters()
     {
         return $this->adapters;
+    }
+
+    /**
+     * Authentication can be used as a PSR-7 middleware.
+     *
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  callable|null          $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    {
+        $auth_result = $this->runAdapters($request);
+
+        if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
+            list($request, $response) = $auth_result->finalize($request, $response);
+        }
+
+        // Initialize adapters and set the result as request key
+        $request = $request->withAttribute($this->getRequestKeyForEncapsulatedResult(), $auth_result);
+
+        if ($next) {
+            $response = $next($request, $response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param  ServerRequestInterface  $request
+     * @return TransportInterface|null
+     * @throws Exception
+     */
+    private function runAdapters(ServerRequestInterface $request)
+    {
+        $last_exception = null;
+        $results = [];
+
+        /** @var AdapterInterface $adapter */
+        foreach ($this->adapters as $adapter) {
+            try {
+                $initialization_result = $adapter->initialize($request);
+
+                if ($initialization_result instanceof Transport && !$initialization_result->isEmpty()) {
+                    $results[] = $initialization_result;
+                }
+            } catch (Exception $e) {
+                $last_exception = $e;
+            }
+        }
+
+        if (empty($results)) {
+            if ($last_exception) {
+                throw $last_exception;
+            }
+
+            return null;
+        }
+
+        if (count($results) > 1) {
+            throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
+        }
+
+        return $results[0];
     }
 }

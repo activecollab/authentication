@@ -11,6 +11,8 @@ namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport
@@ -69,4 +71,20 @@ interface TransportInterface
      * @return bool
      */
     public function isEmpty();
+
+    /**
+     * Sign request and response based on authentication result.
+     *
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @return array
+     */
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response);
+
+    /**
+     * Return true if finalize method has been executed.
+     *
+     * @return bool
+     */
+    public function isFinalized();
 }

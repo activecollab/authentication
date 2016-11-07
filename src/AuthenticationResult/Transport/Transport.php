@@ -11,6 +11,9 @@ namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use LogicException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport
@@ -122,5 +125,43 @@ class Transport implements TransportInterface
     public function isEmpty()
     {
         return empty($this->authenticated_user) && empty($this->authenticated_with);
+    }
+
+    /**
+     * @var bool
+     */
+    private $is_finalized = false;
+
+    /**
+     * Sign request and response based on authentication result.
+     *
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @return array
+     */
+    public function finalize(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        if ($this->isEmpty()) {
+            throw new LogicException('Empty result cannot be used to finalize authentication');
+        }
+
+        if ($this->isFinalized()) {
+            throw new LogicException('Authentication already finalized');
+        }
+
+        $result = $this->getAdapter()->finalize($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getAdditionalArguments());
+        $this->is_finalized = true;
+
+        return $result;
+    }
+
+    /**
+     * Return true if finalize method has been executed.
+     *
+     * @return bool
+     */
+    public function isFinalized()
+    {
+        return $this->is_finalized;
     }
 }
