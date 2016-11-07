@@ -132,6 +132,5 @@ class Session implements SessionInterface
      */
     public function extendSession($reference_timestamp = null)
     {
-        
     }
 }

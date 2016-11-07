@@ -186,7 +186,7 @@ class Authentication implements AuthenticationInterface
             $exec_result = $request->getAttribute($this->getExecutionResultAttributeName());
 
             if ($exec_result instanceof TransportInterface && !$exec_result->isEmpty() && !$exec_result->isFinalized()) {
-                $response = $exec_result->finalize($request, $response)[1];
+                list($request, $response) = $exec_result->finalize($request, $response);
             }
         }
 

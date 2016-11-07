@@ -90,7 +90,7 @@ interface AuthenticationInterface
     /**
      * Override authentication adapter and force set logged user for this request.
      *
-     * @param  AuthenticatedUserInterface|null            $user
+     * @param  AuthenticatedUserInterface|null $user
      * @return $this
      */
     public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null);
@@ -107,7 +107,7 @@ interface AuthenticationInterface
     public function &setAuthenticatedWith(AuthenticationResultInterface $value);
 
     /**
-     * @param callable|null $value
+     * @param  callable|null $value
      * @return $this
      */
     public function &setOnAuthenciatedUserChanged(callable $value = null);

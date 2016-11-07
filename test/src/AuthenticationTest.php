@@ -10,7 +10,6 @@ namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\Authentication;
-use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
