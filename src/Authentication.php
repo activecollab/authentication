@@ -9,6 +9,8 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
@@ -33,6 +35,23 @@ class Authentication implements AuthenticationInterface
      * @var string
      */
     private $execution_result_attribute_name;
+
+    /**
+     * Authenticated user instance.
+     *
+     * @var AuthenticatedUserInterface
+     */
+    private $authenticated_user;
+
+    /**
+     * @var AuthenticationResultInterface
+     */
+    private $authenticated_with;
+
+    /**
+     * @var callable|null
+     */
+    private $on_authencated_user_changed;
 
     /**
      * @param array $adapters
@@ -150,6 +169,9 @@ class Authentication implements AuthenticationInterface
         $auth_result = $this->initializeAdapters($request);
 
         if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
+            $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+            $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+
             list($request, $response) = $auth_result->finalize($request, $response);
         }
 
@@ -207,5 +229,55 @@ class Authentication implements AuthenticationInterface
         }
 
         return $results[0];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &getAuthenticatedUser()
+    {
+        return $this->authenticated_user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null)
+    {
+        $this->authenticated_user = $user;
+
+        if (is_callable($this->on_authencated_user_changed)) {
+            call_user_func($this->on_authencated_user_changed, $user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return AuthenticationResultInterface|null
+     */
+    public function getAuthenticatedWith()
+    {
+        return $this->authenticated_with;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function &setAuthenticatedWith(AuthenticationResultInterface $value)
+    {
+        $this->authenticated_with = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setOnAuthenciatedUserChanged(callable $value = null)
+    {
+        $this->on_authencated_user_changed = $value;
+
+        return $this;
     }
 }

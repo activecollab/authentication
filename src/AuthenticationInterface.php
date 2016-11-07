@@ -9,6 +9,8 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -77,4 +79,36 @@ interface AuthenticationInterface
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
+
+    /**
+     * Return authenticated in user.
+     *
+     * @return AuthenticatedUserInterface
+     */
+    public function &getAuthenticatedUser();
+
+    /**
+     * Override authentication adapter and force set logged user for this request.
+     *
+     * @param  AuthenticatedUserInterface|null            $user
+     * @return $this
+     */
+    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null);
+
+    /**
+     * @return AuthenticationResultInterface|null
+     */
+    public function getAuthenticatedWith();
+
+    /**
+     * @param  AuthenticationResultInterface $value
+     * @return $this
+     */
+    protected function &setAuthenticatedWith(AuthenticationResultInterface $value);
+
+    /**
+     * @param callable|null $value
+     * @return $this
+     */
+    public function &setOnAuthenciatedUserChanged(callable $value = null);
 }
