@@ -14,7 +14,6 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
-use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,11 +30,6 @@ class Authentication implements AuthenticationInterface
     private $adapters;
 
     /**
-     * @var string
-     */
-    private $request_key_for_encapsulated_result = 'encapsulated_authentication_result';
-
-    /**
      * @param array $adapters
      */
     public function __construct(array $adapters)
@@ -50,33 +44,12 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
-     * @return string
-     */
-    public function getRequestKeyForEncapsulatedResult()
-    {
-        return $this->request_key_for_encapsulated_result;
-    }
-
-    /**
-     * @param  string $value
-     * @return $this
-     */
-    public function &setRequestKeyForEncapsulatedResult($value)
-    {
-        if (empty($value)) {
-            throw new InvalidArgumentException('Value cannot be empty');
-        }
-
-        $this->request_key_for_encapsulated_result = $value;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function initialize(ServerRequestInterface $request)
     {
+        // @TODO Legacy method
+
         $last_exception = null;
         $results = [];
 
@@ -113,6 +86,8 @@ class Authentication implements AuthenticationInterface
      */
     public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $authentication_result)
     {
+        // @TODO Legacy method
+
         if ($authentication_result->isEmpty()) {
             throw new LogicException('Finalization is not possible with an empty authentication result');
         }
@@ -140,23 +115,15 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
-     * Authentication can be used as a PSR-7 middleware.
-     *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  callable|null          $next
-     * @return ResponseInterface
+     * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        $auth_result = $this->runAdapters($request);
+        $auth_result = $this->initializeAdapters($request);
 
         if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
             list($request, $response) = $auth_result->finalize($request, $response);
         }
-
-        // Initialize adapters and set the result as request key
-        $request = $request->withAttribute($this->getRequestKeyForEncapsulatedResult(), $auth_result);
 
         if ($next) {
             $response = $next($request, $response);
@@ -170,7 +137,7 @@ class Authentication implements AuthenticationInterface
      * @return TransportInterface|null
      * @throws Exception
      */
-    private function runAdapters(ServerRequestInterface $request)
+    private function initializeAdapters(ServerRequestInterface $request)
     {
         $last_exception = null;
         $results = [];

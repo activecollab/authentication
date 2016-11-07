@@ -52,4 +52,14 @@ interface AuthenticationInterface
      * @return AdapterInterface[]
      */
     public function getAdapters();
+
+    /**
+     * Authentication can be used as a PSR-7 middleware.
+     *
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  callable|null          $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
 }
