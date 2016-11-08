@@ -58,11 +58,11 @@ class SamlUtils
      * @param string $saml_key
      */
     public function __construct(
-        string $consumer_service_url,
-        string $idp_destination,
-        string $issuer,
-        string $saml_crt,
-        string $saml_key
+        $consumer_service_url,
+        $idp_destination,
+        $issuer,
+        $saml_crt,
+        $saml_key
     ) {
         $this->consumer_service_url = $consumer_service_url;
         $this->idp_destination = $idp_destination;
@@ -78,8 +78,8 @@ class SamlUtils
      */
     public function getAuthnRequest()
     {
-        $authnRequest = new AuthnRequest();
-        $authnRequest
+        $authn_request = new AuthnRequest();
+        $authn_request
             ->setAssertionConsumerServiceURL($this->consumer_service_url)
             ->setProtocolBinding(SamlConstants::BINDING_SAML2_HTTP_POST)
             ->setID(Helper::generateID())
@@ -88,22 +88,22 @@ class SamlUtils
             ->setIssuer(new Issuer($this->issuer));
 
         $certificate = X509Certificate::fromFile($this->saml_crt);
-        $privateKey = KeyHelper::createPrivateKey($this->saml_key, '', true);
+        $private_key = KeyHelper::createPrivateKey($this->saml_key, '', true);
 
-        $authnRequest->setSignature(new SignatureWriter($certificate, $privateKey));
+        $authn_request->setSignature(new SignatureWriter($certificate, $private_key));
 
-        $serializationContext = new SerializationContext();
-        $authnRequest->serialize($serializationContext->getDocument(), $serializationContext);
+        $serialization_context = new SerializationContext();
+        $authn_request->serialize($serialization_context->getDocument(), $serialization_context);
 
-        $bindingFactory = new BindingFactory();
-        $redirectBinding = $bindingFactory->create(\LightSaml\SamlConstants::BINDING_SAML2_HTTP_REDIRECT);
+        $binding_factory = new BindingFactory();
+        $redirect_binding = $binding_factory->create(SamlConstants::BINDING_SAML2_HTTP_REDIRECT);
 
-        $messageContext = new MessageContext();
-        $messageContext->setMessage($authnRequest);
+        $message_context = new MessageContext();
+        $message_context->setMessage($authn_request);
 
-        /** @var \Symfony\Component\HttpFoundation\RedirectResponse $httpResponse */
-        $httpResponse = $redirectBinding->send($messageContext);
+        /** @var \Symfony\Component\HttpFoundation\RedirectResponse $http_response */
+        $http_response = $redirect_binding->send($message_context);
 
-        return $httpResponse->getTargetUrl();
+        return $http_response->getTargetUrl();
     }
 }
