@@ -10,6 +10,7 @@ namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
+use LightSaml\ClaimTypes;
 use LightSaml\Model\Context\DeserializationContext;
 use LightSaml\Model\Protocol\Response;
 
@@ -45,12 +46,12 @@ class SamlAuthorizer implements AuthorizerInterface
         $username = null;
 
         foreach ($saml_response->getAllAssertions() as $assertion) {
-            if ($assertion->getSubject()) {
-                $username = $assertion->getSubject()->getNameID();
+            foreach ($assertion->getAllAttributeStatements() as $statement) {
+                $username = $statement->getFirstAttributeByName(ClaimTypes::EMAIL_ADDRESS);
             }
         }
 
-        $user = $this->user_repository->findByUsername($username->getValue());
+        $user = $this->user_repository->findByUsername($username);
 
         if (!$user) {
             throw new UserNotFoundException();
