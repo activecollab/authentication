@@ -36,11 +36,11 @@ class SamlAuthorizer implements AuthorizerInterface
      */
     public function verifyCredentials(array $payload)
     {
-        $deserializationContext = new DeserializationContext();
-        $deserializationContext->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
 
         $saml_response = new Response();
-        $saml_response->deserialize($deserializationContext->getDocument()->firstChild, $deserializationContext);
+        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
 
         $username = null;
 
