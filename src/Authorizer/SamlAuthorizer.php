@@ -51,7 +51,7 @@ class SamlAuthorizer implements AuthorizerInterface
             }
         }
 
-        $user = $this->user_repository->findByUsername($username);
+        $user = $this->user_repository->findByUsername($username->getFirstAttributeValue());
 
         if (!$user) {
             throw new UserNotFoundException();
