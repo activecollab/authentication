@@ -87,8 +87,9 @@ class SamlUtils
             ->setDestination($this->idp_destination)
             ->setIssuer(new Issuer($this->issuer));
 
-        $certificate = X509Certificate::fromFile($this->saml_crt);
-        $privateKey = KeyHelper::createPrivateKey($this->saml_key, '', true);
+        $certificate = new X509Certificate();
+        $certificate->loadPem($this->saml_crt);
+        $privateKey = KeyHelper::createPrivateKey($this->saml_key, '', false);
 
         $authnRequest->setSignature(new SignatureWriter($certificate, $privateKey));
 
