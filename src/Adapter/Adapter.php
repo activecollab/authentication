@@ -8,8 +8,9 @@
 
 namespace ActiveCollab\Authentication\Adapter;
 
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -21,11 +22,13 @@ abstract class Adapter implements AdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, $payload = null)
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport)
     {
-        $request = $request
-            ->withAttribute('authenticated_user', $authenticated_user)
-            ->withAttribute('authenticated_with', $authenticated_with);
+        if ($transport instanceof AuthenticationTransportInterface || $transport instanceof AuthorizationTransportInterface) {
+            $request = $request
+                ->withAttribute('authenticated_user', $transport->getAuthenticatedUser())
+                ->withAttribute('authenticated_with', $transport->getAuthenticatedWith());
+        }
 
         return [$request, $response];
     }

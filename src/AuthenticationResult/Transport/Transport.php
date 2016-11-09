@@ -92,7 +92,7 @@ abstract class Transport implements TransportInterface
             throw new LogicException('Authentication already finalized');
         }
 
-        $result = $this->getAdapter()->finalize($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getPayload());
+        $result = $this->getAdapter()->applyTo($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getPayload());
         $this->is_applied = true;
 
         return $result;

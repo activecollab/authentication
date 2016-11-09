@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
@@ -38,14 +39,12 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
         $this->assertNull((new BrowserSessionAdapter($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request));
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSessionException
-     */
-    public function testExceptionWhenSessionIsNotValid()
+    public function testInvalidSessionRequiresCleanUp()
     {
         $this->setCookie('sessid', 'not a valid session ID');
 
-        (new BrowserSessionAdapter($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
+        $result = (new BrowserSessionAdapter($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
+        $this->assertInstanceOf(CleanUpTransportInterface::class, $result);
     }
 
     /**

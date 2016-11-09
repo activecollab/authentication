@@ -15,7 +15,7 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization
  */
-interface AuthroizationTransportInterface extends TransportInterface
+interface AuthorizationTransportInterface extends TransportInterface
 {
     /**
      * @return AuthenticatedUserInterface

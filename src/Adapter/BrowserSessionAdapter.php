@@ -12,6 +12,12 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
@@ -93,25 +99,46 @@ class BrowserSessionAdapter extends Adapter
             }
         }
 
-        throw new InvalidSessionException();
+        return new CleanUpTransport($this);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, $payload = null)
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport)
     {
-        if (!$authenticated_with instanceof SessionInterface) {
-            throw new InvalidArgumentException('Only user sessions are supported');
+        // Extend session
+        if ($transport instanceof AuthenticationTransportInterface) {
+            $authenticated_with = $transport->getAuthenticatedWith();
+
+            if (!$authenticated_with instanceof SessionInterface) {
+                throw new InvalidArgumentException('Only user sessions are supported');
+            }
+
+            $authenticated_with->extendSession();
+
+            list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
+                'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+            ]);
+
+        // Log in
+        } elseif ($transport instanceof AuthorizationTransportInterface) {
+            $authenticated_with = $transport->getAuthenticatedWith();
+
+            if (!$authenticated_with instanceof SessionInterface) {
+                throw new InvalidArgumentException('Only user sessions are supported');
+            }
+
+            list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
+                'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+            ]);
+
+        // Log out or clean-up
+        } elseif ($transport instanceof DeauthenticationTransportInterface || $transport instanceof CleanUpTransportInterface) {
+            list ($request, $response) = $this->cookies->remove($request, $response, $this->session_cookie_name);
         }
 
-        $authenticated_with->extendSession();
-
-        list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
-            'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
-        ]);
-
-        return parent::finalize($request, $response, $authenticated_user, $authenticated_with, $payload);
+        return parent::applyTo($request, $response, $transport);
     }
 
     /**
