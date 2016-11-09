@@ -46,9 +46,10 @@ interface AuthenticationInterface
      * @param  AuthorizerInterface $authorizer
      * @param  AdapterInterface    $adapter
      * @param  array               $credentials
+     * @param  mixed               $payload
      * @return TransportInterface
      */
-    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials);
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null);
 
     /**
      * @return AdapterInterface[]
