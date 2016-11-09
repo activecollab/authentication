@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Active Collab Authentication project.
+ * This file is part of the Active Collab project.
  *
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
@@ -10,13 +10,16 @@ namespace ActiveCollab\Authentication\Saml;
 
 use DateTime;
 use LightSaml\Binding\BindingFactory;
+use LightSaml\ClaimTypes;
 use LightSaml\Context\Profile\MessageContext;
 use LightSaml\Credential\KeyHelper;
 use LightSaml\Credential\X509Certificate;
 use LightSaml\Helper;
 use LightSaml\Model\Assertion\Issuer;
+use LightSaml\Model\Context\DeserializationContext;
 use LightSaml\Model\Context\SerializationContext;
 use LightSaml\Model\Protocol\AuthnRequest;
+use LightSaml\Model\Protocol\Response;
 use LightSaml\Model\XmlDSig\SignatureWriter;
 use LightSaml\SamlConstants;
 
@@ -26,70 +29,34 @@ use LightSaml\SamlConstants;
 class SamlUtils
 {
     /**
-     * @var string
+     * Get saml authnRequest.
+     *
+     * @param  string $consumer_service_url
+     * @param  string $idp_destination
+     * @param  string $issuer
+     * @param  string $saml_crt
+     * @param  string $saml_key
+     * @return string
      */
-    private $consumer_service_url;
-
-    /**
-     * @var string
-     */
-    private $idp_destination;
-
-    /**
-     * @var string
-     */
-    private $issuer;
-
-    /**
-     * @var string
-     */
-    private $saml_crt;
-
-    /**
-     * @var string
-     */
-    private $saml_key;
-
-    /**
-     * @param string $consumer_service_url
-     * @param string $idp_destination
-     * @param string $issuer
-     * @param string $saml_crt
-     * @param string $saml_key
-     */
-    public function __construct(
+    public function getAuthnRequest(
         $consumer_service_url,
         $idp_destination,
         $issuer,
         $saml_crt,
         $saml_key
     ) {
-        $this->consumer_service_url = $consumer_service_url;
-        $this->idp_destination = $idp_destination;
-        $this->issuer = $issuer;
-        $this->saml_crt = $saml_crt;
-        $this->saml_key = $saml_key;
-    }
-
-    /**
-     * Get saml authnRequest.
-     *
-     * @return string
-     */
-    public function getAuthnRequest()
-    {
         $authn_request = new AuthnRequest();
         $authn_request
-            ->setAssertionConsumerServiceURL($this->consumer_service_url)
+            ->setAssertionConsumerServiceURL($consumer_service_url)
             ->setProtocolBinding(SamlConstants::BINDING_SAML2_HTTP_POST)
             ->setID(Helper::generateID())
             ->setIssueInstant(new DateTime())
-            ->setDestination($this->idp_destination)
-            ->setIssuer(new Issuer($this->issuer));
+            ->setDestination($idp_destination)
+            ->setIssuer(new Issuer($issuer));
 
         $certificate = new X509Certificate();
-        $certificate->loadPem($this->saml_crt);
-        $private_key = KeyHelper::createPrivateKey($this->saml_key, '', false);
+        $certificate->loadPem($saml_crt);
+        $private_key = KeyHelper::createPrivateKey($saml_key, '', false);
 
         $authn_request->setSignature(new SignatureWriter($certificate, $private_key));
 
@@ -106,5 +73,50 @@ class SamlUtils
         $http_response = $redirect_binding->send($message_context);
 
         return $http_response->getTargetUrl();
+    }
+
+    /**
+     * Parse saml response.
+     *
+     * @param  array    $payload
+     * @return Response
+     */
+    public function parseSamlResponse(array $payload)
+    {
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
+
+        $saml_response = new Response();
+        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
+
+        return $saml_response;
+    }
+
+    /**
+     * @param  Response    $response
+     * @return null|string
+     */
+    public function getEmailAddress(Response $response)
+    {
+        foreach ($response->getAllAssertions() as $assertion) {
+            foreach ($assertion->getAllAttributeStatements() as $statement) {
+                $username = $statement->getFirstAttributeByName(ClaimTypes::EMAIL_ADDRESS);
+
+                if (!$username) {
+                    continue;
+                }
+
+                return $username->getFirstAttributeValue();
+            }
+        }
+    }
+
+    /**
+     * @param  Response $response
+     * @return string
+     */
+    public function getIssuerUrl(Response $response)
+    {
+        return $response->getIssuer()->getValue();
     }
 }

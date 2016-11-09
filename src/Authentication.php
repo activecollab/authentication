@@ -122,12 +122,12 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials)
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null)
     {
         $user = $authorizer->verifyCredentials($credentials);
         $authenticated_with = $adapter->authenticate($user);
 
-        return new Transport($adapter, $user, $authenticated_with);
+        return new Transport($adapter, $user, $authenticated_with, $payload);
     }
 
     /**

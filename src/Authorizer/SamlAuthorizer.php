@@ -9,7 +9,9 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
+use ActiveCollab\Authentication\Saml\SamlUtils;
 use LightSaml\ClaimTypes;
 use LightSaml\Model\Context\DeserializationContext;
 use LightSaml\Model\Protocol\Response;
@@ -37,21 +39,11 @@ class SamlAuthorizer implements AuthorizerInterface
      */
     public function verifyCredentials(array $payload)
     {
-        $deserialization_context = new DeserializationContext();
-        $deserialization_context->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
-
-        $saml_response = new Response();
-        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
-
-        $username = null;
-
-        foreach ($saml_response->getAllAssertions() as $assertion) {
-            foreach ($assertion->getAllAttributeStatements() as $statement) {
-                $username = $statement->getFirstAttributeByName(ClaimTypes::EMAIL_ADDRESS);
-            }
+        if (!isset($payload['username'])) {
+            throw new InvalidCredentialsException();
         }
 
-        $user = $this->user_repository->findByUsername($username->getFirstAttributeValue());
+        $user = $this->user_repository->findByUsername($payload['username']);
 
         if (!$user) {
             throw new UserNotFoundException();
