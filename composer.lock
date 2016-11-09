@@ -642,16 +642,16 @@
         },
         {
             "name": "lightsaml/lightsaml",
-            "version": "1.1.3",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightSAML/lightSAML.git",
-                "reference": "54d67869e8a67dad33cea20605150855f153b3aa"
+                "reference": "1ac26c63bee6b0ec82b4f57cabdad88df2bb293d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightSAML/lightSAML/zipball/54d67869e8a67dad33cea20605150855f153b3aa",
-                "reference": "54d67869e8a67dad33cea20605150855f153b3aa",
+                "url": "https://api.github.com/repos/lightSAML/lightSAML/zipball/1ac26c63bee6b0ec82b4f57cabdad88df2bb293d",
+                "reference": "1ac26c63bee6b0ec82b4f57cabdad88df2bb293d",
                 "shasum": ""
             },
             "require": {
@@ -701,7 +701,7 @@
                 "lightSAML",
                 "php"
             ],
-            "time": "2016-11-04 13:32:48"
+            "time": "2016-11-08 11:22:28"
         },
         {
             "name": "myclabs/deep-copy",
