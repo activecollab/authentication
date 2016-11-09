@@ -118,7 +118,7 @@ class Transport implements TransportInterface
      * @param  ResponseInterface      $response
      * @return array
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response)
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($this->isEmpty()) {
             throw new LogicException('Empty result cannot be used to finalize authentication');

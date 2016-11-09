@@ -172,7 +172,7 @@ class Authentication implements AuthenticationInterface
             $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
             $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
 
-            list($request, $response) = $auth_result->finalize($request, $response);
+            list($request, $response) = $auth_result->applyTo($request, $response);
         }
 
         if ($next) {
@@ -186,7 +186,7 @@ class Authentication implements AuthenticationInterface
             $exec_result = $request->getAttribute($this->getExecutionResultAttributeName());
 
             if ($exec_result instanceof TransportInterface && !$exec_result->isEmpty() && !$exec_result->isFinalized()) {
-                list($request, $response) = $exec_result->finalize($request, $response);
+                list($request, $response) = $exec_result->applyTo($request, $response);
             }
         }
 

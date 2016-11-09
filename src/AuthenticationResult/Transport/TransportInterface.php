@@ -57,13 +57,13 @@ interface TransportInterface
     public function isEmpty();
 
     /**
-     * Sign request and response based on authentication result.
+     * Apply authentication result to request and response, and return modified objects.
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface      $response
      * @return array
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response);
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response);
 
     /**
      * Return true if finalize method has been executed.
