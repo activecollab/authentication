@@ -11,7 +11,7 @@ namespace ActiveCollab\Authentication\Adapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
 use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
@@ -89,7 +89,7 @@ class BrowserSessionAdapter extends Adapter
             if ($user = $session->getAuthenticatedUser($this->user_repository)) {
                 $this->session_repository->recordUsageBySession($session);
 
-                return new Transport($this, $user, $session);
+                return new AuthenticationTransport($this, $user, $session);
             }
         }
 

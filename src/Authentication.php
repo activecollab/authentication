@@ -11,6 +11,7 @@ namespace ActiveCollab\Authentication;
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthroizationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
@@ -122,7 +123,7 @@ class Authentication implements AuthenticationInterface
         $user = $authorizer->verifyCredentials($credentials);
         $authenticated_with = $adapter->authenticate($user);
 
-        return new Transport($adapter, $user, $authenticated_with, $payload);
+        return new AuthroizationTransport($adapter, $user, $authenticated_with, $payload);
     }
 
     /**

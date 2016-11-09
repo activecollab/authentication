@@ -11,10 +11,6 @@ namespace ActiveCollab\Authentication\Authorizer;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
-use ActiveCollab\Authentication\Saml\SamlUtils;
-use LightSaml\ClaimTypes;
-use LightSaml\Model\Context\DeserializationContext;
-use LightSaml\Model\Protocol\Response;
 
 /**
  * @package ActiveCollab\Authentication\Authorizer

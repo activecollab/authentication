@@ -9,8 +9,6 @@
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -25,16 +23,6 @@ interface TransportInterface
      * @return AdapterInterface
      */
     public function getAdapter();
-
-    /**
-     * @return AuthenticatedUserInterface|null
-     */
-    public function getAuthenticatedUser();
-
-    /**
-     * @return AuthenticationResultInterface|null
-     */
-    public function getAuthenticatedWith();
 
     /**
      * Return a possible response payload after successful authorization.
@@ -66,9 +54,9 @@ interface TransportInterface
     public function applyTo(ServerRequestInterface $request, ResponseInterface $response);
 
     /**
-     * Return true if finalize method has been executed.
+     * Return true if this transport has already been applied to request and response.
      *
      * @return bool
      */
-    public function isFinalized();
+    public function isApplied();
 }

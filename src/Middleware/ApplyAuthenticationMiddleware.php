@@ -34,7 +34,7 @@ class ApplyAuthenticationMiddleware
     {
         $transport = $this->getTransportFrom($request);
 
-        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isFinalized()) {
+        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
             list($request, $response) = $transport->applyTo($request, $response);
         }
 

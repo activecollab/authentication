@@ -11,7 +11,7 @@ namespace ActiveCollab\Authentication\Adapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
@@ -68,7 +68,7 @@ class TokenBearerAdapter extends Adapter
             if ($user = $token->getAuthenticatedUser($this->user_repository)) {
                 $this->token_repository->recordUsageByToken($token);
 
-                return new Transport($this, $user, $token);
+                return new AuthenticationTransport($this, $user, $token);
             }
         }
 

@@ -9,8 +9,6 @@
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,22 +16,12 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult\Transport
  */
-class Transport implements TransportInterface
+abstract class Transport implements TransportInterface
 {
     /**
      * @var AdapterInterface
      */
     private $adapter;
-
-    /**
-     * @var AuthenticatedUserInterface
-     */
-    private $authenticated_user;
-
-    /**
-     * @var AuthenticationResultInterface
-     */
-    private $authenticated_with;
 
     /**
      * @var mixed
@@ -43,16 +31,12 @@ class Transport implements TransportInterface
     /**
      * Transport constructor.
      *
-     * @param AdapterInterface                   $adapter
-     * @param AuthenticatedUserInterface|null    $authenticated_user
-     * @param AuthenticationResultInterface|null $authenticated_with
-     * @param mixed                              $payload
+     * @param AdapterInterface $adapter
+     * @param mixed            $payload
      */
-    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, $payload = null)
+    public function __construct(AdapterInterface $adapter, $payload = null)
     {
         $this->adapter = $adapter;
-        $this->authenticated_user = $authenticated_user;
-        $this->authenticated_with = $authenticated_with;
         $this->payload = $payload;
     }
 
@@ -62,22 +46,6 @@ class Transport implements TransportInterface
     public function getAdapter()
     {
         return $this->adapter;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedUser()
-    {
-        return $this->authenticated_user;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedWith()
-    {
-        return $this->authenticated_with;
     }
 
     /**
@@ -103,20 +71,16 @@ class Transport implements TransportInterface
      */
     public function isEmpty()
     {
-        return empty($this->authenticated_user) && empty($this->authenticated_with);
+        return false;
     }
 
     /**
      * @var bool
      */
-    private $is_finalized = false;
+    private $is_applied = false;
 
     /**
-     * Sign request and response based on authentication result.
-     *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @return array
+     * {@inheritdoc}
      */
     public function applyTo(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -124,23 +88,21 @@ class Transport implements TransportInterface
             throw new LogicException('Empty result cannot be used to finalize authentication');
         }
 
-        if ($this->isFinalized()) {
+        if ($this->isApplied()) {
             throw new LogicException('Authentication already finalized');
         }
 
         $result = $this->getAdapter()->finalize($request, $response, $this->getAuthenticatedUser(), $this->getAuthenticatedWith(), $this->getPayload());
-        $this->is_finalized = true;
+        $this->is_applied = true;
 
         return $result;
     }
 
     /**
-     * Return true if finalize method has been executed.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isFinalized()
+    public function isApplied()
     {
-        return $this->is_finalized;
+        return $this->is_applied;
     }
 }
