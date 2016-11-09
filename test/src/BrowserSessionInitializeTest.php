@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;

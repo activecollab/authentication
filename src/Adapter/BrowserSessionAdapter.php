@@ -14,11 +14,10 @@ use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterfa
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransport;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Cleanup\CleanUpTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
-use ActiveCollab\Authentication\Exception\InvalidSessionException;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Util\CurrentTimestamp;
@@ -117,7 +116,7 @@ class BrowserSessionAdapter extends Adapter
 
             $authenticated_with->extendSession();
 
-            list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
+            list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
                 'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
             ]);
 
@@ -129,13 +128,13 @@ class BrowserSessionAdapter extends Adapter
                 throw new InvalidArgumentException('Only user sessions are supported');
             }
 
-            list ($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
+            list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
                 'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
             ]);
 
         // Log out or clean-up
         } elseif ($transport instanceof DeauthenticationTransportInterface || $transport instanceof CleanUpTransportInterface) {
-            list ($request, $response) = $this->cookies->remove($request, $response, $this->session_cookie_name);
+            list($request, $response) = $this->cookies->remove($request, $response, $this->session_cookie_name);
         }
 
         return parent::applyTo($request, $response, $transport);
