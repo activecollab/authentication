@@ -66,53 +66,22 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function initialize(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        // @TODO Legacy method
+        $auth_result = $this->authenticatedUsingAdapters($request);
 
-        $last_exception = null;
-        $results = [];
+        if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
+            $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+            $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
 
-        /** @var AdapterInterface $adapter */
-        foreach ($this->adapters as $adapter) {
-            try {
-                $initialization_result = $adapter->initialize($request);
-
-                if ($initialization_result instanceof Transport && !$initialization_result->isEmpty()) {
-                    $results[] = $initialization_result;
-                }
-            } catch (Exception $e) {
-                $last_exception = $e;
-            }
+            list($request, $response) = $auth_result->applyTo($request, $response);
         }
 
-        if (empty($results)) {
-            if ($last_exception) {
-                throw $last_exception;
-            }
-
-            return null;
+        if ($next) {
+            $response = $next($request, $response);
         }
 
-        if (count($results) > 1) {
-            throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
-        }
-
-        return $results[0];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $authentication_result)
-    {
-        // @TODO Legacy method
-
-        if ($authentication_result->isEmpty()) {
-            throw new LogicException('Finalization is not possible with an empty authentication result.');
-        }
-
-        return $authentication_result->getAdapter()->finalize($request, $response, $authentication_result->getAuthenticatedUser(), $authentication_result->getAuthenticatedWith(), $authentication_result->getPayload());
+        return $response;
     }
 
     /**
@@ -135,32 +104,11 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
-    {
-        $auth_result = $this->initializeAdapters($request);
-
-        if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
-            $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
-            $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
-
-            list($request, $response) = $auth_result->applyTo($request, $response);
-        }
-
-        if ($next) {
-            $response = $next($request, $response);
-        }
-
-        return $response;
-    }
-
-    /**
      * @param  ServerRequestInterface  $request
      * @return TransportInterface|null
      * @throws Exception
      */
-    private function initializeAdapters(ServerRequestInterface $request)
+    private function authenticatedUsingAdapters(ServerRequestInterface $request)
     {
         $last_exception = null;
         $results = [];

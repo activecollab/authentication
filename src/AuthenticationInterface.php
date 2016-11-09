@@ -23,22 +23,14 @@ use Psr\Http\Message\ServerRequestInterface;
 interface AuthenticationInterface
 {
     /**
-     * Initialize authentication layer and see if we have a user who's already logged in.
-     *
-     * @param  RequestInterface|ServerRequestInterface $request
-     * @return TransportInterface|null
-     */
-    public function initialize(ServerRequestInterface $request);
-
-    /**
-     * Finalize authentication and apply data from the transport to the response (and optionally request).
+     * Authentication can be used as a PSR-7 middleware.
      *
      * @param  ServerRequestInterface $request
      * @param  ResponseInterface      $response
-     * @param  TransportInterface     $authentication_result
-     * @return array
+     * @param  callable|null          $next
+     * @return ResponseInterface
      */
-    public function finalize(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $authentication_result);
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
 
     /**
      * Authorize and authenticate with given credentials against authorization/authentication source.
@@ -55,16 +47,6 @@ interface AuthenticationInterface
      * @return AdapterInterface[]
      */
     public function getAdapters();
-
-    /**
-     * Authentication can be used as a PSR-7 middleware.
-     *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  callable|null          $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
 
     /**
      * Return authenticated in user.
