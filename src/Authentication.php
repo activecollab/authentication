@@ -17,7 +17,6 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;

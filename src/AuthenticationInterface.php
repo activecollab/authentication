@@ -13,7 +13,6 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
