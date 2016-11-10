@@ -43,6 +43,15 @@ interface AuthenticationInterface
     public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null);
 
     /**
+     * Deauthetnicate.
+     *
+     * @param  AdapterInterface              $adapter
+     * @param  AuthenticationResultInterface $authenticated_with
+     * @return TransportInterface
+     */
+    public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with);
+
+    /**
      * @return AdapterInterface[]
      */
     public function getAdapters();

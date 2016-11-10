@@ -97,6 +97,14 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
+    public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with)
+    {
+        return $adapter->terminate($authenticated_with);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAdapters()
     {
         return $this->adapters;
