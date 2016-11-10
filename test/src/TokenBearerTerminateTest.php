@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
@@ -44,8 +45,8 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
 
         $this->assertInstanceOf(Token::class, $token_repository->getById($test_token));
 
-        $token_bearer_adapter->terminate($token);
-
+        $termination_transport = $token_bearer_adapter->terminate($token);
+        $this->assertInstanceOf(TransportInterface::class, $termination_transport);
         $this->assertNull($token_repository->getById($test_token));
     }
 }

@@ -12,6 +12,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransport;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
@@ -88,10 +89,11 @@ class TokenBearerAdapter extends Adapter
      */
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
-        if ($authenticated_with instanceof TokenInterface) {
-            $this->token_repository->terminateToken($authenticated_with);
-        } else {
+        if (!$authenticated_with instanceof TokenInterface) {
             throw new InvalidArgumentException('Instance is not a token');
         }
+
+        $this->token_repository->terminateToken($authenticated_with);
+        return new DeauthenticationTransport($this);
     }
 }

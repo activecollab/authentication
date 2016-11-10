@@ -48,7 +48,8 @@ interface AdapterInterface
     /**
      * Terminate an instance that was used to authenticate a user.
      *
-     * @param AuthenticationResultInterface $authenticated_with
+     * @param  AuthenticationResultInterface $authenticated_with
+     * @return TransportInterface
      */
     public function terminate(AuthenticationResultInterface $authenticated_with);
 }

@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
@@ -44,8 +45,8 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
 
         $this->assertInstanceOf(Session::class, $session_repository->getById($test_session_id));
 
-        $browser_session_adapter->terminate($session);
-
+        $termination_transport = $browser_session_adapter->terminate($session);
+        $this->assertInstanceOf(TransportInterface::class, $termination_transport);
         $this->assertNull($session_repository->getById($test_session_id));
     }
 }

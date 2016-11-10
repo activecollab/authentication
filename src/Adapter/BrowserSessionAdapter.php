@@ -16,6 +16,7 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\Au
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
@@ -155,10 +156,11 @@ class BrowserSessionAdapter extends Adapter
      */
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
-        if ($authenticated_with instanceof SessionInterface) {
-            $this->session_repository->terminateSession($authenticated_with);
-        } else {
+        if (!$authenticated_with instanceof SessionInterface) {
             throw new InvalidArgumentException('Instance is not a browser session');
         }
+
+        $this->session_repository->terminateSession($authenticated_with);
+        return new DeauthenticationTransport($this);
     }
 }
