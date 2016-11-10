@@ -118,6 +118,7 @@ class BrowserSessionAdapter extends Adapter
 
             list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
                 'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+                'http_only' => true,
             ]);
 
         // Log in
@@ -130,6 +131,7 @@ class BrowserSessionAdapter extends Adapter
 
             list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
                 'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+                'http_only' => true,
             ]);
 
         // Log out or clean-up
