@@ -26,6 +26,7 @@ abstract class Adapter implements AdapterInterface
     {
         if ($transport instanceof AuthenticationTransportInterface || $transport instanceof AuthorizationTransportInterface) {
             $request = $request
+                ->withAttribute('authentication_adapter', $this)
                 ->withAttribute('authenticated_user', $transport->getAuthenticatedUser())
                 ->withAttribute('authenticated_with', $transport->getAuthenticatedWith());
         }
