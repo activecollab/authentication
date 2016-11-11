@@ -146,7 +146,7 @@ class BrowserSessionAdapter extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function authenticate(AuthenticatedUserInterface $authenticated_user)
+    public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
     {
         return $this->session_repository->createSession($authenticated_user);
     }

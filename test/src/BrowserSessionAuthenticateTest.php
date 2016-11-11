@@ -33,7 +33,7 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
         ]);
         $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
 
-        $result = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->authenticate($user);
+        $result = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->authenticate($user, []);
 
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);

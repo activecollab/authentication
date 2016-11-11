@@ -33,7 +33,7 @@ class TokenBearerAuthenticateTest extends TokenBearerTestCase
         ]);
         $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
 
-        $result = (new TokenBearerAdapter($user_repository, $token_repository))->authenticate($user);
+        $result = (new TokenBearerAdapter($user_repository, $token_repository))->authenticate($user, []);
 
         $this->assertInstanceOf(TokenInterface::class, $result);
     }
