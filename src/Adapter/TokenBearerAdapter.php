@@ -81,7 +81,7 @@ class TokenBearerAdapter extends Adapter
      */
     public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
     {
-        return $this->token_repository->issueToken($authenticated_user);
+        return $this->token_repository->issueToken($authenticated_user, $credentials);
     }
 
     /**

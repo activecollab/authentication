@@ -42,7 +42,7 @@ class Session implements SessionInterface
     /**
      * @var bool
      */
-    public $is_extended_session;
+    public $is_extended_session = false;
 
     /**
      * @param string                 $session_id

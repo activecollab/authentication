@@ -148,7 +148,7 @@ class BrowserSessionAdapter extends Adapter
      */
     public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
     {
-        return $this->session_repository->createSession($authenticated_user);
+        return $this->session_repository->createSession($authenticated_user, $credentials);
     }
 
     /**

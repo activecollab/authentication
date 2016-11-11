@@ -37,6 +37,11 @@ class Token implements TokenInterface
     private $expires_at;
 
     /**
+     * @var mixed
+     */
+    private $extra_attribute;
+
+    /**
      * @param string                 $token
      * @param string                 $user_id
      * @param DateTimeInterface|null $expires_at
@@ -62,6 +67,25 @@ class Token implements TokenInterface
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
     {
         return $repository->findByUsername($this->user_id);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExtraAttribute()
+    {
+        return $this->extra_attribute;
+    }
+
+    /**
+     * @param  mixed $value
+     * @return $this
+     */
+    public function &setExtraAttribute($value)
+    {
+        $this->extra_attribute = $value;
+
+        return $this;
     }
 
     /**

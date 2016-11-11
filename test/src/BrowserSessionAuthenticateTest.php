@@ -38,4 +38,42 @@ class BrowserSessionAuthenticateTest extends BrowserSessionTestCase
         $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
         $this->assertInstanceOf(SessionInterface::class, $result);
     }
+
+    /**
+     * Test to make sure that sessions repository fixture does not set session as extended by default.
+     */
+    public function testSessionIsNotExtendedByDefault()
+    {
+        $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
+        $user_repository = new UserRepository([
+            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        ]);
+        $session_repository = new SessionRepository();
+
+        /** @var Session $result */
+        $result = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->authenticate($user, []);
+
+        $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
+        $this->assertInstanceOf(SessionInterface::class, $result);
+        $this->assertFalse($result->getIsExtendedSession());
+    }
+
+    /**
+     * Test if session can be extended via credential attribute (basically, a test if we can extend session via credential attribute).
+     */
+    public function testSessionCanBeExtendedViaCredentialAttribute()
+    {
+        $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
+        $user_repository = new UserRepository([
+            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
+        ]);
+        $session_repository = new SessionRepository();
+
+        /** @var Session $result */
+        $result = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->authenticate($user, ['remember' => true]);
+
+        $this->assertInstanceOf(AuthenticationResultInterface::class, $result);
+        $this->assertInstanceOf(SessionInterface::class, $result);
+        $this->assertTrue($result->getIsExtendedSession());
+    }
 }
