@@ -59,13 +59,13 @@ class BrowserSessionAdapter extends Adapter
     private $current_timestamp;
 
     /**
-     * @param UserRepositoryInterface    $user_repository
-     * @param SessionRepositoryInterface $session_repository
-     * @param CookiesInterface           $cookies
-     * @param string                     $session_cookie_name
-     * @param CurrentTimestamp|null      $current_timestamp
+     * @param UserRepositoryInterface        $user_repository
+     * @param SessionRepositoryInterface     $session_repository
+     * @param CookiesInterface               $cookies
+     * @param string                         $session_cookie_name
+     * @param CurrentTimestampInterface|null $current_timestamp
      */
-    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid', CurrentTimestamp $current_timestamp = null)
+    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid', CurrentTimestampInterface $current_timestamp = null)
     {
         if (empty($session_cookie_name)) {
             throw new InvalidArgumentException('Session cookie name is required');
@@ -161,6 +161,7 @@ class BrowserSessionAdapter extends Adapter
         }
 
         $this->session_repository->terminateSession($authenticated_with);
+
         return new DeauthenticationTransport($this);
     }
 }
