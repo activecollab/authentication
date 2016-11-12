@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Token\TokenInterface;
 use DateTimeInterface;
 use JsonSerializable;
@@ -19,8 +18,6 @@ use JsonSerializable;
  */
 class Token implements TokenInterface
 {
-    use AuthenticationResultInterfaceImplementation;
-
     /**
      * @var string
      */

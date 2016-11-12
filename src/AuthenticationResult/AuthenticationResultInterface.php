@@ -25,10 +25,4 @@ interface AuthenticationResultInterface extends JsonSerializable
      * @return AuthenticatedUserInterface
      */
     public function getAuthenticatedUser(RepositoryInterface $repository);
-
-    /**
-     * @param  ResponseInterface $response
-     * @return ResponseInterface
-     */
-    public function toResponse(ResponseInterface $response);
 }

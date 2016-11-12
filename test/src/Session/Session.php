@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use DateTimeInterface;
 use JsonSerializable;
@@ -19,8 +18,6 @@ use JsonSerializable;
  */
 class Session implements SessionInterface
 {
-    use AuthenticationResultInterfaceImplementation;
-
     const SESSION_TTL = 1800;
     const EXTENDED_SESSION_TTL = 1209600;
 
