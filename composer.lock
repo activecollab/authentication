@@ -4,24 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "96df1557d8b50f800d2e63af9f1497ed",
-    "content-hash": "0196a8642d4b2f5d810517d0cd91cf40",
+    "hash": "2492bad38a33f59a067b8e8978042959",
+    "content-hash": "4c5dd8c3f73677f842bdd089e7bfb9ae",
     "packages": [
         {
             "name": "activecollab/cookies",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/cookies.git",
-                "reference": "538639c62dba9efd30c55e818d11fefc983cc9b4"
+                "reference": "24dfe76809cebcd13c94d51eef1684b6f325e6a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/cookies/zipball/538639c62dba9efd30c55e818d11fefc983cc9b4",
-                "reference": "538639c62dba9efd30c55e818d11fefc983cc9b4",
+                "url": "https://api.github.com/repos/activecollab/cookies/zipball/24dfe76809cebcd13c94d51eef1684b6f325e6a4",
+                "reference": "24dfe76809cebcd13c94d51eef1684b6f325e6a4",
                 "shasum": ""
             },
             "require": {
+                "activecollab/utils": "^0.10",
                 "dflydev/fig-cookies": "~1.0",
                 "ext-openssl": "*",
                 "php": ">=5.6.0"
@@ -52,7 +53,7 @@
                 "activecollab",
                 "cookies"
             ],
-            "time": "2016-10-20 12:15:12"
+            "time": "2016-11-13 00:35:01"
         },
         {
             "name": "activecollab/humannameparser",
@@ -194,6 +195,43 @@
                 "activecollab"
             ],
             "time": "2016-07-14 20:42:29"
+        },
+        {
+            "name": "activecollab/utils",
+            "version": "0.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/activecollab/utils.git",
+                "reference": "87e5b0f5796eda7b6ced63cec53850d57257f347"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/activecollab/utils/zipball/87e5b0f5796eda7b6ced63cec53850d57257f347",
+                "reference": "87e5b0f5796eda7b6ced63cec53850d57257f347",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "^1.0",
+                "phpunit/phpunit": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ActiveCollab\\CurrentTimestamp\\": "src/CurrentTimestamp"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A collection of small, useful components",
+            "keywords": [
+                "timestamp"
+            ],
+            "time": "2016-11-13 00:14:35"
         },
         {
             "name": "dflydev/fig-cookies",

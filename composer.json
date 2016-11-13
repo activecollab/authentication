@@ -17,8 +17,8 @@
     "require": {
         "php": ">=5.6.0",
         "ext-mbstring": "*",
-        "activecollab/user": "^3.0",
         "activecollab/cookies": "^1.0",
+        "activecollab/user": "^3.0",
         "guzzlehttp/psr7": "^1.2",
         "google/apiclient": "^1.1",
         "ircmaxell/random-lib" : "^1.2"

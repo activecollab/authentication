@@ -21,8 +21,6 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
-use ActiveCollab\Authentication\Util\CurrentTimestamp;
-use ActiveCollab\Authentication\Util\CurrentTimestampInterface;
 use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -54,18 +52,12 @@ class BrowserSessionAdapter extends Adapter
     private $session_cookie_name;
 
     /**
-     * @var CurrentTimestampInterface
+     * @param UserRepositoryInterface    $user_repository
+     * @param SessionRepositoryInterface $session_repository
+     * @param CookiesInterface           $cookies
+     * @param string                     $session_cookie_name
      */
-    private $current_timestamp;
-
-    /**
-     * @param UserRepositoryInterface        $user_repository
-     * @param SessionRepositoryInterface     $session_repository
-     * @param CookiesInterface               $cookies
-     * @param string                         $session_cookie_name
-     * @param CurrentTimestampInterface|null $current_timestamp
-     */
-    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid', CurrentTimestampInterface $current_timestamp = null)
+    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid')
     {
         if (empty($session_cookie_name)) {
             throw new InvalidArgumentException('Session cookie name is required');
@@ -75,7 +67,6 @@ class BrowserSessionAdapter extends Adapter
         $this->session_repository = $session_repository;
         $this->cookies = $cookies;
         $this->session_cookie_name = $session_cookie_name;
-        $this->current_timestamp = $current_timestamp ? $current_timestamp : new CurrentTimestamp();
     }
 
     /**
@@ -118,7 +109,7 @@ class BrowserSessionAdapter extends Adapter
             $authenticated_with->extendSession();
 
             list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
-                'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+                'ttl' => $authenticated_with->getSessionTtl(),
                 'http_only' => true,
             ]);
 
@@ -131,7 +122,7 @@ class BrowserSessionAdapter extends Adapter
             }
 
             list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
-                'ttl' => $this->current_timestamp->getCurrentTimestamp() + $authenticated_with->getSessionTtl(),
+                'ttl' => $authenticated_with->getSessionTtl(),
                 'http_only' => true,
             ]);
 
