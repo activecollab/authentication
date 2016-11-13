@@ -6,4 +6,4 @@ before_install:
   - composer self-update
 install: composer install --dev
 script: phpunit --coverage-clover ./test/log/clover.xml
-after_script: php vendor/bin/coveralls -v
+after_script: php ./vendor/bin/coveralls -v -x ./test/log/clover.xml
