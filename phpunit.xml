@@ -16,4 +16,9 @@
             <directory>./test/src</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>./test/src</directory>
+        </whitelist>
+    </filter>
 </phpunit>
