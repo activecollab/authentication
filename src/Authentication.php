@@ -11,6 +11,7 @@ namespace ActiveCollab\Authentication;
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
@@ -70,8 +71,10 @@ class Authentication implements AuthenticationInterface
         $auth_result = $this->authenticatedUsingAdapters($request);
 
         if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
-            $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
-            $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+            if ($auth_result instanceof AuthenticationTransportInterface) {
+                $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+                $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+            }
 
             list($request, $response) = $auth_result->applyTo($request, $response);
         }
