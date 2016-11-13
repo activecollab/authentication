@@ -94,7 +94,7 @@ class Repository implements RepositoryInterface
      * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
-     * @param array                       $credentials
+     * @param  array                      $credentials
      * @param  DateTimeInterface|null     $expires_at
      * @return SessionInterface
      */

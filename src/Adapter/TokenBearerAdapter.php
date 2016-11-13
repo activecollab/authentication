@@ -94,6 +94,7 @@ class TokenBearerAdapter extends Adapter
         }
 
         $this->token_repository->terminateToken($authenticated_with);
+
         return new DeauthenticationTransport($this);
     }
 }

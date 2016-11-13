@@ -11,7 +11,6 @@ namespace ActiveCollab\Authentication\AuthenticationResult;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use JsonSerializable;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * @package ActiveCollab\Authentication\AuthenticationResult

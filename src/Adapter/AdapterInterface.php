@@ -40,8 +40,8 @@ interface AdapterInterface
     /**
      * Authenticate user against authentication source.
      *
-     * @param  AuthenticatedUserInterface $authenticated_user
-     * @param array                       $credentials
+     * @param  AuthenticatedUserInterface    $authenticated_user
+     * @param  array                         $credentials
      * @return AuthenticationResultInterface
      */
     public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = []);
