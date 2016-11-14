@@ -70,7 +70,9 @@ if (!$transport->isApplied()) {
 
 ## Authentication Middlewares
 
-`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. Default implementation that's included in the package (`ActiveCollab\Authentication\Authentication`) is implemented in such way that when it is involved, it initializes authentication by looking at request (it searches for a token, browser session, or any other ID transport in the request):
+`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. 
+
+Default implementation of the interface (`ActiveCollab\Authentication\Authentication`) is implemented in such way that it initializes authentication by looking at request when it is invoked. Initialization process will look for an ID in the request (token, session cookie, etc, depending on the used adapters), and loading proper user account when found. User and method of authentication (token, session, etc) are set as request attributes (`authenticated_user`, and `authenticated_with` respectively) and passed down the middleware stack:
 
 ![Authentication middlewares](docs/auth-middlewares.png)
 
