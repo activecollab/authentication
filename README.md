@@ -12,6 +12,10 @@ Table of Contents:
 * [Login Policy](#login-policy)
 * [To Do](#to-do)
 
+## Middlewares
+
+![Authentication middlewares](docs/auth-middlewares.png)
+
 ## Transports
 
 During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
