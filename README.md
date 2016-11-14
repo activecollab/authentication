@@ -11,27 +11,6 @@ Table of Contents:
   * [Generating Random Passwords](#generating-random-passwords)
 * [Login Policy](#login-policy)
 * [To Do](#to-do)
-
-## Middlewares
-
-![Authentication middlewares](docs/auth-middlewares.png)
-
-## Transports
-
-During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
-
-1. `AuthenticationTransportInterface` is returned on initial authentication. It can be empty, when request does not bear any user ID embedded (token, or session), or it can contain information about authenticated user, way of authentication, used adapter etc, when system finds valid ID in the request. 
-1. `AuthroizationTransportInterface` is returned when user provides their credentials to the authorizer.
-1. `CleanUpTransportInterface` is returned when there's ID found in the request, but it expired, and needs to be cleaned up.
-1. `DeauthenticationTransportInterface` - is returned when user requests to be logged out of the system.
-
-Authentication and authorization transports can be applied to responses (and requests) to sign them with proper identification data (set or extend user session cookie for example):
-
-```php
-if (!$transport->isApplied()) {
-    list ($request, $response) = $transport->applyTo($request, $response);
-}
-```
     
 ## Who are Authenticated Users?
 
@@ -71,6 +50,29 @@ class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUse
     }
 }
 ```
+
+## Transports
+
+During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
+
+1. `AuthenticationTransportInterface` is returned on initial authentication. It can be empty, when request does not bear any user ID embedded (token, or session), or it can contain information about authenticated user, way of authentication, used adapter etc, when system finds valid ID in the request. 
+1. `AuthroizationTransportInterface` is returned when user provides their credentials to the authorizer.
+1. `CleanUpTransportInterface` is returned when there's ID found in the request, but it expired, and needs to be cleaned up.
+1. `DeauthenticationTransportInterface` - is returned when user requests to be logged out of the system.
+
+Authentication and authorization transports can be applied to responses (and requests) to sign them with proper identification data (set or extend user session cookie for example):
+
+```php
+if (!$transport->isApplied()) {
+    list ($request, $response) = $transport->applyTo($request, $response);
+}
+```
+
+## Authentication Middlewares
+
+`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. Default implementation that's included in the package (`ActiveCollab\Authentication\Authentication`) is implemented in such way that when it is involved, it initializes authentication by looking at request (it searches for a token, browser session, or any other ID transport in the request):
+
+![Authentication middlewares](docs/auth-middlewares.png)
 
 ## Working with Passwords
 
