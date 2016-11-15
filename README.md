@@ -70,9 +70,55 @@ if (!$transport->isApplied()) {
 
 ## Authentication Middlewares
 
-`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. 
+`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. That is why implementation of `__invoke` method in middleware stack fashion is part of the interface.
 
-Default implementation of the interface (`ActiveCollab\Authentication\Authentication`) is implemented in such way that it initializes authentication by looking at request when it is invoked. Initialization process will look for an ID in the request (token, session cookie, etc, depending on the used adapters), and loading proper user account when found. User and method of authentication (token, session, etc) are set as request attributes (`authenticated_user`, and `authenticated_with` respectively) and passed down the middleware stack:
+Default implementation of the interface (`ActiveCollab\Authentication\Authentication`) is implemented in such way that it initializes authentication by looking at server request when it is invoked. Initialization process will look for an ID in the request (token, session cookie, etc, depending on the used adapters), and loading proper user account when found. User and method of authentication (token, session, etc) are set as request attributes (`authenticated_user`, and `authenticated_with` respectively) and passed down the middleware stack. You can check these attributes in inner middlewares:
+
+Here's an example of middleware that checks for authenticated user, and returns 401 Unauthorized status if user is not authenticated:
+
+```php
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+/**
+ * @package ActiveCollab\Authentication\Middleware
+ */
+class CheckAuthMiddleware
+{
+    /**
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  callable|null          $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    {
+        if (empty($request->getAttribute('authenticated_user'))) {
+            return $response->withStatus(401);
+        }
+
+        if ($next) {
+            $response = $next($request, $response);
+        }
+
+        return $response;
+    }
+}
+```
+
+During request handling, authentication can change:
+
+1. User can log in,
+1. User can log out,
+1. System may request that authentication artifacts (like cookies) are cleaned up.
+
+System can communicate these changes by making appropriate authentication transports that encapuslate information aboute these events available as request attributes, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
+
+```php
+$middleware_stack->add(new ApplyAuthenticationMiddleware('authentication_transport'));
+```
+
+This will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
 
 ![Authentication middlewares](docs/auth-middlewares.png)
 

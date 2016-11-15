@@ -30,6 +30,12 @@ class ApplyAuthenticationMiddleware
         $this->request_attribute_name = $request_attribute_name;
     }
 
+    /**
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  callable|null          $next
+     * @return ResponseInterface
+     */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
         $transport = $this->getTransportFrom($request);
