@@ -102,11 +102,9 @@ class SamlUtils
             foreach ($assertion->getAllAttributeStatements() as $statement) {
                 $username = $statement->getFirstAttributeByName(ClaimTypes::EMAIL_ADDRESS);
 
-                if (!$username) {
-                    continue;
+                if ($username) {
+                    return $username->getFirstAttributeValue();
                 }
-
-                return $username->getFirstAttributeValue();
             }
         }
     }
