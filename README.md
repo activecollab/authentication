@@ -5,6 +5,9 @@
 Table of Contents:
 
 * [Who are Authenticated Users](#who-are-authenticated-users)
+  * [Accessing Users](#accessing-users)
+* [Transports](#transports)
+* [Authentication Middlewares](#authentication-middlewares)
 * [Working with Passwords](#working-with-passwords)
   * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
   * [Password Policy](#password-policy)
