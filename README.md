@@ -58,6 +58,83 @@ class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUse
 
 Authorizers are used to authorize user credentials against data that is stored by a particular authentication service (stored users, LDAP/AD, IdP etc).
 
+Key authorizer method is `verifyCredentials`. It receives an array with credentials and it is expected to return `ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface` instance on successful authorization, or `null` when auhtorization is not successful. Some implementations may decide to throw exceptions, to make a clear distinction between various reasons why authorization failed (user not found, invalid password, user account is temporaly or permanently suspended etc). 
+
+Example of Authorizer implementation that fetches user from users repository, and validates user's password:
+
+```php
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
+
+class MyAuthorizer implements AuthorizerInterface
+{
+    /**
+     * @var RepositoryInterface
+     */
+    private $user_repository;
+
+    /**
+     * @param RepositoryInterface $user_repository
+     */
+    public function __construct(RepositoryInterface $user_repository)
+    {
+        $this->user_repository = $user_repository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+        if (empty($credentials['username'])) {
+            throw new InvalidArgumentException('Username not found in credentials array');
+        }
+        
+        if (empty($credentials['password'])) {
+            throw new InvalidArgumentException('Password not found in credentials array');
+        }
+
+        $user = $this->user_repository->findByUsername($credentials['username']);
+        
+        if (!$user) {
+            throw new UserNotFoundException();
+        }
+        
+        if (!$user->isValidPassword()) {
+            throw new InvalidPasswordException();        
+        }
+
+        return $user;
+    }
+}
+```
+
+Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
+
+```php
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
+
+class MyAuthorizer implements AuthorizerInterface, RequestAwareInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequestProcessor()
+    {
+    }
+}
+```
+
 ## Transports
 
 During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
