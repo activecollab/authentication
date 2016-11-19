@@ -54,6 +54,10 @@ class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUse
 }
 ```
 
+## Authorizers
+
+Authorizers are used to authorize user credentials against data that is stored by a particular authentication service (stored users, LDAP/AD, IdP etc).
+
 ## Transports
 
 During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:

@@ -9,6 +9,8 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAware;
+use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
@@ -16,8 +18,10 @@ use ActiveCollab\Authentication\Exception\UserNotFoundException;
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class SamlAuthorizer extends Authorizer
+class SamlAuthorizer extends Authorizer implements RequestAwareInterface
 {
+    use RequestAware;
+
     /**
      * @var RepositoryInterface
      */
