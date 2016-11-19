@@ -63,10 +63,15 @@ Key authorizer method is `verifyCredentials`. It receives an array with credenti
 Example of Authorizer implementation that fetches user from users repository, and validates user's password:
 
 ```php
+<?php
+
+namespace MyApp;
+
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
+use InvalidArgumentException;
 
 class MyAuthorizer implements AuthorizerInterface
 {
@@ -102,7 +107,7 @@ class MyAuthorizer implements AuthorizerInterface
             throw new UserNotFoundException();
         }
         
-        if (!$user->isValidPassword()) {
+        if (!$user->isValidPassword($credentials['password'])) {
             throw new InvalidPasswordException();        
         }
 
@@ -114,6 +119,10 @@ class MyAuthorizer implements AuthorizerInterface
 Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
 
 ```php
+<?php
+
+namespace MyApp;
+
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
 
