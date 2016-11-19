@@ -37,12 +37,4 @@ class Authorizer implements AuthorizerInterface
             return $this->authenticated_user;
         }
     }
-
-    public function onLogin(array $payload)
-    {
-    }
-
-    public function onLogout(array $payload)
-    {
-    }
 }

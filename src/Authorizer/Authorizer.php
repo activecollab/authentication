@@ -13,17 +13,4 @@ namespace ActiveCollab\Authentication\Authorizer;
  */
 abstract class Authorizer implements AuthorizerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogin(array $payload)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogout(array $payload)
-    {
-    }
 }
