@@ -9,13 +9,14 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class SamlAuthorizer implements AuthorizerInterface
+class SamlAuthorizer extends Authorizer
 {
     /**
      * @var RepositoryInterface
@@ -23,11 +24,13 @@ class SamlAuthorizer implements AuthorizerInterface
     private $user_repository;
 
     /**
-     * @param RepositoryInterface $user_repository
+     * @param RepositoryInterface       $user_repository
+     * @param RequestProcessorInterface $request_processor
      */
-    public function __construct(RepositoryInterface $user_repository)
+    public function __construct(RepositoryInterface $user_repository, RequestProcessorInterface $request_processor = null)
     {
         $this->user_repository = $user_repository;
+        $this->setRequestProcessor($request_processor);
     }
 
     /**
@@ -46,19 +49,5 @@ class SamlAuthorizer implements AuthorizerInterface
         }
 
         return $user;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogin(array $payload)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogout(array $payload)
-    {
     }
 }

@@ -8,11 +8,18 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
+use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
+
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
 interface AuthorizerInterface
 {
+    /**
+     * @return RequestProcessorInterface
+     */
+    public function getRequestProcessor();
+
     /**
      * Perform user credentials verification against the real user database provider.
      *
