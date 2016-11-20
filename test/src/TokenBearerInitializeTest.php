@@ -24,7 +24,7 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     /**
      * Test if we can properly set header line using our stub request objects.
      */
-    public function testAuthorizationBearerTest()
+    public function testAuthorizationBearerHeaderLine()
     {
         $this->assertEquals('Bearer 123', $this->request->withHeader('Authorization', 'Bearer 123')->getHeaderLine('Authorization'));
     }
@@ -43,6 +43,14 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
     public function testInitializationSkipWhenAuthorizationIsNotTokenBearer()
     {
         $this->assertNull((new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
+    }
+
+    /**
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidTokenException
+     */
+    public function testExceptionWhenTokenIsNotSet()
+    {
+        (new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Bearer'));
     }
 
     /**

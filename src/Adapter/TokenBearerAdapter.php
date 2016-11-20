@@ -55,7 +55,7 @@ class TokenBearerAdapter extends Adapter
 
         $authorization = $request->getHeaderLine('Authorization');
 
-        if (empty($authorization) || substr($authorization, 0, 7) !== 'Bearer ') {
+        if (empty($authorization) || substr($authorization, 0, 6) !== 'Bearer') {
             return null;
         }
 
