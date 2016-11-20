@@ -6,7 +6,7 @@ Table of Contents:
 
 * [Who are Authenticated Users](#who-are-authenticated-users)
   * [Accessing Users](#accessing-users)
-  [Authorizers](#authorizers)
+* [Authorizers](#authorizers)
   * [Request Aware Auhtorizers](#request-aware-auhtorizers)
 * [Transports](#transports)
 * [Authentication Middlewares](#authentication-middlewares)
