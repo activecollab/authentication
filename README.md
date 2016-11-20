@@ -6,6 +6,8 @@ Table of Contents:
 
 * [Who are Authenticated Users](#who-are-authenticated-users)
   * [Accessing Users](#accessing-users)
+  [Authorizers](#authorizers)
+  * [Request Aware Auhtorizers](#request-aware-auhtorizers)
 * [Transports](#transports)
 * [Authentication Middlewares](#authentication-middlewares)
 * [Working with Passwords](#working-with-passwords)
@@ -115,6 +117,8 @@ class MyAuthorizer implements AuthorizerInterface
     }
 }
 ```
+
+## Request Aware Auhtorizers
 
 Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
 

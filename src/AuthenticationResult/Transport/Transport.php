@@ -85,11 +85,11 @@ abstract class Transport implements TransportInterface
     public function applyTo(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($this->isEmpty()) {
-            throw new LogicException('Empty result cannot be used to finalize authentication');
+            throw new LogicException('Empty authentication transport cannot be applied');
         }
 
         if ($this->isApplied()) {
-            throw new LogicException('Authentication already finalized');
+            throw new LogicException('Authentication transport already applied');
         }
 
         $result = $this->getAdapter()->applyTo($request, $response, $this);
