@@ -333,5 +333,5 @@ Login policy implements `\JsonSerializable` interface, and can be safely encoded
 
 ## To Do
 
-1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords
-1. Remove compat `ActiveCollab\Authentication\Adapter\BrowserSession` and `ActiveCollab\Authentication\Adapter\TokenBearer` classes once all apps that use this package are updated to use new classes
+1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords,
+1. Add `onAuthentication()`, `onAuthorization()`, `onDeauthentication()` events to `AuthenticationInterface`.
