@@ -34,7 +34,7 @@ class GoogleAuthorizerTest extends TestCase
 
     /**
      * @dataProvider providerInvalidCredentials
-     * @expectedException ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      * @expectedExceptionMessage Authentication request data not valid
      */
     public function testInvalidCredentialsThrowsException($credentials)
@@ -55,7 +55,7 @@ class GoogleAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Unrecognized google_client
      */
     public function testExceptionIsThrownForInvalidAud()
@@ -68,7 +68,7 @@ class GoogleAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Wrong issuer
      */
     public function testExceptionIsThrownForInvalidIss()
@@ -83,7 +83,7 @@ class GoogleAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Email is not verified by Google
      */
     public function testExceptionIsThrownForInvalidUsername()
@@ -98,7 +98,7 @@ class GoogleAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\UserNotFoundException
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
      */
     public function testExceptionIsThrownForNotFoundUser()
@@ -116,7 +116,7 @@ class GoogleAuthorizerTest extends TestCase
     }
 
     /**
-     * @expectedException ActiveCollab\Authentication\Exception\UserNotFoundException
+     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
      */
     public function testExceptionIsThrownForNotAuthenticatedUser()
@@ -157,6 +157,7 @@ class GoogleAuthorizerTest extends TestCase
         $user = $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
 
         $this->assertSame(1, $user->getId());
+        $this->assertSame($payload, $google_authorizer->getUserProfile());
     }
 
     private function ensureTokenVerificationResult($token, $results)
