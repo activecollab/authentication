@@ -8,7 +8,9 @@
 
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\Adapter\BrowserSession;
+use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
@@ -34,17 +36,15 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
      */
     public function testInitializationSkipWhenTheresNoSessionCookie()
     {
-        $this->assertNull((new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request));
+        $this->assertNull((new BrowserSessionAdapter($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request));
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidSessionException
-     */
-    public function testExceptionWhenSessionIsNotValid()
+    public function testInvalidSessionRequiresCleanUp()
     {
         $this->setCookie('sessid', 'not a valid session ID');
 
-        (new BrowserSession($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
+        $result = (new BrowserSessionAdapter($this->empty_user_repository, $this->empty_session_repository, $this->cookies))->initialize($this->request);
+        $this->assertInstanceOf(CleanUpTransportInterface::class, $result);
     }
 
     /**
@@ -59,10 +59,12 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->setCookie('sessid', $test_session_id);
 
-        $results = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+        $results = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Session::class, $results['authenticated_with']);
+        $this->assertInstanceOf(Transport::class, $results);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Session::class, $results->getAuthenticatedWith());
     }
 
     /**
@@ -79,18 +81,20 @@ class BrowserSessionInitializeTest extends BrowserSessionTestCase
 
         $this->assertSame(0, $session_repository->getUsageById($test_session_id));
 
-        $results = (new BrowserSession($user_repository, $session_repository, $this->cookies))->initialize($this->request);
+        $results = (new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies))->initialize($this->request);
 
-        $this->assertInstanceOf(AuthenticatedUser::class, $results['authenticated_user']);
-        $this->assertInstanceOf(Session::class, $results['authenticated_with']);
+        $this->assertInstanceOf(Transport::class, $results);
+
+        $this->assertInstanceOf(AuthenticatedUser::class, $results->getAuthenticatedUser());
+        $this->assertInstanceOf(Session::class, $results->getAuthenticatedWith());
 
         $this->assertSame(1, $session_repository->getUsageById($test_session_id));
     }
 
     /**
-     * Test session ttl expiration
+     * Test session ttl expiration.
      */
-    public function testAuthenticationSessionTtlDuration() 
+    public function testAuthenticationSessionTtlDuration()
     {
         $test_session_id = 's123';
 

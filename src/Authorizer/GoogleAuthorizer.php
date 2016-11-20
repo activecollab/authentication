@@ -17,7 +17,7 @@ use Google_Client;
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class GoogleAuthorizer implements AuthorizerInterface
+class GoogleAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;
 
@@ -83,20 +83,6 @@ class GoogleAuthorizer implements AuthorizerInterface
     public function getUserProfile()
     {
         return $this->user_profile;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogin(array $payload)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogout(array $payload)
-    {
     }
 
     /**

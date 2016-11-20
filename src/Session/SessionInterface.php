@@ -24,4 +24,11 @@ interface SessionInterface extends AuthenticationResultInterface
      * @return int
      */
     public function getSessionTtl();
+
+    /**
+     * Extend session for the set TTL while using $timestamp as reference (defaults to time() when empty).
+     *
+     * @param int|null $reference_timestamp
+     */
+    public function extendSession($reference_timestamp = null);
 }

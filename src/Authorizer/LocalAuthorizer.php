@@ -16,7 +16,7 @@ use ActiveCollab\Authentication\Exception\UserNotFoundException;
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class LocalAuthorizer implements AuthorizerInterface
+class LocalAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;
 
@@ -48,20 +48,6 @@ class LocalAuthorizer implements AuthorizerInterface
         $this->verifyUser($user, $credentials['password']);
 
         return $user;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogin(array $payload)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onLogout(array $payload)
-    {
     }
 
     /**

@@ -8,7 +8,8 @@
 
 namespace ActiveCollab\Authentication\Test;
 
-use ActiveCollab\Authentication\Adapter\TokenBearer;
+use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
@@ -26,7 +27,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
      */
     public function testTerminateNonSessionRaisesAnException()
     {
-        (new TokenBearer($this->empty_user_repository, $this->empty_token_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
+        (new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->terminate(new Session('123', 'ilija.studen@activecollab.com'));
     }
 
     /**
@@ -40,12 +41,12 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
         $user_repository = new UserRepository([new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123')]);
         $token_repository = new TokenRepository([$test_token => new Token($test_token, 'ilija.studen@activecollab.com')]);
 
-        $token_bearer_adapter = new TokenBearer($user_repository, $token_repository);
+        $token_bearer_adapter = new TokenBearerAdapter($user_repository, $token_repository);
 
         $this->assertInstanceOf(Token::class, $token_repository->getById($test_token));
 
-        $token_bearer_adapter->terminate($token);
-
+        $termination_transport = $token_bearer_adapter->terminate($token);
+        $this->assertInstanceOf(TransportInterface::class, $termination_transport);
         $this->assertNull($token_repository->getById($test_token));
     }
 }

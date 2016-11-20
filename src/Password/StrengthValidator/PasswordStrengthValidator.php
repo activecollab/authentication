@@ -93,7 +93,6 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
                     return $password;
                 }
             } catch (InvalidPasswordException $e) {
-
             }
         }
 

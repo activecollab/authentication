@@ -5,6 +5,11 @@
 Table of Contents:
 
 * [Who are Authenticated Users](#who-are-authenticated-users)
+  * [Accessing Users](#accessing-users)
+  [Authorizers](#authorizers)
+  * [Request Aware Auhtorizers](#request-aware-auhtorizers)
+* [Transports](#transports)
+* [Authentication Middlewares](#authentication-middlewares)
 * [Working with Passwords](#working-with-passwords)
   * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
   * [Password Policy](#password-policy)
@@ -50,6 +55,171 @@ class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUse
     }
 }
 ```
+
+## Authorizers
+
+Authorizers are used to authorize user credentials against data that is stored by a particular authentication service (stored users, LDAP/AD, IdP etc).
+
+Key authorizer method is `verifyCredentials`. It receives an array with credentials and it is expected to return `ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface` instance on successful authorization, or `null` when auhtorization is not successful. Some implementations may decide to throw exceptions, to make a clear distinction between various reasons why authorization failed (user not found, invalid password, user account is temporaly or permanently suspended etc). 
+
+Example of Authorizer implementation that fetches user from users repository, and validates user's password:
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
+use InvalidArgumentException;
+
+class MyAuthorizer implements AuthorizerInterface
+{
+    /**
+     * @var RepositoryInterface
+     */
+    private $user_repository;
+
+    /**
+     * @param RepositoryInterface $user_repository
+     */
+    public function __construct(RepositoryInterface $user_repository)
+    {
+        $this->user_repository = $user_repository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+        if (empty($credentials['username'])) {
+            throw new InvalidArgumentException('Username not found in credentials array');
+        }
+        
+        if (empty($credentials['password'])) {
+            throw new InvalidArgumentException('Password not found in credentials array');
+        }
+
+        $user = $this->user_repository->findByUsername($credentials['username']);
+        
+        if (!$user) {
+            throw new UserNotFoundException();
+        }
+        
+        if (!$user->isValidPassword($credentials['password'])) {
+            throw new InvalidPasswordException();        
+        }
+
+        return $user;
+    }
+}
+```
+
+## Request Aware Auhtorizers
+
+Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
+
+class MyAuthorizer implements AuthorizerInterface, RequestAwareInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequestProcessor()
+    {
+    }
+}
+```
+
+## Transports
+
+During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
+
+1. `AuthenticationTransportInterface` is returned on initial authentication. It can be empty, when request does not bear any user ID embedded (token, or session), or it can contain information about authenticated user, way of authentication, used adapter etc, when system finds valid ID in the request. 
+1. `AuthroizationTransportInterface` is returned when user provides their credentials to the authorizer.
+1. `CleanUpTransportInterface` is returned when there's ID found in the request, but it expired, and needs to be cleaned up.
+1. `DeauthenticationTransportInterface` - is returned when user requests to be logged out of the system.
+
+Authentication and authorization transports can be applied to responses (and requests) to sign them with proper identification data (set or extend user session cookie for example):
+
+```php
+if (!$transport->isApplied()) {
+    list ($request, $response) = $transport->applyTo($request, $response);
+}
+```
+
+## Authentication Middlewares
+
+`AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. That is why implementation of `__invoke` method in middleware stack fashion is part of the interface.
+
+Default implementation of the interface (`ActiveCollab\Authentication\Authentication`) is implemented in such way that it initializes authentication by looking at server request when it is invoked. Initialization process will look for an ID in the request (token, session cookie, etc, depending on the used adapters), and loading proper user account when found. User and method of authentication (token, session, etc) are set as request attributes (`authenticated_user`, and `authenticated_with` respectively) and passed down the middleware stack. You can check these attributes in inner middlewares:
+
+Here's an example of middleware that checks for authenticated user, and returns 401 Unauthorized status if user is not authenticated:
+
+```php
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+/**
+ * @package ActiveCollab\Authentication\Middleware
+ */
+class CheckAuthMiddleware
+{
+    /**
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @param  callable|null          $next
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    {
+        if (empty($request->getAttribute('authenticated_user'))) {
+            return $response->withStatus(401);
+        }
+
+        if ($next) {
+            $response = $next($request, $response);
+        }
+
+        return $response;
+    }
+}
+```
+
+During request handling, authentication can change:
+
+1. User can log in,
+1. User can log out,
+1. System may request that authentication artifacts (like cookies) are cleaned up.
+
+System can communicate these changes by making appropriate authentication transports that encapuslate information aboute these events available as request attributes, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
+
+```php
+$middleware_stack->add(new ApplyAuthenticationMiddleware('authentication_transport'));
+```
+
+This will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
+
+**Note**: Reason why we do this in a separate middleware, instead of exiting part of Authentication middleware is because we may need to clean up request (remove invalid cookie for example).
+
+![Authentication middlewares](docs/auth-middlewares.png)
 
 ## Working with Passwords
 
@@ -164,3 +334,4 @@ Login policy implements `\JsonSerializable` interface, and can be safely encoded
 ## To Do
 
 1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords
+1. Remove compat `ActiveCollab\Authentication\Adapter\BrowserSession` and `ActiveCollab\Authentication\Adapter\TokenBearer` classes once all apps that use this package are updated to use new classes

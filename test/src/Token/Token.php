@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Token\TokenInterface;
 use DateTimeInterface;
 use JsonSerializable;
@@ -19,8 +18,6 @@ use JsonSerializable;
  */
 class Token implements TokenInterface
 {
-    use AuthenticationResultInterfaceImplementation;
-
     /**
      * @var string
      */
@@ -35,6 +32,11 @@ class Token implements TokenInterface
      * @var DateTimeInterface
      */
     private $expires_at;
+
+    /**
+     * @var mixed
+     */
+    private $extra_attribute;
 
     /**
      * @param string                 $token
@@ -62,6 +64,25 @@ class Token implements TokenInterface
     public function getAuthenticatedUser(UserRepositoryInterface $repository)
     {
         return $repository->findByUsername($this->user_id);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExtraAttribute()
+    {
+        return $this->extra_attribute;
+    }
+
+    /**
+     * @param  mixed $value
+     * @return $this
+     */
+    public function &setExtraAttribute($value)
+    {
+        $this->extra_attribute = $value;
+
+        return $this;
     }
 
     /**

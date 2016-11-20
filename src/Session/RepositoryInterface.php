@@ -58,10 +58,11 @@ interface RepositoryInterface
      * Create a new session.
      *
      * @param  AuthenticatedUserInterface $user
+     * @param  array                      $credentials
      * @param  DateTimeInterface|null     $expires_at
      * @return SessionInterface
      */
-    public function createSession(AuthenticatedUserInterface $user, DateTimeInterface $expires_at = null);
+    public function createSession(AuthenticatedUserInterface $user, array $credentials = [], DateTimeInterface $expires_at = null);
 
     /**
      * Terminate a session.

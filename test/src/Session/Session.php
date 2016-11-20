@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
-use ActiveCollab\Authentication\AuthenticationResult\Implementation as AuthenticationResultInterfaceImplementation;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use DateTimeInterface;
 use JsonSerializable;
@@ -19,8 +18,6 @@ use JsonSerializable;
  */
 class Session implements SessionInterface
 {
-    use AuthenticationResultInterfaceImplementation;
-
     const SESSION_TTL = 1800;
     const EXTENDED_SESSION_TTL = 1209600;
 
@@ -42,7 +39,7 @@ class Session implements SessionInterface
     /**
      * @var bool
      */
-    public $is_extended_session;
+    public $is_extended_session = false;
 
     /**
      * @param string                 $session_id
@@ -125,5 +122,12 @@ class Session implements SessionInterface
         }
 
         return ['session_id' => $this->session_id, 'user_id' => $this->user_id, 'expires_at' => $expires_at];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function extendSession($reference_timestamp = null)
+    {
     }
 }

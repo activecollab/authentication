@@ -9,12 +9,22 @@
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
-use Psr\Http\Message\RequestInterface;
-use RuntimeException;
+use LogicException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @package ActiveCollab\Authentication
+ */
 class Authentication implements AuthenticationInterface
 {
     /**
@@ -23,13 +33,30 @@ class Authentication implements AuthenticationInterface
     private $adapters;
 
     /**
+     * Authenticated user instance.
+     *
+     * @var AuthenticatedUserInterface
+     */
+    private $authenticated_user;
+
+    /**
+     * @var AuthenticationResultInterface
+     */
+    private $authenticated_with;
+
+    /**
+     * @var callable|null
+     */
+    private $on_authencated_user_changed;
+
+    /**
      * @param array $adapters
      */
     public function __construct(array $adapters)
     {
         foreach ($adapters as $adapter) {
             if (!($adapter instanceof AdapterInterface)) {
-                throw new RuntimeException('Invalid object type provided');
+                throw new LogicException('Invalid authentication adapter provided');
             }
         }
 
@@ -39,48 +66,43 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function initialize(RequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        $exception = null;
-        $results = ['authenticated_user' => [], 'authenticated_with' => []];
+        $auth_result = $this->authenticatedUsingAdapters($request);
 
-        foreach ($this->adapters as $adapter) {
-            try {
-                $result = $adapter->initialize($request);
-                if ($result) {
-                    $results['authenticated_user'][] = $result['authenticated_user'];
-                    $results['authenticated_with'][] = $result['authenticated_with'];
-                }
-            } catch (Exception $e) {
-                $exception = $e;
-            }
-        }
-
-        if (empty($results['authenticated_user'])) {
-            if ($exception) {
-                throw $exception;
+        if ($auth_result instanceof TransportInterface && !$auth_result->isEmpty()) {
+            if ($auth_result instanceof AuthenticationTransportInterface) {
+                $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+                $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
             }
 
-            return $request;
+            list($request, $response) = $auth_result->applyTo($request, $response);
         }
 
-        if (count($results['authenticated_user']) > 1) {
-            throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
+        if ($next) {
+            $response = $next($request, $response);
         }
 
-        return $request
-            ->withAttribute('authenticated_user', $results['authenticated_user'][0])
-            ->withAttribute('authenticated_with', $results['authenticated_with'][0]);
+        return $response;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials)
+    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null)
     {
         $user = $authorizer->verifyCredentials($credentials);
+        $authenticated_with = $adapter->authenticate($user, $credentials);
 
-        return $adapter->authenticate($user);
+        return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with)
+    {
+        return $adapter->terminate($authenticated_with);
     }
 
     /**
@@ -89,5 +111,93 @@ class Authentication implements AuthenticationInterface
     public function getAdapters()
     {
         return $this->adapters;
+    }
+
+    /**
+     * @param  ServerRequestInterface  $request
+     * @return TransportInterface|null
+     * @throws Exception
+     */
+    private function authenticatedUsingAdapters(ServerRequestInterface $request)
+    {
+        $last_exception = null;
+        $results = [];
+
+        /** @var AdapterInterface $adapter */
+        foreach ($this->adapters as $adapter) {
+            try {
+                $initialization_result = $adapter->initialize($request);
+
+                if ($initialization_result instanceof Transport && !$initialization_result->isEmpty()) {
+                    $results[] = $initialization_result;
+                }
+            } catch (Exception $e) {
+                $last_exception = $e;
+            }
+        }
+
+        if (empty($results)) {
+            if ($last_exception) {
+                throw $last_exception;
+            }
+
+            return null;
+        }
+
+        if (count($results) > 1) {
+            throw new InvalidAuthenticationRequestException('You can not be authenticated with more than one authentication method');
+        }
+
+        return $results[0];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &getAuthenticatedUser()
+    {
+        return $this->authenticated_user;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null)
+    {
+        $this->authenticated_user = $user;
+
+        if (is_callable($this->on_authencated_user_changed)) {
+            call_user_func($this->on_authencated_user_changed, $user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return AuthenticationResultInterface|null
+     */
+    public function getAuthenticatedWith()
+    {
+        return $this->authenticated_with;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setAuthenticatedWith(AuthenticationResultInterface $value)
+    {
+        $this->authenticated_with = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &setOnAuthenciatedUserChanged(callable $value = null)
+    {
+        $this->on_authencated_user_changed = $value;
+
+        return $this;
     }
 }
