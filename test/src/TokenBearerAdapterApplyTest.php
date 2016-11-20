@@ -8,17 +8,14 @@
 
 namespace ActiveCollab\Authentication\Test;
 
+use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransport;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\CleanUp\CleanUpTransport;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransport;
-use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
+use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
-use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -75,7 +72,7 @@ class TokenBearerAdapterApplyTest extends RequestResponseTestCase
     {
         $transport = new AuthenticationTransport($this->token_bearer_adapter, $this->user, $this->token);
 
-        list ($request, $response) = $this->token_bearer_adapter->applyTo($this->request, $this->response, $transport);
+        list($request, $response) = $this->token_bearer_adapter->applyTo($this->request, $this->response, $transport);
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
         $this->assertInstanceOf(ResponseInterface::class, $response);
     }

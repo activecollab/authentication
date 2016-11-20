@@ -18,9 +18,9 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 /**
  * @package ActiveCollab\Authentication
@@ -56,7 +56,7 @@ class Authentication implements AuthenticationInterface
     {
         foreach ($adapters as $adapter) {
             if (!($adapter instanceof AdapterInterface)) {
-                throw new RuntimeException('Invalid object type provided');
+                throw new LogicException('Invalid authentication adapter provided');
             }
         }
 

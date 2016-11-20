@@ -9,7 +9,6 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
-use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransport;
 use ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
@@ -44,7 +43,7 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
     }
 
     /**
-     * Test that user is authenticated.
+     * Test if authentication is applied based on request attribute.
      */
     public function testUserIsAuthenticated()
     {
