@@ -6,7 +6,7 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Test\Utils;
+namespace ActiveCollab\Shepherd\Test\Authentication;
 
 use ActiveCollab\Authentication\Saml\SamlUtils;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
@@ -38,8 +38,8 @@ class SamlUtilsTest extends TestCase
             'http://localhost/consumer',
             'http://localhost/idp',
             'http://localhost/issuer',
-            file_get_contents(__DIR__.'/../Fixtures/saml.crt'),
-            file_get_contents(__DIR__.'/../Fixtures/saml.key')
+            file_get_contents(__DIR__ . '/../Fixtures/saml.crt'),
+            file_get_contents(__DIR__ . '/../Fixtures/saml.key')
         );
 
         $this->assertStringStartsWith('http://localhost/idp?SAMLRequest=', $result);
