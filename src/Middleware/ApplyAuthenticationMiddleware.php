@@ -23,11 +23,26 @@ class ApplyAuthenticationMiddleware
     private $request_attribute_name;
 
     /**
-     * @param string $request_attribute_name
+     * @var bool
      */
-    public function __construct($request_attribute_name = '')
+    private $apply_on_exit;
+
+    /**
+     * @param string $request_attribute_name
+     * @param bool   $apply_on_exit
+     */
+    public function __construct($request_attribute_name = '', $apply_on_exit = false)
     {
         $this->request_attribute_name = $request_attribute_name;
+        $this->apply_on_exit = (bool) $apply_on_exit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function applyOnExit()
+    {
+        return $this->apply_on_exit;
     }
 
     /**
@@ -38,17 +53,35 @@ class ApplyAuthenticationMiddleware
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
-        $transport = $this->getTransportFrom($request);
-
-        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
-            list($request, $response) = $transport->applyTo($request, $response);
+        if (!$this->apply_on_exit) {
+            list($request, $response) = $this->apply($request, $response);
         }
 
         if ($next) {
             $response = $next($request, $response);
         }
 
+        if ($this->apply_on_exit) {
+            $response = $this->apply($request, $response)[1];
+        }
+
         return $response;
+    }
+
+    /**
+     * @param  ServerRequestInterface $request
+     * @param  ResponseInterface      $response
+     * @return array
+     */
+    private function apply(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $transport = $this->getTransportFrom($request);
+
+        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
+            list($request, $response) = $transport->applyTo($request, $response);
+        }
+
+        return [$request, $response];
     }
 
     /**
