@@ -212,17 +212,19 @@ During request handling, authentication can change:
 System can communicate these changes by making appropriate authentication transports that encapuslate information aboute these events available as request attributes, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
 
 ```php
-$middleware_stack->add(new ApplyAuthenticationMiddleware('authentication_transport'));
+$middleware_stack->add(new ApplyAuthenticationMiddleware(
+    'authentication_transport'
+));
 ```
 
 This will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
 
-Second argument of `ApplyAuthenticationMiddleware`'s constructor is `$apply_on_exit` argument. It lets you configure when transport will be applied - when entering middleware stack, or when existing it. Default is `FALESE` (when entering middleware stack):
+Second argument of `ApplyAuthenticationMiddleware`'s constructor is `$apply_on_exit` argument. It lets you configure when transport will be applied - when entering middleware stack, or when existing it. Default is `false` (when entering middleware stack):
  
 ```php
 $middleware_stack->add(new ApplyAuthenticationMiddleware(
     'authentication_transport', 
-    true // Apply when exiting
+    true // Apply when exiting middleware stack.
 ));
 ``` 
 
