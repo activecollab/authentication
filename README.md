@@ -217,6 +217,12 @@ $middleware_stack->add(new ApplyAuthenticationMiddleware('authentication_transpo
 
 This will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
 
+Second argument of `ApplyAuthenticationMiddleware`'s constructor lets you configure when transport will be applied - when entering middleware stack, or when existing it. Default is when entering middleware stack:
+ 
+```php
+$middleware_stack->add(new ApplyAuthenticationMiddleware('authentication_transport', true)); // Apply when exiting
+``` 
+
 **Note**: Reason why we do this in a separate middleware, instead of exiting part of Authentication middleware is because we may need to clean up request (remove invalid cookie for example).
 
 ![Authentication middlewares](docs/auth-middlewares.png)
