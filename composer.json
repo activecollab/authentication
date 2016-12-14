@@ -19,8 +19,8 @@
         "ext-mbstring": "*",
         "activecollab/cookies": "^1.0",
         "activecollab/user": "^3.0",
-        "guzzlehttp/psr7": "^1.2",
         "google/apiclient": "^1.1",
+        "guzzlehttp/psr7": "^1.2",
         "ircmaxell/random-lib" : "^1.2"
     },
     "require-dev": {
