@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "13d9f339bfc09c7d41227470b1ef0877",
-    "content-hash": "fc5efb78d3729ad8d989f5afdb325173",
+    "hash": "f3a478bb5a3b6b45187ac18d663f91eb",
+    "content-hash": "bfe234a8dba10a8951d36d20a8120181",
     "packages": [
         {
             "name": "activecollab/cookies",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/cookies.git",
-                "reference": "4b13efae39ac27fe0b74ca63d921a5ca29569dd2"
+                "reference": "4b7f794b47b67d9289ccd46af29877c6d5f65457"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/cookies/zipball/4b13efae39ac27fe0b74ca63d921a5ca29569dd2",
-                "reference": "4b13efae39ac27fe0b74ca63d921a5ca29569dd2",
+                "url": "https://api.github.com/repos/activecollab/cookies/zipball/4b7f794b47b67d9289ccd46af29877c6d5f65457",
+                "reference": "4b7f794b47b67d9289ccd46af29877c6d5f65457",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "activecollab",
                 "cookies"
             ],
-            "time": "2016-12-14 23:19:01"
+            "time": "2016-12-15 00:33:03"
         },
         {
             "name": "activecollab/humannameparser",
@@ -198,16 +198,16 @@
         },
         {
             "name": "activecollab/utils",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/utils.git",
-                "reference": "e53c6a8272d431dfaee7e8599cb895784fa7e818"
+                "reference": "48825198abcad0d52bf63e40af939cbe5b211499"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/utils/zipball/e53c6a8272d431dfaee7e8599cb895784fa7e818",
-                "reference": "e53c6a8272d431dfaee7e8599cb895784fa7e818",
+                "url": "https://api.github.com/repos/activecollab/utils/zipball/48825198abcad0d52bf63e40af939cbe5b211499",
+                "reference": "48825198abcad0d52bf63e40af939cbe5b211499",
                 "shasum": ""
             },
             "require": {
@@ -234,7 +234,7 @@
             "keywords": [
                 "timestamp"
             ],
-            "time": "2016-12-14 22:11:11"
+            "time": "2016-12-15 01:11:38"
         },
         {
             "name": "dflydev/fig-cookies",

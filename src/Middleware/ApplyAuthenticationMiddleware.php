@@ -9,6 +9,8 @@
 namespace ActiveCollab\Authentication\Middleware;
 
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
+use ActiveCollab\Authentication\ValueContainer\RequestValueContainerInterface;
+use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -18,9 +20,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class ApplyAuthenticationMiddleware
 {
     /**
-     * @var string
+     * @var ValueContainerInterface
      */
-    private $request_attribute_name;
+    private $value_container;
 
     /**
      * @var bool
@@ -28,12 +30,12 @@ class ApplyAuthenticationMiddleware
     private $apply_on_exit;
 
     /**
-     * @param string $request_attribute_name
-     * @param bool   $apply_on_exit
+     * @param ValueContainerInterface $value_container
+     * @param bool                    $apply_on_exit
      */
-    public function __construct($request_attribute_name = '', $apply_on_exit = false)
+    public function __construct(ValueContainerInterface $value_container, $apply_on_exit = false)
     {
-        $this->request_attribute_name = $request_attribute_name;
+        $this->value_container = $value_container;
         $this->apply_on_exit = (bool) $apply_on_exit;
     }
 
@@ -92,6 +94,10 @@ class ApplyAuthenticationMiddleware
      */
     protected function getTransportFrom(ServerRequestInterface $request)
     {
-        return $this->request_attribute_name ? $request->getAttribute($this->request_attribute_name) : null;
+        if ($this->value_container instanceof RequestValueContainerInterface) {
+            $this->value_container->setRequest($request);
+        }
+
+        return $this->value_container->getValue();
     }
 }
