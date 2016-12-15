@@ -209,21 +209,33 @@ During request handling, authentication can change:
 1. User can log out,
 1. System may request that authentication artifacts (like cookies) are cleaned up.
 
-System can communicate these changes by making appropriate authentication transports that encapuslate information aboute these events available as request attributes, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
+System can communicate these changes by making appropriate authentication transports that encapuslate information about these events available in a value container, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
 
 ```php
+<?php
+
+use ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware;
+use ActiveCollab\Authentication\ValueContainer\RequestValueContainer;
+
 $middleware_stack->add(new ApplyAuthenticationMiddleware(
-    'authentication_transport'
+    new RequestValueContainer('authentication')
 ));
 ```
 
-This will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
+**Note:** Value container may be any object that implements `ActiveCollab\ValueContainer\ValueContainerInterface`. This container can wrap around DI container, or any other mean of value storage. For the convenience we provide a value container that wraps around server request (`RequestValueContainer`), that can extract transport from request attributes:
+
+Example above will tell `ApplyAuthenticationMiddleware` to check for `authentication_transport` attribute, and apply it to request and response if found.
 
 Second argument of `ApplyAuthenticationMiddleware`'s constructor is `$apply_on_exit` argument. It lets you configure when transport will be applied - when entering middleware stack, or when existing it. Default is `false` (when entering middleware stack):
  
 ```php
+<?php
+
+use ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware;
+use ActiveCollab\Authentication\ValueContainer\RequestValueContainer;
+
 $middleware_stack->add(new ApplyAuthenticationMiddleware(
-    'authentication_transport', 
+    new RequestValueContainer('authentication')
     true // Apply when exiting middleware stack.
 ));
 ``` 
