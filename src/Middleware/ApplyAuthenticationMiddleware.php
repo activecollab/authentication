@@ -9,7 +9,7 @@
 namespace ActiveCollab\Authentication\Middleware;
 
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
-use ActiveCollab\Authentication\ValueContainer\RequestValueContainerInterface;
+use ActiveCollab\ValueContainer\Request\RequestValueContainerInterface;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

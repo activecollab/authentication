@@ -215,7 +215,7 @@ System can communicate these changes by making appropriate authentication transp
 <?php
 
 use ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware;
-use ActiveCollab\Authentication\ValueContainer\RequestValueContainer;
+use ActiveCollab\ValueContainer\Request\RequestValueContainer;
 
 $middleware_stack->add(new ApplyAuthenticationMiddleware(
     new RequestValueContainer('authentication')
@@ -232,10 +232,10 @@ Second argument of `ApplyAuthenticationMiddleware`'s constructor is `$apply_on_e
 <?php
 
 use ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware;
-use ActiveCollab\Authentication\ValueContainer\RequestValueContainer;
+use ActiveCollab\ValueContainer\Request\RequestValueContainer;
 
 $middleware_stack->add(new ApplyAuthenticationMiddleware(
-    new RequestValueContainer('authentication')
+    new RequestValueContainer('authentication'),
     true // Apply when exiting middleware stack.
 ));
 ``` 

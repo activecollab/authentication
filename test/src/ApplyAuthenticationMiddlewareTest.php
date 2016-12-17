@@ -16,12 +16,11 @@ use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserReposit
 use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
-use ActiveCollab\Authentication\ValueContainer\RequestValueContainer;
 use ActiveCollab\Cookies\Cookies;
 use ActiveCollab\Cookies\CookiesInterface;
+use ActiveCollab\ValueContainer\Request\RequestValueContainer;
 use ActiveCollab\ValueContainer\ValueContainer;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
-use Guzzle\Http\Message\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
