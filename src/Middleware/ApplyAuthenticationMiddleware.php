@@ -98,6 +98,10 @@ class ApplyAuthenticationMiddleware
             $this->value_container->setRequest($request);
         }
 
-        return $this->value_container->getValue();
+        if ($this->value_container->hasValue()) {
+            return $this->value_container->getValue();
+        }
+
+        return null;
     }
 }
