@@ -32,6 +32,19 @@ trait CredentialFieldsCheckTrait
      * @param array $credentials
      * @param array $fields
      */
+    private function verifyAlphanumFields(array $credentials, array $fields)
+    {
+        foreach ($fields as $field) {
+            if (empty($credentials[$field]) || !ctype_alnum($credentials[$field])) {
+                throw new InvalidAuthenticationRequestException();
+            }
+        }
+    }
+
+    /**
+     * @param array $credentials
+     * @param array $fields
+     */
     private function verifyEmailFields(array $credentials, array $fields)
     {
         foreach ($fields as $field) {

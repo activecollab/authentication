@@ -15,6 +15,10 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
  */
 interface AuthorizerInterface
 {
+    const USERNAME_FORMAT_ANY = 'any';
+    const USERNAME_FORMAT_ALPHANUM = 'alphanum';
+    const USERNAME_FORMAT_EMAIL = 'email';
+
     /**
      * Perform user credentials verification against the real user database provider.
      *
