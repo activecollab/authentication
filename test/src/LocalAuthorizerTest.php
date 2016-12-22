@@ -42,6 +42,33 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
+     * @param array $username
+     * @dataProvider providerInvalidUsername
+     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
+     * @expectedExceptionMessage Authentication request data not valid
+     */
+    public function testInvalidUsernameThrowsException($username)
+    {
+        $local_authorizer = new LocalAuthorizer(new Repository(), true);
+
+        $local_authorizer->verifyCredentials([
+            'username' => $username,
+            'password' => 'Easy to remember, Hard to guess',
+        ]);
+    }
+
+    public function providerInvalidUsername()
+    {
+        return [
+            ['username' => null],
+            ['username' => ''],
+            ['username' => 'Invalid Username'],
+            ['username' => 'Not a valid Username'],
+            ['username' => 'not_a_username'],
+        ];
+    }
+
+    /**
      * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
      * @expectedExceptionMessage User not found
      */
@@ -81,8 +108,19 @@ class LocalAuthorizerTest extends TestCase
     public function testUserIsAuthenticated()
     {
         $local_authorizer = new LocalAuthorizer(new Repository([
-            'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', true),
+            'john@doe.com' => new AuthenticatedUser(1, 'johndoe', 'John', 'password', true),
         ]));
+
+        $user = $local_authorizer->verifyCredentials(['username' => 'johndoe', 'password' => 'password']);
+
+        $this->assertSame(1, $user->getId());
+    }
+
+    public function testUserWithEmailUsernameIsAuthenticated()
+    {
+        $local_authorizer = new LocalAuthorizer(new Repository([
+            'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', true),
+        ]), true);
 
         $user = $local_authorizer->verifyCredentials(['username' => 'john@doe.com', 'password' => 'password']);
 

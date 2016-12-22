@@ -21,12 +21,21 @@ trait CredentialFieldsCheckTrait
      */
     private function verifyRequiredFields(array $credentials, array $fields)
     {
-        $is_empty = function ($credentials, $field) {
-            return isset($credentials[$field]) ? $credentials[$field] === '' : true;
-        };
-
         foreach ($fields as $field) {
-            if ($is_empty($credentials, $field)) {
+            if (empty($credentials[$field])) {
+                throw new InvalidAuthenticationRequestException();
+            }
+        }
+    }
+
+    /**
+     * @param array $credentials
+     * @param array $fields
+     */
+    private function verifyEmailFields(array $credentials, array $fields)
+    {
+        foreach ($fields as $field) {
+            if (empty($credentials[$field]) || !filter_var($credentials[$field], FILTER_VALIDATE_EMAIL)) {
                 throw new InvalidAuthenticationRequestException();
             }
         }

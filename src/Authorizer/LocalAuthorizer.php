@@ -26,11 +26,18 @@ class LocalAuthorizer extends Authorizer
     private $user_repository;
 
     /**
-     * @param RepositoryInterface $user_repository
+     * @var bool
      */
-    public function __construct(RepositoryInterface $user_repository)
+    private $username_is_email = false;
+
+    /**
+     * @param RepositoryInterface $user_repository
+     * @param bool                $username_is_email
+     */
+    public function __construct(RepositoryInterface $user_repository, $username_is_email = false)
     {
         $this->user_repository = $user_repository;
+        $this->username_is_email = (bool) $username_is_email;
     }
 
     /**
@@ -42,6 +49,10 @@ class LocalAuthorizer extends Authorizer
     public function verifyCredentials(array $credentials)
     {
         $this->verifyRequiredFields($credentials, ['username', 'password']);
+
+        if ($this->username_is_email) {
+            $this->verifyEmailFields($credentials, ['username']);
+        }
 
         $user = $this->user_repository->findByUsername($credentials['username']);
 
