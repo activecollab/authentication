@@ -70,21 +70,17 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     }
 
     /**
-     * Return email address of a given user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
     /**
-     * Return first name of this user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getFullName()
+    public function getFullName(): ?string
     {
         return $this->name;
     }

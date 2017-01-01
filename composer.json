@@ -15,16 +15,16 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.1",
         "ext-mbstring": "*",
         "activecollab/cookies": "^1.0",
-        "activecollab/user": "^3.0",
+        "activecollab/user": "v4.0.x-dev",
         "google/apiclient": "^1.1",
         "guzzlehttp/psr7": "^1.2",
         "ircmaxell/random-lib" : "^1.2"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^1.0",
+        "friendsofphp/php-cs-fixer": "^2.0",
         "lightsaml/lightsaml": "^1.1",
         "phpunit/phpunit": "^5.0",
         "satooshi/php-coveralls": "^1.0",
