@@ -118,9 +118,11 @@ class MyAuthorizer implements AuthorizerInterface
 }
 ```
 
-## Request Aware Auhtorizers
+## Request Aware Authorizers
 
-Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
+Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. 
+
+For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
 
 ```php
 <?php
@@ -144,6 +146,70 @@ class MyAuthorizer implements AuthorizerInterface, RequestAwareInterface
      */
     public function getRequestProcessor()
     {
+    }
+}
+```
+
+## Exception Aware Authorizers
+
+Authorizers can be set to be exception aware. Such authorizers have `handleException()` method that should be called on authorization exception. For system to consider an authorizer to be exception aware, it needs to implement `ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface` interface. 
+
+This is useful if you need to handle error in a particular way (redirect user to an external SSO for example), or if you want to implement some extra measures of protections (like brute force login protection, as demonstrated below): 
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface;
+use Exception;
+
+class InvalidPasswordException extends Exception
+{
+}
+
+class MyAuthorizer implements AuthorizerInterface, ExceptionAwareInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+        if ($this->shouldCoolDown($credentials)) {
+            return null;
+        }
+        
+        if ($this->checkUserPassword($credentials['password'])) {
+            // Proceed with auth
+        } else {
+            throw new InvalidPasswordException('Password not valid.');            
+        }
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function handleException(array $credentials, $error_or_exception)
+    {
+        if ($error_or_exception instanceof InvalidPasswordException) {
+            $this->logPasswordFailure($credentials, $error_or_exception);
+        }
+    }
+    
+    private function shouldCoolDown(array $credentials)
+    {
+        // Return true if incorrect password is entered multiple times, so user needs to wait before they can proceed.
+    }
+    
+    private function logPasswordFailure(array $credentials, $error)
+    {
+        // Log
+    }
+    
+    private function checkUserPassword(array $credentials)
+    {
+        // Check if user password is OK.
     }
 }
 ```
