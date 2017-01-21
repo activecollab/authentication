@@ -148,6 +148,68 @@ class MyAuthorizer implements AuthorizerInterface, RequestAwareInterface
 }
 ```
 
+## Exception Aware Auhtorizers
+
+Authorizers can be set to be exception aware. Such authorizers have `handleException()` method that should be called on authorization exception. This is useful if you need to handle error in a particular way (redirect user to an external SSO for example), or if you want to implement some extra measures of protections (like brute force login protection, as demonstrated below): 
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface;
+use Exception;
+
+class InvalidPasswordException extends Exception
+{
+}
+
+class MyAuthorizer implements AuthorizerInterface, ExceptionAwareInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function verifyCredentials(array $credentials)
+    {
+        if ($this->shouldCoolDown($credentials)) {
+            return null;
+        }
+        
+        if ($this->checkUserPassword($credentials['password'])) {
+            // Proceed with auth
+        } else {
+            throw new InvalidPasswordException('Password not valid.');            
+        }
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function handleException(array $credentials, $error_or_exception)
+    {
+        if ($error_or_exception instanceof InvalidPasswordException) {
+            $this->logPasswordFailure($credentials, $error_or_exception);
+        }
+    }
+    
+    private function shouldCoolDown(array $credentials)
+    {
+        // Return true if incorrect password is entered multiple times, so user needs to wait before they can proceed.
+    }
+    
+    private function logPasswordFailure(array $credentials, $error)
+    {
+        // Log
+    }
+    
+    private function checkUserPassword(array $credentials)
+    {
+        // Check if user password is OK.
+    }
+}
+```
+
 ## Transports
 
 During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:
