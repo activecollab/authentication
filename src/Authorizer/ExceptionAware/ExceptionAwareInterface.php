@@ -6,19 +6,19 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
-namespace ActiveCollab\Authentication\Authorizer\ExceptionAwareAware;
+namespace ActiveCollab\Authentication\Authorizer\ExceptionAware;
 
 use Exception;
 use Throwable;
 
 /**
- * @package ActiveCollab\Authentication\Authorizer\ExceptionAwareAware
+ * @package ActiveCollab\Authentication\Authorizer\ExceptionAware
  */
 interface ExceptionAwareInterface
 {
     /**
      * @param  Throwable|Exception $error_or_exception
-     * @return mixed
+     * @return void|mixed
      */
     public function handleException($error_or_exception);
 }
