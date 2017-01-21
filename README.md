@@ -118,9 +118,11 @@ class MyAuthorizer implements AuthorizerInterface
 }
 ```
 
-## Request Aware Auhtorizers
+## Request Aware Authorizers
 
-Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
+Request aware authorizers go a step further. They offer a mechanism to receive PSR-7 request, and extract credentials and default payload from them (or based on them). This is useful when authorizer requires request data validation and parsing. For example, SAML authorizer will need to parse SAML payload in order to extract relevant credentials from it. 
+
+For authorizer to become request aware, it additionally needs to implement `ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface`, and implement request processor that can take in `Psr\Http\Message\ServerRequestInterface` and return processing result:
 
 ```php
 <?php
@@ -148,9 +150,11 @@ class MyAuthorizer implements AuthorizerInterface, RequestAwareInterface
 }
 ```
 
-## Exception Aware Auhtorizers
+## Exception Aware Authorizers
 
-Authorizers can be set to be exception aware. Such authorizers have `handleException()` method that should be called on authorization exception. This is useful if you need to handle error in a particular way (redirect user to an external SSO for example), or if you want to implement some extra measures of protections (like brute force login protection, as demonstrated below): 
+Authorizers can be set to be exception aware. Such authorizers have `handleException()` method that should be called on authorization exception. For system to consider an authorizer to be exception aware, it needs to implement `ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface` interface. 
+
+This is useful if you need to handle error in a particular way (redirect user to an external SSO for example), or if you want to implement some extra measures of protections (like brute force login protection, as demonstrated below): 
 
 ```php
 <?php
