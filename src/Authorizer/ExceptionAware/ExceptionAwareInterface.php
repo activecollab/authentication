@@ -17,8 +17,9 @@ use Throwable;
 interface ExceptionAwareInterface
 {
     /**
+     * @param  array               $credentials
      * @param  Throwable|Exception $error_or_exception
      * @return void|mixed
      */
-    public function handleException($error_or_exception);
+    public function handleException(array $credentials, $error_or_exception);
 }
