@@ -9,6 +9,9 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionProcessor\ExceptionAwareProcessor as ExceptionAware;
+use ActiveCollab\Authentication\Authorizer\ExceptionProcessor\ExceptionAwareProcessorInterface;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAware;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
@@ -18,9 +21,9 @@ use ActiveCollab\Authentication\Exception\UserNotFoundException;
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class SamlAuthorizer extends Authorizer implements RequestAwareInterface
+class SamlAuthorizer extends Authorizer implements RequestAwareInterface, ExceptionAwareProcessorInterface
 {
-    use RequestAware;
+    use RequestAware, ExceptionAware;
 
     /**
      * @var RepositoryInterface
@@ -30,11 +33,13 @@ class SamlAuthorizer extends Authorizer implements RequestAwareInterface
     /**
      * @param RepositoryInterface       $user_repository
      * @param RequestProcessorInterface $request_processor
+     * @param ExceptionAwareInterface   $exception_processor
      */
-    public function __construct(RepositoryInterface $user_repository, RequestProcessorInterface $request_processor = null)
+    public function __construct(RepositoryInterface $user_repository, RequestProcessorInterface $request_processor = null, ExceptionAwareInterface $exception_processor = null)
     {
         $this->user_repository = $user_repository;
         $this->setRequestProcessor($request_processor);
+        $this->setExceptionProcessor($exception_processor);
     }
 
     /**
