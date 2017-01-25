@@ -8,32 +8,22 @@
 
 namespace ActiveCollab\Authentication\Authorizer\ExceptionAware;
 
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
+
 /**
  * @package ActiveCollab\Authentication\Authorizer\ExceptionAware
  */
 trait ExceptionAware
 {
     /**
-     * @var ExceptionAwareInterface
-     */
-    private $exception_processor;
-
-    /**
      * {@inheritdoc}
      */
-    public function getExceptionProcessor()
+    public function handleException(array $credentials, $error_or_exception)
     {
-        return $this->exception_processor;
-    }
-
-    /**
-     * @param  ExceptionAwareInterface|null $exception_processor
-     * @return $this
-     */
-    protected function &setExceptionProcessor(ExceptionAwareInterface $exception_processor = null)
-    {
-        $this->exception_processor = $exception_processor;
-
-        return $this;
+        if ($this instanceof DelegatesToHandlerInterface && $this->getExceptionHandler()) {
+            return $this->getExceptionHandler()->handleException($credentials, $error_or_exception);
+        }
+        
+        return null;
     }
 }
