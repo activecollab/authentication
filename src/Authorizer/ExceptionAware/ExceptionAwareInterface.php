@@ -14,7 +14,7 @@ use Throwable;
 /**
  * @package ActiveCollab\Authentication\Authorizer\ExceptionAware
  */
-interface ExceptionHandlerInterface
+interface ExceptionAwareInterface
 {
     /**
      * @param  array               $credentials

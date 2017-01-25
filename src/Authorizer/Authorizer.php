@@ -8,10 +8,10 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandler as DelegatesToExceptionHandler;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandler as DelegatesToExceptionHandlerImplementation;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAware;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAware as ExceptionAwareImplementation;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface;
 
 /**
  * @package ActiveCollab\Authentication\Authorizer
@@ -19,7 +19,7 @@ use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\Excep
 abstract class Authorizer implements
     AuthorizerInterface,
     DelegatesToHandlerInterface,
-    ExceptionHandlerInterface
+    ExceptionAwareInterface
 {
-    use DelegatesToExceptionHandler, ExceptionAware;
+    use DelegatesToExceptionHandlerImplementation, ExceptionAwareImplementation;
 }
