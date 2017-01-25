@@ -4,6 +4,8 @@ php:
   - 7
 before_install:
   - composer self-update
-install: composer install --dev
+install:
+  - composer install --dev
+  - phpunit --self-upgrade
 script: phpunit
 after_script: php ./vendor/bin/coveralls -v
