@@ -214,6 +214,30 @@ class MyAuthorizer implements AuthorizerInterface, ExceptionAwareInterface
 }
 ```
 
+Additionally, exception handling can be delegated to exception handlers. For default `ExceptionAware` to detect that authorizer uses handler to handle an exception, authorizer needs to implement `ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface`.
+
+All built in authorizers are exception aware, and can receive a handler:
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
+use ActiveCollab\Authentication\Authorizer\LocalAuthorizer;
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+
+class MyExceptionHandler implements ExceptionHandlerInterface
+{
+    public function handleException(array $credentials, $error_or_exception)
+    {
+        // Do something with an exception.
+    }
+}
+
+$local_authorizer = new LocalAuthorizer($user_repo, AuthorizerInterface::USERNAME_FORMAT_ALPHANUM, new MyExceptionHandler());
+```
+
 ## Transports
 
 During authentication and authorization steps, this library returns transport objects that encapsulate all auth elements that are relevant for the given step in the process:

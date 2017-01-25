@@ -10,6 +10,7 @@ namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
@@ -31,13 +32,17 @@ class LocalAuthorizer extends Authorizer
     private $username_format;
 
     /**
-     * @param RepositoryInterface $user_repository
-     * @param string              $username_format
+     * LocalAuthorizer constructor.
+     *
+     * @param RepositoryInterface            $user_repository
+     * @param string                         $username_format
+     * @param ExceptionHandlerInterface|null $exception_handler
      */
-    public function __construct(RepositoryInterface $user_repository, $username_format = AuthorizerInterface::USERNAME_FORMAT_ANY)
+    public function __construct(RepositoryInterface $user_repository, $username_format = AuthorizerInterface::USERNAME_FORMAT_ANY, ExceptionHandlerInterface $exception_handler = null)
     {
         $this->user_repository = $user_repository;
         $this->username_format = $username_format;
+        $this->setExceptionHandler($exception_handler);
     }
 
     /**

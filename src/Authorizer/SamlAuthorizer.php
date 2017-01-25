@@ -9,9 +9,6 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandler as DelegatesToExceptionHandler;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAware;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAware;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
@@ -22,12 +19,9 @@ use ActiveCollab\Authentication\Exception\UserNotFoundException;
 /**
  * @package ActiveCollab\Authentication\Authorizer
  */
-class SamlAuthorizer extends Authorizer implements
-    DelegatesToHandlerInterface,
-    ExceptionHandlerInterface,
-    RequestAwareInterface
+class SamlAuthorizer extends Authorizer implements RequestAwareInterface
 {
-    use DelegatesToExceptionHandler, ExceptionAware, RequestAware;
+    use RequestAware;
 
     /**
      * @var RepositoryInterface
