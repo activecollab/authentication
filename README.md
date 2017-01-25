@@ -223,9 +223,9 @@ All built in authorizers are exception aware, and can receive a handler:
 
 namespace MyApp;
 
+use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\LocalAuthorizer;
-use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 
 class MyExceptionHandler implements ExceptionHandlerInterface
 {
