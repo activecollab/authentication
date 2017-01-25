@@ -9,10 +9,10 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandler as DelegatesToExceptionHandler;
-use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAware;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAware;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;

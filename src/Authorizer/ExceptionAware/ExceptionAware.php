@@ -23,7 +23,7 @@ trait ExceptionAware
         if ($this instanceof DelegatesToHandlerInterface && $this->getExceptionHandler()) {
             return $this->getExceptionHandler()->handleException($credentials, $error_or_exception);
         }
-        
+
         return null;
     }
 }
