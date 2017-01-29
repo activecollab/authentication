@@ -206,21 +206,4 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         call_user_func(new Authentication([$this->browser_session_adapter, $this->token_bearer_adapter]), $request, $response);
     }
-
-    public function testOnAuthenticatedUserCallback()
-    {
-        /** @var ServerRequestInterface $request */
-        $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
-
-        $middleware = new Authentication([$this->token_bearer_adapter]);
-
-        $callback_is_called = false;
-        $middleware->setOnAuthenciatedUserChanged(function () use (&$callback_is_called) {
-            $callback_is_called = true;
-        });
-
-        call_user_func($middleware, $request, $this->response);
-
-        $this->assertTrue($callback_is_called);
-    }
 }

@@ -8,7 +8,9 @@ Table of Contents:
   * [Accessing Users](#accessing-users)
 * [Authorizers](#authorizers)
   * [Request Aware Auhtorizers](#request-aware-auhtorizers)
+  * [Exception Aware Authorizers](#exception-aware-auhtorizers)
 * [Transports](#transports)
+* [Events](#events)
 * [Authentication Middlewares](#authentication-middlewares)
 * [Working with Passwords](#working-with-passwords)
   * [Hashing and Validating Passwords](#hashing-and-validating-passwords)
@@ -255,6 +257,37 @@ if (!$transport->isApplied()) {
 }
 ```
 
+## Events
+
+Authentication utility throws events for which you can write handlers. Here's an example:
+
+```php
+<?php
+
+namespace MyApp;
+
+use ActiveCollab\Authentication\Authentication;
+
+$auth = new Authentication([]);
+$auth->onUserAuthorizationFailed(function(array $credentials) {
+    // Log attempt for user's username.
+});
+$auth->onUserAuthorizationFailed(function(array $credentials) {
+    // If third attempt, notify administrator that particular user has trouble logging in.
+});
+$auth->onUserAuthorizationFailed(function(array $credentials) {
+    // If fifth attempt, block IP address for a couple of minutes, to cool it down.
+});
+```
+
+As you can see from the example above, you can provide multiple handlers for the same event. Following events are available:
+
+1. `onUserAuthenticated` - (visit) User is recognized by its session cookie, token etc, so it was authenticated. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
+1. `onUserAuthorized` (login) User provided valid credentials, and system authorized it. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
+1. `onUserAuthorizationFailed` (login failed)  User tried to authorize, but provided credentials were not valid, or authorization failed due to other reasons (SSO service down, etc). Arguments provided to the callback are user's credentials [array], as well as the failure reason ([Exception] or [Throwable]).
+1. `onUserSet` - User is set - authenticated, authorizer, or app set the user using its own logic. Argument provided to the callback is the user instance [AuthenticatedUserInterface].
+1. `setOnUserDeauthenticated` (logout) User logged out. Argument provided to the callback is authentication method that got terminated [AuthenticationResultInterface].
+
 ## Authentication Middlewares
 
 `AuthenticationInterface` interface assumes that implementation will be such that it can be invoked as a middleware in a [PSR-7](http://www.php-fig.org/psr/psr-7/) middleware stack. That is why implementation of `__invoke` method in middleware stack fashion is part of the interface.
@@ -446,5 +479,5 @@ Login policy implements `\JsonSerializable` interface, and can be safely encoded
 
 ## To Do
 
-1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords,
-1. Add `onAuthentication()`, `onAuthorization()`, `onDeauthentication()` events to `AuthenticationInterface`.
+1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords.
+1. Remove deprecated `AuthenticationInterface::setOnAuthenciatedUserChanged()`.
