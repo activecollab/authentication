@@ -480,5 +480,4 @@ Login policy implements `\JsonSerializable` interface, and can be safely encoded
 ## To Do
 
 1. Consider adding previously used passwords repository, so library can enforce no-repeat policy for passwords.
-1. Add `onAuthentication()`, `onAuthorization()`, `onDeauthentication()` events to `AuthenticationInterface`.
 1. Remove deprecated `AuthenticationInterface::setOnAuthenciatedUserChanged()`.
