@@ -9,6 +9,7 @@
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAware;
 use ActiveCollab\Authentication\Authorizer\RequestAware\RequestAwareInterface;
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
@@ -30,11 +31,13 @@ class SamlAuthorizer extends Authorizer implements RequestAwareInterface
     /**
      * @param RepositoryInterface       $user_repository
      * @param RequestProcessorInterface $request_processor
+     * @param ExceptionHandlerInterface $exception_handler
      */
-    public function __construct(RepositoryInterface $user_repository, RequestProcessorInterface $request_processor = null)
+    public function __construct(RepositoryInterface $user_repository, RequestProcessorInterface $request_processor = null, ExceptionHandlerInterface $exception_handler = null)
     {
         $this->user_repository = $user_repository;
         $this->setRequestProcessor($request_processor);
+        $this->setExceptionHandler($exception_handler);
     }
 
     /**

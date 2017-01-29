@@ -10,6 +10,7 @@ namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
+use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Exception\RuntimeException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Google_Client;
@@ -42,16 +43,20 @@ class GoogleAuthorizer extends Authorizer
     private $user_profile;
 
     /**
-     * @param RepositoryInterface $user_repository
-     * @param Google_Client       $google_client
-     * @param string              $client_id
+     * GoogleAuthorizer constructor.
+     *
+     * @param RepositoryInterface            $user_repository
+     * @param Google_Client                  $google_client
+     * @param                                $client_id
+     * @param ExceptionHandlerInterface|null $exception_handler
      */
-    public function __construct(RepositoryInterface $user_repository, Google_Client $google_client, $client_id)
+    public function __construct(RepositoryInterface $user_repository, Google_Client $google_client, $client_id, ExceptionHandlerInterface $exception_handler = null)
     {
         $this->user_repository = $user_repository;
         $this->google_client = $google_client;
         $this->client_id = $client_id;
         $this->user_profile = [];
+        $this->setExceptionHandler($exception_handler);
     }
 
     /**
