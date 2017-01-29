@@ -95,6 +95,8 @@ class Authentication implements AuthenticationInterface
             if ($auth_result instanceof AuthenticationTransportInterface) {
                 $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
                 $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+
+                $this->triggerEvent('user_authenticated', $auth_result->getAuthenticatedUser(), $auth_result->getAuthenticatedWith());
             }
 
             list($request, $response) = $auth_result->applyTo($request, $response);
@@ -219,7 +221,7 @@ class Authentication implements AuthenticationInterface
      */
     private function &triggerEvent($event_name, ...$arguments)
     {
-        if (!in_array($event_name, ['user_set'])) {
+        if (!in_array($event_name, ['user_authenticated', 'user_set'])) {
             throw new LogicException("Event '$event_name' is not supported.");
         }
 
