@@ -83,8 +83,11 @@ interface AuthenticationInterface
     public function &setAuthenticatedWith(AuthenticationResultInterface $value);
 
     /**
+     * Use onUserSet() instead.
+     *
      * @param  callable|null $value
      * @return $this
+     * @deprecated
      */
     public function &setOnAuthenciatedUserChanged(callable $value = null);
 }

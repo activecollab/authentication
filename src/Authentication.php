@@ -18,6 +18,7 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
+use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,9 +46,29 @@ class Authentication implements AuthenticationInterface
     private $authenticated_with;
 
     /**
-     * @var callable|null
+     * @var callable[]
      */
-    private $on_authencated_user_changed;
+    private $on_user_authenticated = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_authorized = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_authorization_failed = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_set = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_deauthenticated = [];
 
     /**
      * @param array $adapters
@@ -166,9 +187,7 @@ class Authentication implements AuthenticationInterface
     {
         $this->authenticated_user = $user;
 
-        if (is_callable($this->on_authencated_user_changed)) {
-            call_user_func($this->on_authencated_user_changed, $user);
-        }
+        $this->triggerEvent('user_set', $user);
 
         return $this;
     }
@@ -192,12 +211,80 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
+     * Trigger an internal event.
+     *
+     * @param  string $event_name
+     * @param  array  $arguments
+     * @return $this
+     */
+    private function &triggerEvent($event_name, ...$arguments)
+    {
+        if (!in_array($event_name, ['user_set'])) {
+            throw new LogicException("Event '$event_name' is not supported.");
+        }
+
+        $property_name = "on_{$event_name}";
+
+        /** @var callable $handler */
+        foreach ($this->$property_name as $handler) {
+            call_user_func_array($handler, $arguments);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &onUserAuthenticated(callable $value)
+    {
+        $this->on_user_authenticated[] = $value;
+
+        return $this;
+    }
+
+    public function &onUserAuthorized(callable $value)
+    {
+        $this->on_user_authorized[] = $value;
+
+        return $this;
+    }
+
+    public function &onUserAuthorizationFailed(callable $value)
+    {
+        $this->on_user_authorization_failed[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &onUserSet(callable $value)
+    {
+        $this->on_user_set[] = $value;
+
+        return $this;
+    }
+
+    public function &setOnUserDeauthenticated(callable $value)
+    {
+        $this->on_user_deauthenticated[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Kept for backward compatibility reasons. Will be removed.
+     *
      * {@inheritdoc}
      */
     public function &setOnAuthenciatedUserChanged(callable $value = null)
     {
-        $this->on_authencated_user_changed = $value;
+        if (empty($value)) {
+            throw new InvalidArgumentException('Value needs to be a callable.');
+        }
 
-        return $this;
+        return $this->onUserSet($value);
     }
 }
