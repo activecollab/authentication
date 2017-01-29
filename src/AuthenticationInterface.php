@@ -83,8 +83,41 @@ interface AuthenticationInterface
     public function &setAuthenticatedWith(AuthenticationResultInterface $value);
 
     /**
+     * @param  callable $value
+     * @return $this
+     */
+    public function &onUserAuthenticated(callable $value);
+
+    /**
+     * @param  callable $value
+     * @return $this
+     */
+    public function &onUserAuthorized(callable $value);
+
+    /**
+     * @param  callable $value
+     * @return $this
+     */
+    public function &onUserAuthorizationFailed(callable $value);
+
+    /**
+     * @param  callable $value
+     * @return $this
+     */
+    public function &onUserSet(callable $value);
+
+    /**
+     * @param  callable $value
+     * @return $this
+     */
+    public function &setOnUserDeauthenticated(callable $value);
+
+    /**
+     * Use onUserSet() instead.
+     *
      * @param  callable|null $value
      * @return $this
+     * @deprecated
      */
     public function &setOnAuthenciatedUserChanged(callable $value = null);
 }

@@ -18,6 +18,7 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
+use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,9 +46,29 @@ class Authentication implements AuthenticationInterface
     private $authenticated_with;
 
     /**
-     * @var callable|null
+     * @var callable[]
      */
-    private $on_authencated_user_changed;
+    private $on_user_authenticated = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_authorized = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_authorization_failed = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_set = [];
+
+    /**
+     * @var callable[]
+     */
+    private $on_user_deauthenticated = [];
 
     /**
      * @param array $adapters
@@ -74,6 +95,8 @@ class Authentication implements AuthenticationInterface
             if ($auth_result instanceof AuthenticationTransportInterface) {
                 $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
                 $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+
+                $this->triggerEvent('user_authenticated', $auth_result->getAuthenticatedUser(), $auth_result->getAuthenticatedWith());
             }
 
             list($request, $response) = $auth_result->applyTo($request, $response);
@@ -91,10 +114,18 @@ class Authentication implements AuthenticationInterface
      */
     public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null)
     {
-        $user = $authorizer->verifyCredentials($credentials);
-        $authenticated_with = $adapter->authenticate($user, $credentials);
+        try {
+            $user = $authorizer->verifyCredentials($credentials);
+            $authenticated_with = $adapter->authenticate($user, $credentials);
 
-        return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+            $this->triggerEvent('user_authorized', $user, $authenticated_with);
+
+            return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+        } catch (Exception $e) {
+            $this->triggerEvent('user_authorization_failed', $credentials, $e);
+
+            throw $e;
+        }
     }
 
     /**
@@ -102,7 +133,11 @@ class Authentication implements AuthenticationInterface
      */
     public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with)
     {
-        return $adapter->terminate($authenticated_with);
+        $termination_result = $adapter->terminate($authenticated_with);
+
+        $this->triggerEvent('user_deauthenticated', $authenticated_with);
+
+        return $termination_result;
     }
 
     /**
@@ -166,9 +201,7 @@ class Authentication implements AuthenticationInterface
     {
         $this->authenticated_user = $user;
 
-        if (is_callable($this->on_authencated_user_changed)) {
-            call_user_func($this->on_authencated_user_changed, $user);
-        }
+        $this->triggerEvent('user_set', $user);
 
         return $this;
     }
@@ -192,12 +225,76 @@ class Authentication implements AuthenticationInterface
     }
 
     /**
+     * Trigger an internal event.
+     *
+     * @param  string $event_name
+     * @param  array  $arguments
+     * @return $this
+     */
+    private function &triggerEvent($event_name, ...$arguments)
+    {
+        $property_name = "on_{$event_name}";
+
+        /** @var callable $handler */
+        foreach ($this->$property_name as $handler) {
+            call_user_func_array($handler, $arguments);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &onUserAuthenticated(callable $value)
+    {
+        $this->on_user_authenticated[] = $value;
+
+        return $this;
+    }
+
+    public function &onUserAuthorized(callable $value)
+    {
+        $this->on_user_authorized[] = $value;
+
+        return $this;
+    }
+
+    public function &onUserAuthorizationFailed(callable $value)
+    {
+        $this->on_user_authorization_failed[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function &onUserSet(callable $value)
+    {
+        $this->on_user_set[] = $value;
+
+        return $this;
+    }
+
+    public function &setOnUserDeauthenticated(callable $value)
+    {
+        $this->on_user_deauthenticated[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Kept for backward compatibility reasons. Will be removed.
+     *
      * {@inheritdoc}
      */
     public function &setOnAuthenciatedUserChanged(callable $value = null)
     {
-        $this->on_authencated_user_changed = $value;
+        if (empty($value)) {
+            throw new InvalidArgumentException('Value needs to be a callable.');
+        }
 
-        return $this;
+        return $this->onUserSet($value);
     }
 }
