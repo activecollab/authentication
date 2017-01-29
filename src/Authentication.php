@@ -114,10 +114,18 @@ class Authentication implements AuthenticationInterface
      */
     public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null)
     {
-        $user = $authorizer->verifyCredentials($credentials);
-        $authenticated_with = $adapter->authenticate($user, $credentials);
+        try {
+            $user = $authorizer->verifyCredentials($credentials);
+            $authenticated_with = $adapter->authenticate($user, $credentials);
 
-        return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+            $this->triggerEvent('user_authorized', $user, $authenticated_with);
+
+            return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+        } catch (Exception $e) {
+            $this->triggerEvent('user_authorization_failed', $credentials, $e);
+
+            throw $e;
+        }
     }
 
     /**
@@ -125,7 +133,11 @@ class Authentication implements AuthenticationInterface
      */
     public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with)
     {
-        return $adapter->terminate($authenticated_with);
+        $termination_result = $adapter->terminate($authenticated_with);
+
+        $this->triggerEvent('user_deauthenticated', $authenticated_with);
+
+        return $termination_result;
     }
 
     /**
@@ -221,10 +233,6 @@ class Authentication implements AuthenticationInterface
      */
     private function &triggerEvent($event_name, ...$arguments)
     {
-        if (!in_array($event_name, ['user_authenticated', 'user_set'])) {
-            throw new LogicException("Event '$event_name' is not supported.");
-        }
-
         $property_name = "on_{$event_name}";
 
         /** @var callable $handler */

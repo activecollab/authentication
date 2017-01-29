@@ -280,11 +280,11 @@ $auth->onUserAuthorizationFailed(function(array $credentials) {
 
 As you can see from the example above, you can provide multiple handlers for the same event. Following events are available:
 
-1. `onUserAuthenticated` - (visit) User is recognized by its session cookie, token etc, so it was authenticated. Arguments provided to the callaback aure user instance [AuthenticatedUserInterface], and authentication method  
-1. `onUserAuthorized` (login) User provided valid credentials, and system authorized it.
-1. `onUserAuthorizationFailed` (login failed)  User tried to authorize, but provided credentials were not valid, or authorization failed due to other reasons (SSO service down, etc). Argument provided to the callback are user's credentials [array].
-1. `onUserSet` - User is set - authenticated, authorizer, or app set the user using its own logic.
-1. `setOnUserDeauthenticated` (logout) User logged out.
+1. `onUserAuthenticated` - (visit) User is recognized by its session cookie, token etc, so it was authenticated. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
+1. `onUserAuthorized` (login) User provided valid credentials, and system authorized it. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
+1. `onUserAuthorizationFailed` (login failed)  User tried to authorize, but provided credentials were not valid, or authorization failed due to other reasons (SSO service down, etc). Arguments provided to the callback are user's credentials [array], as well as the failure reason ([Exception] or [Throwable]).
+1. `onUserSet` - User is set - authenticated, authorizer, or app set the user using its own logic. Argument provided to the callback is the user instance [AuthenticatedUserInterface].
+1. `setOnUserDeauthenticated` (logout) User logged out. Argument provided to the callback is authentication method that got terminated [AuthenticationResultInterface].
 
 ## Authentication Middlewares
 
