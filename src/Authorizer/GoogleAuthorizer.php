@@ -72,7 +72,7 @@ class GoogleAuthorizer extends Authorizer
         $token = $credentials['token'];
         $username = $credentials['username'];
 
-        $payload = $this->google_client->verifyIdToken($token)->getAttributes()['payload'];
+        $payload = $this->google_client->verifyIdToken($token);
         $this->verifyGoogleProfile($payload, $username);
         $this->user_profile = $payload;
 
