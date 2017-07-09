@@ -11,7 +11,6 @@ namespace ActiveCollab\Authentication\Password\StrengthValidator;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 use LogicException;
-use RandomLib\Factory as RandomLibFactory;
 use RuntimeException;
 
 /**
@@ -76,7 +75,6 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
             throw new LogicException('Password policy requires longer password');
         }
 
-        $generator = (new RandomLibFactory())->getMediumStrengthGenerator();
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
         if ($policy->requireSymbols()) {
@@ -87,7 +85,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
 
         while (++$counter < 10000) {
             try {
-                $password = $generator->generateString($length, $characters);
+                $password = $this->generateRandomString($length, $characters);
 
                 if ($this->validate($password, $policy)) {
                     return $password;
@@ -97,5 +95,18 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         }
 
         throw new RuntimeException('Failed to generate new password in 1000 iterations');
+    }
+
+    public function generateRandomString(int $length, string $characters): string
+    {
+        $max = mb_strlen($characters, '8bit') - 1;
+
+        $result = '';
+
+        for ($i = 0; $i < $length; ++$i) {
+            $result .= $characters[random_int(0, $max)];
+        }
+
+        return $result;
     }
 }
