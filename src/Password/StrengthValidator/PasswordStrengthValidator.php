@@ -76,7 +76,6 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
             throw new LogicException('Password policy requires longer password');
         }
 
-        $generator = (new RandomLibFactory())->getMediumStrengthGenerator();
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
         if ($policy->requireSymbols()) {
@@ -87,7 +86,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
 
         while (++$counter < 10000) {
             try {
-                $password = $generator->generateString($length, $characters);
+                $password = $this->generateRandomString($length, $characters);
 
                 if ($this->validate($password, $policy)) {
                     return $password;
@@ -97,5 +96,18 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         }
 
         throw new RuntimeException('Failed to generate new password in 1000 iterations');
+    }
+
+    private function generateRandomString(int $length, string $characters): string
+    {
+        $result = '';
+
+        $max = mb_strlen($characters, '8bit') - 1;
+
+        for ($i = 0; $i < $length; ++$i) {
+            $result .= $characters[random_int(0, $max)];
+        }
+
+        return $result;
     }
 }
