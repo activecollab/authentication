@@ -11,7 +11,6 @@ namespace ActiveCollab\Authentication\Password\StrengthValidator;
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 use LogicException;
-use RandomLib\Factory as RandomLibFactory;
 use RuntimeException;
 
 /**
