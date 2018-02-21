@@ -44,4 +44,20 @@ interface PasswordManagerInterface
      * @return bool
      */
     public function needsRehash($hash, $hashed_with);
+
+    /**
+     * Encrypt password.
+     *
+     * @param $password
+     * @return string
+     */
+    public function encryptPassword($password);
+
+    /**
+     * Decrypt password.
+     *
+     * @param $password
+     * @return mixed
+     */
+    public function decryptPassword($password);
 }

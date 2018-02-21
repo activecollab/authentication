@@ -15,6 +15,8 @@ use InvalidArgumentException;
  */
 class PasswordManager implements PasswordManagerInterface
 {
+    const OPENSSL_CRYPT_METHOD = 'aes-256-cbc';
+
     /**
      * @var string
      */
@@ -110,5 +112,58 @@ class PasswordManager implements PasswordManagerInterface
         // Return derived key of correct length
 
         return substr($dk, 0, $kl);
+    }
+
+    /**
+     * @param $password
+     * @return string
+     */
+    public function encryptPassword($password)
+    {
+        $password_hash = !empty(getenv('PASSWORD_CRYPT_HASH'))
+            ? getenv('PASSWORD_CRYPT_HASH')
+            : 'its_hashed';
+
+        $iv_size = openssl_cipher_iv_length(self::OPENSSL_CRYPT_METHOD);
+        $iv = openssl_random_pseudo_bytes($iv_size);
+
+        return base64_encode(
+            openssl_encrypt(
+                $password,
+                self::OPENSSL_CRYPT_METHOD,
+                $password_hash,
+                OPENSSL_RAW_DATA,
+                $iv
+            )
+        ) . ':' . base64_encode($iv);
+    }
+
+    /**
+     * @param $password
+     * @return string
+     */
+    public function decryptPassword($password)
+    {
+        $password_hash = !empty(getenv('PASSWORD_CRYPT_HASH'))
+            ? getenv('PASSWORD_CRYPT_HASH')
+            : 'its_hashed';
+
+        if (empty($password)) {
+            throw new InvalidArgumentException('Password argument is required');
+        }
+
+        $separated_data = explode(':', $password);
+
+        if (count($separated_data) != 2) {
+            throw new InvalidArgumentException('Encryption is not valid');
+        }
+
+        return openssl_decrypt(
+            base64_decode($separated_data[0], true),
+            self::OPENSSL_CRYPT_METHOD,
+            $password_hash,
+            OPENSSL_RAW_DATA,
+            base64_decode($separated_data[1], true)
+        );
     }
 }

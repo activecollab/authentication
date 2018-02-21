@@ -92,4 +92,15 @@ class PasswordManagerTest extends TestCase
         $this->assertTrue($manager->needsRehash($manager->hash('123', PasswordManagerInterface::HASHED_WITH_PBKDF2), PasswordManagerInterface::HASHED_WITH_PBKDF2));
         $this->assertTrue($manager->needsRehash($manager->hash('123', PasswordManagerInterface::HASHED_WITH_SHA1), PasswordManagerInterface::HASHED_WITH_SHA1));
     }
+
+    public function testCryptDecryptPassword()
+    {
+        $password = 'crypt_password';
+        $password_manager = new PasswordManager();
+
+        $crypted_password = $password_manager->encryptPassword($password);
+        $decrypted_password = $password_manager->decryptPassword($crypted_password);
+
+        $this->assertEquals($password, $decrypted_password);
+    }
 }
