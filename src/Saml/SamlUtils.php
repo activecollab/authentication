@@ -24,7 +24,6 @@ use LightSaml\Model\Protocol\AuthnRequest;
 use LightSaml\Model\Protocol\Response;
 use LightSaml\Model\XmlDSig\SignatureWriter;
 use LightSaml\SamlConstants;
-use LogicException;
 
 /**
  * @package ActiveCollab\Authentication\Saml
