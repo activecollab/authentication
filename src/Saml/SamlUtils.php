@@ -8,7 +8,9 @@
 
 namespace ActiveCollab\Authentication\Saml;
 
+use ActiveCollab\Authentication\Session\SessionInterface;
 use DateTime;
+use InvalidArgumentException;
 use LightSaml\Binding\BindingFactory;
 use LightSaml\ClaimTypes;
 use LightSaml\Context\Profile\MessageContext;
@@ -28,6 +30,8 @@ use LightSaml\SamlConstants;
  */
 class SamlUtils
 {
+    const SESSION_DURATION_TYPE_ATTRIBUTE_NAME = 'session_duration_type';
+
     /**
      * Get saml authnRequest.
      *
@@ -109,6 +113,21 @@ class SamlUtils
         }
     }
 
+    public function getSessionDurationType(Response $response)
+    {
+        foreach ($response->getAllAssertions() as $assertion) {
+            foreach ($assertion->getAllAttributeStatements() as $statement) {
+                $session_type = $statement->getFirstAttributeByName(SsoResponse::SESSION_DURATION_TYPE_ATTRIBUTE_NAME);
+
+                if ($session_type && $this->validateSessionType($session_type->getFirstAttributeValue())) {
+                    return $session_type->getFirstAttributeValue();
+                }
+            }
+        }
+
+        return SessionInterface::DEFAULT_SESSION_DURATION;
+    }
+
     /**
      * @param  Response $response
      * @return string
@@ -116,5 +135,14 @@ class SamlUtils
     public function getIssuerUrl(Response $response)
     {
         return $response->getIssuer()->getValue();
+    }
+
+    private function validateSessionType($session_type)
+    {
+        if (!in_array($session_type, SessionInterface::SESSION_DURATIONS)) {
+            throw new InvalidArgumentException('Invalid session duration value');
+        }
+
+        return true;
     }
 }
