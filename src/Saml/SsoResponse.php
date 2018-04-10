@@ -36,6 +36,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class SsoResponse
 {
+    const SESSION_DURATION_TYPE_ATTRIBUTE_NAME = 'session_duration_type';
+
     /**
      * @var SamlDataManagerInterface
      */

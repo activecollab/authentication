@@ -15,6 +15,15 @@ use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterfa
  */
 interface SessionInterface extends AuthenticationResultInterface
 {
+    const SESSION_DURATION_SHORT = 'short';
+    const SESSION_DURATION_LONG = 'long';
+    const DEFAULT_SESSION_DURATION = self::SESSION_DURATION_SHORT;
+
+    const SESSION_DURATIONS = [
+        self::SESSION_DURATION_SHORT,
+        self::SESSION_DURATION_LONG,
+    ];
+
     /**
      * @return string
      */

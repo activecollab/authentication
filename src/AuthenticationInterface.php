@@ -110,7 +110,7 @@ interface AuthenticationInterface
      * @param  callable $value
      * @return $this
      */
-    public function &setOnUserDeauthenticated(callable $value);
+    public function &onUserDeauthenticated(callable $value);
 
     /**
      * Use onUserSet() instead.

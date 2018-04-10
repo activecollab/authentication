@@ -277,7 +277,7 @@ class Authentication implements AuthenticationInterface
         return $this;
     }
 
-    public function &setOnUserDeauthenticated(callable $value)
+    public function &onUserDeauthenticated(callable $value)
     {
         $this->on_user_deauthenticated[] = $value;
 

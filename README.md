@@ -7,8 +7,8 @@ Table of Contents:
 * [Who are Authenticated Users](#who-are-authenticated-users)
   * [Accessing Users](#accessing-users)
 * [Authorizers](#authorizers)
-  * [Request Aware Auhtorizers](#request-aware-auhtorizers)
-  * [Exception Aware Authorizers](#exception-aware-auhtorizers)
+  * [Request Aware Authorizers](#request-aware-authorizers)
+  * [Exception Aware Authorizers](#exception-aware-authorizers)
 * [Transports](#transports)
 * [Events](#events)
 * [Authentication Middlewares](#authentication-middlewares)
@@ -62,7 +62,7 @@ class MyUsersRepository implements \ActiveCollab\Authentication\AuthenticatedUse
 
 Authorizers are used to authorize user credentials against data that is stored by a particular authentication service (stored users, LDAP/AD, IdP etc).
 
-Key authorizer method is `verifyCredentials`. It receives an array with credentials and it is expected to return `ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface` instance on successful authorization, or `null` when auhtorization is not successful. Some implementations may decide to throw exceptions, to make a clear distinction between various reasons why authorization failed (user not found, invalid password, user account is temporaly or permanently suspended etc). 
+Key authorizer method is `verifyCredentials`. It receives an array with credentials and it is expected to return `ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface` instance on successful authorization, or `null` when authorization is not successful. Some implementations may decide to throw exceptions, to make a clear distinction between various reasons why authorization failed (user not found, invalid password, user account is temporarily or permanently suspended etc). 
 
 Example of Authorizer implementation that fetches user from users repository, and validates user's password:
 
@@ -282,7 +282,7 @@ $auth->onUserAuthorizationFailed(function(array $credentials) {
 
 As you can see from the example above, you can provide multiple handlers for the same event. Following events are available:
 
-1. `onUserAuthenticated` - (visit) User is recognized by its session cookie, token etc, so it was authenticated. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
+1. `onUserAuthenticated` - (visit) User is recognized by its session cookie, token etc, so it was authenticated. Arguments provided to the callback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
 1. `onUserAuthorized` (login) User provided valid credentials, and system authorized it. Arguments provided to the callaback are user instance [AuthenticatedUserInterface], and authentication result [AuthenticationResultInterface].
 1. `onUserAuthorizationFailed` (login failed)  User tried to authorize, but provided credentials were not valid, or authorization failed due to other reasons (SSO service down, etc). Arguments provided to the callback are user's credentials [array], as well as the failure reason ([Exception] or [Throwable]).
 1. `onUserSet` - User is set - authenticated, authorizer, or app set the user using its own logic. Argument provided to the callback is the user instance [AuthenticatedUserInterface].
@@ -332,7 +332,7 @@ During request handling, authentication can change:
 1. User can log out,
 1. System may request that authentication artifacts (like cookies) are cleaned up.
 
-System can communicate these changes by making appropriate authentication transports that encapuslate information about these events available in a value container, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
+System can communicate these changes by making appropriate authentication transports that encapsulate information about these events available in a value container, and handing them over to `ActiveCollab\Authentication\Middleware\ApplyAuthenticationMiddleware`:
 
 ```php
 <?php
@@ -438,7 +438,7 @@ Password policy implements `\JsonSerializable` interface, and can be safely enco
 
 ### Generating Random Passwords
 
-Password strength validator can also be used to prepare new passwords that meed the requirements of provided policies:
+Password strength validator can also be used to prepare new passwords that meet the requirements of provided policies:
 
 ```php
 $validator = new PasswordStrengthValidator();
@@ -450,7 +450,7 @@ $password = $validator->generateValidPassword(32, $policy);
 
 Password generator uses letters and numbers by default, unless symbols are required by the provided password policy.
 
-Note that generator may throw an exeception if it fails to prepare a password in 10000 tries.
+Note that generator may throw an exception if it fails to prepare a password in 10000 tries.
 
 ## Login Policy
 

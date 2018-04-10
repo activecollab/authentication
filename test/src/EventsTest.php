@@ -68,14 +68,14 @@ class EventsTest extends BrowserSessionTestCase
         $authentication = $this->prepareForAuthentication();
 
         $first_callback_called = false;
-        $authentication->setOnUserDeauthenticated(function () use (&$first_callback_called) {
+        $authentication->onUserDeauthenticated(function () use (&$first_callback_called) {
             $this->validateOnUserDeauthenticatedArguments(func_get_args());
 
             $first_callback_called = true;
         });
 
         $secon_callback_called = false;
-        $authentication->setOnUserDeauthenticated(function () use (&$secon_callback_called) {
+        $authentication->onUserDeauthenticated(function () use (&$secon_callback_called) {
             $this->validateOnUserDeauthenticatedArguments(func_get_args());
 
             $secon_callback_called = true;
