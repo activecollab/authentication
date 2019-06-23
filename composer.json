@@ -15,13 +15,12 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0",
+        "php": ">=7.1",
         "ext-mbstring": "*",
         "activecollab/cookies": "^1.0",
-        "activecollab/user": "^3.0",
-        "google/apiclient": "^1.1",
-        "guzzlehttp/psr7": "^1.2",
-        "paragonie/random_compat": "^2.0"
+        "activecollab/user": "v4.0.x-dev",
+        "google/apiclient": "^2.1",
+        "guzzlehttp/psr7": "^1.2"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",

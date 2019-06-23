@@ -12,7 +12,6 @@ use ActiveCollab\Authentication\Authorizer\GoogleAuthorizer;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
-use Exception;
 
 /**
  * @package ActiveCollab\Authentication\Test
@@ -20,7 +19,15 @@ use Exception;
 class GoogleAuthorizerTest extends TestCase
 {
     private $client_id;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Google_Client
+     */
     private $google_client;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Google_Client
+     */
     private $google_auth_login_ticket;
 
     public function setUp()
@@ -36,6 +43,7 @@ class GoogleAuthorizerTest extends TestCase
      * @dataProvider providerInvalidCredentials
      * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
      * @expectedExceptionMessage Authentication request data not valid
+     * @param array $credentials
      */
     public function testInvalidCredentialsThrowsException($credentials)
     {
@@ -60,9 +68,13 @@ class GoogleAuthorizerTest extends TestCase
      */
     public function testExceptionIsThrownForInvalidAud()
     {
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn(['aud' => '111a']);
+
         $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
 
-        $this->ensureTokenVerificationResult('123abacu', ['payload' => ['aud' => '111a']]);
+        $this->ensureTokenVerificationResult('123abacu', ['aud' => '111a']);
 
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
@@ -73,11 +85,13 @@ class GoogleAuthorizerTest extends TestCase
      */
     public function testExceptionIsThrownForInvalidIss()
     {
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn(['aud' => '123abc', 'iss' => 'www.example.com']);
+
         $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
 
-        $this->ensureTokenVerificationResult('123abacu', [
-            'payload' => ['aud' => '123abc', 'iss' => 'www.example.com'],
-        ]);
+        $this->ensureTokenVerificationResult('123abacu', ['aud' => '123abc', 'iss' => 'www.example.com']);
 
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
@@ -88,11 +102,16 @@ class GoogleAuthorizerTest extends TestCase
      */
     public function testExceptionIsThrownForInvalidUsername()
     {
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn(['aud' => '123abc', 'iss' => 'accounts.google.com', 'email' => 'john123@doe.com']);
+
         $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
 
-        $this->ensureTokenVerificationResult('123abacu', [
-            'payload' => ['aud' => '123abc', 'iss' => 'accounts.google.com', 'email' => 'john123@doe.com'],
-        ]);
+        $this->ensureTokenVerificationResult(
+            '123abacu',
+            ['aud' => '123abc', 'iss' => 'accounts.google.com', 'email' => 'john123@doe.com']
+        );
 
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
@@ -103,14 +122,19 @@ class GoogleAuthorizerTest extends TestCase
      */
     public function testExceptionIsThrownForNotFoundUser()
     {
-        $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
-
         $payload = [
             'aud' => '123abc',
             'iss' => 'accounts.google.com',
             'email' => 'john@doe.com',
         ];
-        $this->ensureTokenVerificationResult('123abacu', ['payload' => $payload]);
+
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn($payload);
+
+        $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
+
+        $this->ensureTokenVerificationResult('123abacu', $payload);
 
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
@@ -121,6 +145,16 @@ class GoogleAuthorizerTest extends TestCase
      */
     public function testExceptionIsThrownForNotAuthenticatedUser()
     {
+        $payload = [
+            'aud' => '123abc',
+            'iss' => 'accounts.google.com',
+            'email' => 'john@doe.com',
+        ];
+
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn($payload);
+
         $google_authorizer = new GoogleAuthorizer(new Repository([
                 'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', false),
             ]),
@@ -128,18 +162,23 @@ class GoogleAuthorizerTest extends TestCase
             $this->client_id
         );
 
-        $payload = [
-            'aud' => '123abc',
-            'iss' => 'accounts.google.com',
-            'email' => 'john@doe.com',
-        ];
-        $this->ensureTokenVerificationResult('123abacu', ['payload' => $payload]);
+        $this->ensureTokenVerificationResult('123abacu', $payload);
 
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
 
     public function testUserIsFoundAndVerified()
     {
+        $payload = [
+            'aud' => '123abc',
+            'iss' => 'accounts.google.com',
+            'email' => 'john@doe.com',
+        ];
+
+        $this->google_client
+            ->method('verifyIdToken')
+            ->willReturn($payload);
+
         $google_authorizer = new GoogleAuthorizer(new Repository([
                 'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', true),
             ]),
@@ -147,12 +186,7 @@ class GoogleAuthorizerTest extends TestCase
             $this->client_id
         );
 
-        $payload = [
-            'aud' => '123abc',
-            'iss' => 'accounts.google.com',
-            'email' => 'john@doe.com',
-        ];
-        $this->ensureTokenVerificationResult('123abacu', ['payload' => $payload]);
+        $this->ensureTokenVerificationResult('123abacu', $payload);
 
         $user = $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
 
@@ -164,25 +198,11 @@ class GoogleAuthorizerTest extends TestCase
     {
         $this
             ->google_client
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('verifyIdToken')
             ->with($token)
             ->will($this->returnValue($this->google_auth_login_ticket));
 
-        $this
-            ->google_auth_login_ticket
-            ->expects($this->once())
-            ->method('getAttributes')
-            ->will($this->returnValue($results));
-    }
-
-    private function ensureTokenVerificationFailed($token, $error)
-    {
-        $this
-            ->google_client
-            ->expects($this->once())
-            ->method('verifyIdToken')
-            ->with($token)
-            ->will($this->throwException(new Exception($error)));
+        $this->assertSame($results, $this->google_client->verifyIdToken($token));
     }
 }

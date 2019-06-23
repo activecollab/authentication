@@ -97,12 +97,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         throw new RuntimeException('Failed to generate new password in 1000 iterations');
     }
 
-    /**
-     * @param  int    $length
-     * @param  string $characters
-     * @return string
-     */
-    private function generateRandomString($length, $characters)
+    private function generateRandomString(int $length, string $characters): string
     {
         $result = '';
 
