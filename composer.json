@@ -18,7 +18,7 @@
         "php": ">=7.1",
         "ext-mbstring": "*",
         "activecollab/cookies": "^1.0",
-        "activecollab/user": "v4.0.x-dev",
+        "activecollab/user": "^4.0",
         "google/apiclient": "^2.1",
         "guzzlehttp/psr7": "^1.2"
     },

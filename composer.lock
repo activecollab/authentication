@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b475f509d6a5deaa413e13cc47ac166d",
+    "content-hash": "0a375c1713087381523eb8cfb7f5e23f",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -151,16 +151,16 @@
         },
         {
             "name": "activecollab/user",
-            "version": "v4.0.x-dev",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/user.git",
-                "reference": "dc6371205e89713b9f3347ff8753dc79f7ae626e"
+                "reference": "6fa07d4a3e345cefce0491d2efe5d83b3867169b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/user/zipball/dc6371205e89713b9f3347ff8753dc79f7ae626e",
-                "reference": "dc6371205e89713b9f3347ff8753dc79f7ae626e",
+                "url": "https://api.github.com/repos/activecollab/user/zipball/6fa07d4a3e345cefce0491d2efe5d83b3867169b",
+                "reference": "6fa07d4a3e345cefce0491d2efe5d83b3867169b",
                 "shasum": ""
             },
             "require": {
@@ -194,7 +194,7 @@
             "keywords": [
                 "activecollab"
             ],
-            "time": "2019-06-23T18:07:23+00:00"
+            "time": "2019-06-23T18:22:56+00:00"
         },
         {
             "name": "activecollab/utils",
@@ -405,16 +405,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.103",
+            "version": "v0.104",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522"
+                "reference": "d41fea99f90d7935bd57cf654bf271072fe584f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/01f9ada6e0f37515419cbf457144ccefee70e522",
-                "reference": "01f9ada6e0f37515419cbf457144ccefee70e522",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/d41fea99f90d7935bd57cf654bf271072fe584f1",
+                "reference": "d41fea99f90d7935bd57cf654bf271072fe584f1",
                 "shasum": ""
             },
             "require": {
@@ -438,7 +438,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2019-06-16T00:23:11+00:00"
+            "time": "2019-06-23T00:23:39+00:00"
         },
         {
             "name": "google/auth",
@@ -754,16 +754,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "2.0.19",
+            "version": "2.0.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba"
+                "reference": "d6819a55b05e123db1e881d8b230d57f912126be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d2085db7b7394baa071a69c8f9159723c250f2ba",
-                "reference": "d2085db7b7394baa071a69c8f9159723c250f2ba",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d6819a55b05e123db1e881d8b230d57f912126be",
+                "reference": "d6819a55b05e123db1e881d8b230d57f912126be",
                 "shasum": ""
             },
             "require": {
@@ -842,7 +842,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2019-06-20T03:34:11+00:00"
+            "time": "2019-06-23T16:33:11+00:00"
         },
         {
             "name": "psr/cache",
@@ -2386,6 +2386,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2017-06-30T09:13:00+00:00"
         },
         {
@@ -2584,6 +2585,7 @@
                 "github",
                 "test"
             ],
+            "abandoned": "php-coveralls/php-coveralls",
             "time": "2017-12-06T23:17:56+00:00"
         },
         {
@@ -4325,9 +4327,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "activecollab/user": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
