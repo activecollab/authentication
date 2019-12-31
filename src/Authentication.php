@@ -120,6 +120,34 @@ class Authentication implements AuthenticationInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $auth_result = $this->authenticatedUsingAdapters($request);
+
+        if ($auth_result instanceof TransportInterface 
+            && !$auth_result->isEmpty()
+        ) {
+            if ($auth_result instanceof AuthenticationTransportInterface) {
+                $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+                $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+
+                $this->triggerEvent(
+                    'user_authenticated',
+                    $auth_result->getAuthenticatedUser(),
+                    $auth_result->getAuthenticatedWith()
+                );
+            }
+
+            $request = $auth_result->applyToRequest($request);
+        }
+
+        $response = $handler->handle($request);
+
+        if ($auth_result instanceof TransportInterface
+            && !$auth_result->isEmpty()
+        ) {
+            $response = $auth_result->applyToResponse($response);
+        }
+
+        return $response;
     }
 
     /**
