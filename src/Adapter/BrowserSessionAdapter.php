@@ -21,6 +21,7 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use ActiveCollab\Cookies\Adapter\CookieSetterInterface;
 use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -93,11 +94,7 @@ class BrowserSessionAdapter extends Adapter
         return new CleanUpTransport($this);
     }
 
-    public function applyTo(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        TransportInterface $transport
-    ): array
+    public function applyToResponse(ResponseInterface $response, TransportInterface $transport): ResponseInterface
     {
         // Extend session
         if ($transport instanceof AuthenticationTransportInterface) {
@@ -109,10 +106,17 @@ class BrowserSessionAdapter extends Adapter
 
             $authenticated_with->extendSession();
 
-            list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
-                'ttl' => $authenticated_with->getSessionTtl(),
-                'http_only' => true,
-            ]);
+            /** @var CookieSetterInterface $cookieSetter */
+            $cookieSetter = $this->cookies->createSetter(
+                $this->session_cookie_name,
+                $authenticated_with->getSessionId(),
+                [
+                    'ttl' => $authenticated_with->getSessionTtl(),
+                    'http_only' => true,
+                ]
+            );
+
+            $response = $cookieSetter->applyToResponse($response);
 
         // Log in
         } elseif ($transport instanceof AuthorizationTransportInterface) {
@@ -122,17 +126,26 @@ class BrowserSessionAdapter extends Adapter
                 throw new InvalidArgumentException('Only user sessions are supported');
             }
 
-            list($request, $response) = $this->cookies->set($request, $response, $this->session_cookie_name, $authenticated_with->getSessionId(), [
-                'ttl' => $authenticated_with->getSessionTtl(),
-                'http_only' => true,
-            ]);
+            /** @var CookieSetterInterface $cookieSetter */
+            $cookieSetter = $this->cookies->createSetter(
+                $this->session_cookie_name,
+                $authenticated_with->getSessionId(),
+                [
+                    'ttl' => $authenticated_with->getSessionTtl(),
+                    'http_only' => true,
+                ]
+            );
+
+            return $cookieSetter->applyToResponse($response);
 
         // Log out or clean-up
-        } elseif ($transport instanceof DeauthenticationTransportInterface || $transport instanceof CleanUpTransportInterface) {
-            list($request, $response) = $this->cookies->remove($request, $response, $this->session_cookie_name);
+        } elseif ($transport instanceof DeauthenticationTransportInterface
+            || $transport instanceof CleanUpTransportInterface
+        ) {
+            return ($this->cookies->createRemover($this->session_cookie_name))->applyToResponse($response);
         }
 
-        return parent::applyTo($request, $response, $transport);
+        return $response;
     }
 
     /**
