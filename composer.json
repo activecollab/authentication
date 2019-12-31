@@ -15,9 +15,9 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.3",
         "ext-mbstring": "*",
-        "activecollab/cookies": "^1.0",
+        "activecollab/cookies": "^2.0",
         "activecollab/user": "^4.0",
         "google/apiclient": "^2.1",
         "guzzlehttp/psr7": "^1.2"
@@ -25,7 +25,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
         "lightsaml/lightsaml": "^1.1",
-        "phpunit/phpunit": "^5.0",
+        "phpunit/phpunit": "^7.0",
         "satooshi/php-coveralls": "^1.0",
         "slim/slim": "~3.2"
     },

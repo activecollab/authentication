@@ -6,8 +6,11 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test\TestCase;
 
+use PHPUnit\Framework\TestCase as BaseTestCase;
 use Pimple\Container;
 use Slim\CallableResolver;
 use Slim\Handlers\Strategies\RequestResponse;
@@ -18,10 +21,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Http\Uri;
 
-/**
- * @package ActiveCollab\Authentication\Test\TestCase
- */
-abstract class RequestResponseTestCase extends \PHPUnit_Framework_TestCase
+abstract class RequestResponseTestCase extends BaseTestCase
 {
     /**
      * @var Container

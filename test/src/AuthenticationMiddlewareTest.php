@@ -73,14 +73,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
      */
     private $token_bearer_adapter;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUp()
     {
         parent::setUp();
 
-        $this->cookies = new Cookies(new Adapter());
+        $this->cookies = new Cookies();
 
         $this->user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
         $this->user_repository = new UserRepository([
