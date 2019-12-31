@@ -40,10 +40,7 @@ abstract class Transport implements TransportInterface
         $this->payload = $payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdapter()
+    public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
     }
@@ -66,18 +63,11 @@ abstract class Transport implements TransportInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return false;
     }
 
-    /**
-     * @var bool
-     */
-    private $is_applied = false;
     private $is_applied_to_request = false;
     private $is_applied_to_response = false;
 
@@ -91,7 +81,8 @@ abstract class Transport implements TransportInterface
             throw new LogicException('Authentication transport already applied');
         }
 
-        return $request;
+        $this->is_applied_to_request = true;
+        return $this->getAdapter()->applyToRequest($request, $this);
     }
 
     public function applyToResponse(ResponseInterface $response): ResponseInterface
@@ -104,30 +95,20 @@ abstract class Transport implements TransportInterface
             throw new LogicException('Authentication transport already applied');
         }
 
-        return $response;
+        $this->is_applied_to_response = true;
+        return $this->getAdapter()->applyToResponse($response, $this);
     }
 
     public function applyTo(ServerRequestInterface $request, ResponseInterface $response): array
     {
-        if ($this->isEmpty()) {
-            throw new LogicException('Empty authentication transport cannot be applied');
-        }
-
-        if ($this->isApplied()) {
-            throw new LogicException('Authentication transport already applied');
-        }
-
-        $result = $this->getAdapter()->applyTo($request, $response, $this);
-        $this->is_applied = true;
-
-        return $result;
+        return [
+            $this->applyToRequest($request),
+            $this->applyToResponse($response),
+        ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplied()
+    public function isApplied(): bool
     {
-        return $this->is_applied;
+        return $this->is_applied_to_request && $this->is_applied_to_response;
     }
 }

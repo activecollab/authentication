@@ -60,10 +60,7 @@ class AuthenticationTransport extends Transport implements AuthenticationTranspo
         return $this->authenticated_with;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->authenticated_user) && empty($this->authenticated_with);
     }

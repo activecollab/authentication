@@ -60,10 +60,7 @@ class AuthorizationTransport extends Transport implements AuthorizationTransport
         return $this->authenticated_with;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->authenticated_user) && empty($this->authenticated_with);
     }

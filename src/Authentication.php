@@ -85,10 +85,11 @@ class Authentication implements AuthenticationInterface
         $this->adapters = $adapters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface
     {
         $auth_result = $this->authenticatedUsingAdapters($request);
 

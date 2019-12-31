@@ -29,7 +29,11 @@ interface AuthenticationInterface extends MiddlewareInterface
      * @param  callable|null          $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface;
 
     /**
      * Authorize and authenticate with given credentials against authorization/authentication source.
