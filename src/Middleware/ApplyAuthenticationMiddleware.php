@@ -61,15 +61,46 @@ class ApplyAuthenticationMiddleware implements MiddlewareInterface
         return (new ResponseFactory())->createResponse();
     }
 
-    private function apply(ServerRequestInterface $request, ResponseInterface $response): array
+    private function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
     {
         $transport = $this->getTransportFrom($request);
 
-        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
-            [$request, $response] = $transport->applyTo($request, $response);
+        if ($transport instanceof TransportInterface
+            && !$transport->isEmpty()
+            && !$transport->isAppliedToResponse()
+        ) {
+            return $transport->applyToRequest($request);
         }
 
-        return [$request, $response];
+        return $request;
+    }
+
+    private function applyToResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface
+    {
+        $transport = $this->getTransportFrom($request);
+
+        if ($transport instanceof TransportInterface
+            && !$transport->isEmpty()
+            && !$transport->isAppliedToResponse()
+        ) {
+            return $transport->applyToResponse($response);
+        }
+
+        return $response;
+    }
+
+    private function apply(ServerRequestInterface $request, ResponseInterface $response): array
+    {
+        $request = $this->applyToRequest($request);
+        $response = $this->applyToResponse($request, $response);
+
+        return [
+            $request,
+            $response,
+        ];
     }
 
     protected function getTransportFrom(ServerRequestInterface $request): ?TransportInterface

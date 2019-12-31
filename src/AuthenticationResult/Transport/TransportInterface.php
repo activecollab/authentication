@@ -28,4 +28,6 @@ interface TransportInterface
     public function applyTo(ServerRequestInterface $request, ResponseInterface $response): array;
 
     public function isApplied(): bool;
+    public function isAppliedToRequest(): bool;
+    public function isAppliedToResponse(): bool;
 }

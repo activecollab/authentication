@@ -91,4 +91,14 @@ abstract class Transport implements TransportInterface
     {
         return $this->is_applied_to_request && $this->is_applied_to_response;
     }
+
+    public function isAppliedToRequest(): bool
+    {
+        return $this->is_applied_to_request;
+    }
+
+    public function isAppliedToResponse(): bool
+    {
+        return $this->is_applied_to_response;
+    }
 }
