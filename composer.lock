@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59bbb08ae41040ac4b3ce0f070e345c1",
+    "content-hash": "0e088a0b640afc2588829adc3d299e86",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -4565,6 +4565,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.3",
+        "ext-json": "*",
         "ext-mbstring": "*"
     },
     "platform-dev": []

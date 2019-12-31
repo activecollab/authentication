@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\LoginPolicy;
 
 use InvalidArgumentException;
 
-/**
- * @package ActiveCollab\Authentication\LoginPolicy
- */
 class LoginPolicy implements LoginPolicyInterface
 {
     /**
@@ -81,18 +80,12 @@ class LoginPolicy implements LoginPolicyInterface
         $this->setExternalUpdateProfileUrl($external_update_profile_url);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsernameFormat()
+    public function getUsernameFormat(): string
     {
         return $this->username_format;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUsernameFormat($value)
+    public function setUsernameFormat(string $value): LoginPolicyInterface
     {
         if (in_array($value, self::VALID_USERNAME_FORMATS)) {
             $this->username_format = $value;
@@ -103,139 +96,91 @@ class LoginPolicy implements LoginPolicyInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rememberExtendsSession()
+    public function rememberExtendsSession(): bool
     {
         return $this->remember_extends_session;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRememberExtendsSession($value)
+    public function setRememberExtendsSession(bool $value): LoginPolicyInterface
     {
-        $this->remember_extends_session = (bool) $value;
+        $this->remember_extends_session = $value;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isPasswordChangeEnabled()
+    public function isPasswordChangeEnabled(): bool
     {
         return $this->password_change_enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setIsPasswordChangeEnabled($value)
+    public function setIsPasswordChangeEnabled(bool $value): LoginPolicyInterface
     {
-        $this->password_change_enabled = (bool) $value;
+        $this->password_change_enabled = $value;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isPasswordRecoveryEnabled()
+    public function isPasswordRecoveryEnabled(): bool
     {
         return $this->password_recovery_enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setIsPasswordRecoveryEnabled($value)
+    public function setIsPasswordRecoveryEnabled(bool $value): LoginPolicyInterface
     {
         $this->password_recovery_enabled = (bool) $value;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExternalLoginUrl()
+    public function getExternalLoginUrl(): ?string
     {
         return $this->external_login_url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExternalLoginUrl($value)
+    public function setExternalLoginUrl(?string $value): LoginPolicyInterface
     {
         $this->external_login_url = $this->getValidExternalUrlValue($value);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExternalLogoutUrl()
+    public function getExternalLogoutUrl(): ?string
     {
         return $this->external_logout_url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExternalLogoutUrl($value)
+    public function setExternalLogoutUrl(?string $value): LoginPolicyInterface
     {
         $this->external_logout_url = $this->getValidExternalUrlValue($value);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExternalChangePasswordUrl()
+    public function getExternalChangePasswordUrl(): ?string
     {
         return $this->external_change_password_url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExternalChangePasswordUrl($value)
+    public function setExternalChangePasswordUrl(?string $value): LoginPolicyInterface
     {
         $this->external_change_password_url = $this->getValidExternalUrlValue($value);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExternalUpdateProfileUrl()
+    public function getExternalUpdateProfileUrl(): ?string
     {
         return $this->external_update_profile_url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExternalUpdateProfileUrl($value)
+    public function setExternalUpdateProfileUrl(?string $value): LoginPolicyInterface
     {
         $this->external_update_profile_url = $this->getValidExternalUrlValue($value);
 
         return $this;
     }
 
-    /**
-     * Validate and return acceptable URL value.
-     *
-     * @param  string|null $url
-     * @return string|null
-     */
-    private function getValidExternalUrlValue($url)
+    private function getValidExternalUrlValue(?string $url): ?string
     {
         if ($url === null || (is_string($url) && filter_var($url, FILTER_VALIDATE_URL))) {
             return $url;
@@ -244,9 +189,6 @@ class LoginPolicy implements LoginPolicyInterface
         throw new InvalidArgumentException('URL is not valid');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return [

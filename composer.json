@@ -16,6 +16,7 @@
     ],
     "require": {
         "php": ">=7.3",
+        "ext-json": "*",
         "ext-mbstring": "*",
         "activecollab/cookies": "^2.0",
         "activecollab/user": "^4.0",
@@ -23,7 +24,6 @@
         "psr/http-server-middleware": "^1.0"
     },
     "require-dev": {
-        "ext-json": "*",
         "friendsofphp/php-cs-fixer": "^2.0",
         "lightsaml/lightsaml": "^1.1",
         "phpunit/phpunit": "^7.0",
