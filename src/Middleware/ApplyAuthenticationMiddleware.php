@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Middleware;
 
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
@@ -13,50 +15,33 @@ use ActiveCollab\ValueContainer\Request\RequestValueContainerInterface;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * @package ActiveCollab\Authentication\Middleware
- */
-class ApplyAuthenticationMiddleware
+class ApplyAuthenticationMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ValueContainerInterface
-     */
     private $value_container;
-
-    /**
-     * @var bool
-     */
     private $apply_on_exit;
 
-    /**
-     * @param ValueContainerInterface $value_container
-     * @param bool                    $apply_on_exit
-     */
-    public function __construct(ValueContainerInterface $value_container, $apply_on_exit = false)
+    public function __construct(ValueContainerInterface $value_container, bool $apply_on_exit = false)
     {
         $this->value_container = $value_container;
         $this->apply_on_exit = (bool) $apply_on_exit;
     }
 
-    /**
-     * @return bool
-     */
-    public function applyOnExit()
+    public function applyOnExit(): bool
     {
         return $this->apply_on_exit;
     }
 
-    /**
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  callable|null          $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface
     {
         if (!$this->apply_on_exit) {
-            list($request, $response) = $this->apply($request, $response);
+            [$request, $response] = $this->apply($request, $response);
         }
 
         if ($next) {
@@ -70,29 +55,61 @@ class ApplyAuthenticationMiddleware
         return $response;
     }
 
-    /**
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @return array
-     */
-    private function apply(ServerRequestInterface $request, ResponseInterface $response)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        if (!$this->apply_on_exit) {
+            $request = $this->applyToRequest($request);
+        }
+
+        $response = $handler->handle($request);
+        $response = $this->applyToResponse($request, $response);
+
+        return $response;
+    }
+
+    private function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
     {
         $transport = $this->getTransportFrom($request);
 
-        if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
-            list($request, $response) = $transport->applyTo($request, $response);
+        if ($transport instanceof TransportInterface
+            && !$transport->isEmpty()
+            && !$transport->isAppliedToResponse()
+        ) {
+            return $transport->applyToRequest($request);
         }
 
-        return [$request, $response];
+        return $request;
     }
 
-    /**
-     * Get authentication response transport from request.
-     *
-     * @param  ServerRequestInterface  $request
-     * @return TransportInterface|null
-     */
-    protected function getTransportFrom(ServerRequestInterface $request)
+    private function applyToResponse(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface
+    {
+        $transport = $this->getTransportFrom($request);
+
+        if ($transport instanceof TransportInterface
+            && !$transport->isEmpty()
+            && !$transport->isAppliedToResponse()
+        ) {
+            return $transport->applyToResponse($response);
+        }
+
+        return $response;
+    }
+
+    private function apply(ServerRequestInterface $request, ResponseInterface $response): array
+    {
+        $request = $this->applyToRequest($request);
+        $response = $this->applyToResponse($request, $response);
+
+        return [
+            $request,
+            $response,
+        ];
+    }
+
+    protected function getTransportFrom(ServerRequestInterface $request): ?TransportInterface
     {
         if ($this->value_container instanceof RequestValueContainerInterface) {
             $this->value_container->setRequest($request);

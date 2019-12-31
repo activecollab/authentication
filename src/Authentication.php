@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -22,26 +24,24 @@ use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * @package ActiveCollab\Authentication
- */
 class Authentication implements AuthenticationInterface
 {
     /**
-     * @var array
+     * @var AdapterInterface[]
      */
     private $adapters;
 
     /**
      * Authenticated user instance.
      *
-     * @var AuthenticatedUserInterface
+     * @var AuthenticatedUserInterface|null
      */
     private $authenticated_user;
 
     /**
-     * @var AuthenticationResultInterface
+     * @var AuthenticationResultInterface|null
      */
     private $authenticated_with;
 
@@ -70,9 +70,6 @@ class Authentication implements AuthenticationInterface
      */
     private $on_user_deauthenticated = [];
 
-    /**
-     * @param array $adapters
-     */
     public function __construct(array $adapters)
     {
         foreach ($adapters as $adapter) {
@@ -84,10 +81,11 @@ class Authentication implements AuthenticationInterface
         $this->adapters = $adapters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface
     {
         $auth_result = $this->authenticatedUsingAdapters($request);
 
@@ -96,10 +94,17 @@ class Authentication implements AuthenticationInterface
                 $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
                 $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
 
-                $this->triggerEvent('user_authenticated', $auth_result->getAuthenticatedUser(), $auth_result->getAuthenticatedWith());
+                $this->triggerEvent(
+                    'user_authenticated',
+                    $auth_result->getAuthenticatedUser(),
+                    $auth_result->getAuthenticatedWith()
+                );
             }
 
-            list($request, $response) = $auth_result->applyTo($request, $response);
+            [
+                $request,
+                $response,
+            ] = $auth_result->applyTo($request, $response);
         }
 
         if ($next) {
@@ -109,10 +114,47 @@ class Authentication implements AuthenticationInterface
         return $response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function authorize(AuthorizerInterface $authorizer, AdapterInterface $adapter, array $credentials, $payload = null)
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface
+    {
+        $auth_result = $this->authenticatedUsingAdapters($request);
+
+        if ($auth_result instanceof TransportInterface 
+            && !$auth_result->isEmpty()
+        ) {
+            if ($auth_result instanceof AuthenticationTransportInterface) {
+                $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
+                $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+
+                $this->triggerEvent(
+                    'user_authenticated',
+                    $auth_result->getAuthenticatedUser(),
+                    $auth_result->getAuthenticatedWith()
+                );
+            }
+
+            $request = $auth_result->applyToRequest($request);
+        }
+
+        $response = $handler->handle($request);
+
+        if ($auth_result instanceof TransportInterface
+            && !$auth_result->isEmpty()
+        ) {
+            $response = $auth_result->applyToResponse($response);
+        }
+
+        return $response;
+    }
+
+    public function authorize(
+        AuthorizerInterface $authorizer,
+        AdapterInterface $adapter,
+        array $credentials,
+        $payload = null
+    ): TransportInterface
     {
         try {
             $user = $authorizer->verifyCredentials($credentials);
@@ -128,10 +170,10 @@ class Authentication implements AuthenticationInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function terminate(AdapterInterface $adapter, AuthenticationResultInterface $authenticated_with)
+    public function terminate(
+        AdapterInterface $adapter,
+        AuthenticationResultInterface $authenticated_with
+    ): TransportInterface
     {
         $termination_result = $adapter->terminate($authenticated_with);
 
@@ -143,17 +185,12 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdapters()
+    public function getAdapters(): iterable
     {
         return $this->adapters;
     }
 
-    /**
-     * @param  ServerRequestInterface  $request
-     * @return TransportInterface|null
-     * @throws Exception
-     */
-    private function authenticatedUsingAdapters(ServerRequestInterface $request)
+    private function authenticatedUsingAdapters(ServerRequestInterface $request): ?TransportInterface
     {
         $last_exception = null;
         $results = [];
@@ -186,18 +223,12 @@ class Authentication implements AuthenticationInterface
         return $results[0];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &getAuthenticatedUser()
+    public function getAuthenticatedUser(): ?AuthenticatedUserInterface
     {
         return $this->authenticated_user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null)
+    public function setAuthenticatedUser(AuthenticatedUserInterface $user = null): AuthenticationInterface
     {
         $this->authenticated_user = $user;
 
@@ -206,32 +237,19 @@ class Authentication implements AuthenticationInterface
         return $this;
     }
 
-    /**
-     * @return AuthenticationResultInterface|null
-     */
-    public function getAuthenticatedWith()
+    public function getAuthenticatedWith(): ?AuthenticationResultInterface
     {
         return $this->authenticated_with;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &setAuthenticatedWith(AuthenticationResultInterface $value)
+    public function setAuthenticatedWith(AuthenticationResultInterface $value): AuthenticationInterface
     {
         $this->authenticated_with = $value;
 
         return $this;
     }
 
-    /**
-     * Trigger an internal event.
-     *
-     * @param  string $event_name
-     * @param  array  $arguments
-     * @return $this
-     */
-    private function &triggerEvent($event_name, ...$arguments)
+    private function triggerEvent(string $event_name, ...$arguments): AuthenticationInterface
     {
         $property_name = "on_{$event_name}";
 
@@ -243,41 +261,35 @@ class Authentication implements AuthenticationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &onUserAuthenticated(callable $value)
+    public function onUserAuthenticated(callable $value): AuthenticationInterface
     {
         $this->on_user_authenticated[] = $value;
 
         return $this;
     }
 
-    public function &onUserAuthorized(callable $value)
+    public function onUserAuthorized(callable $value): AuthenticationInterface
     {
         $this->on_user_authorized[] = $value;
 
         return $this;
     }
 
-    public function &onUserAuthorizationFailed(callable $value)
+    public function onUserAuthorizationFailed(callable $value): AuthenticationInterface
     {
         $this->on_user_authorization_failed[] = $value;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &onUserSet(callable $value)
+    public function onUserSet(callable $value): AuthenticationInterface
     {
         $this->on_user_set[] = $value;
 
         return $this;
     }
 
-    public function &onUserDeauthenticated(callable $value)
+    public function onUserDeauthenticated(callable $value): AuthenticationInterface
     {
         $this->on_user_deauthenticated[] = $value;
 
@@ -289,7 +301,7 @@ class Authentication implements AuthenticationInterface
      *
      * {@inheritdoc}
      */
-    public function &setOnAuthenciatedUserChanged(callable $value = null)
+    public function setOnAuthenciatedUserChanged(callable $value = null): AuthenticationInterface
     {
         if (empty($value)) {
             throw new InvalidArgumentException('Value needs to be a callable.');

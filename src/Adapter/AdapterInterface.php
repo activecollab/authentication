@@ -27,15 +27,21 @@ interface AdapterInterface
      */
     public function initialize(ServerRequestInterface $request);
 
-    /**
-     * Finish initialization once adapter which did the authentication is known (and is the only one).
-     *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  TransportInterface     $transport
-     * @return array
-     */
-    public function applyTo(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport);
+    public function applyToRequest(
+        ServerRequestInterface $request,
+        TransportInterface $transport
+    ): ServerRequestInterface;
+
+    public function applyToResponse(
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): ResponseInterface;
+
+    public function applyTo(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): array;
 
     /**
      * Authenticate user against authentication source.

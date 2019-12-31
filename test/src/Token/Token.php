@@ -78,7 +78,7 @@ class Token implements TokenInterface
      * @param  mixed $value
      * @return $this
      */
-    public function &setExtraAttribute($value)
+    public function setExtraAttribute($value)
     {
         $this->extra_attribute = $value;
 

@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
@@ -23,10 +25,9 @@ use ActiveCollab\ValueContainer\ValueContainer;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\ResponseFactory;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 {
     /**
@@ -55,19 +56,56 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
      */
     public function testUserIsAuthenticated()
     {
-        $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
-        $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
+        $user = new AuthenticatedUser(
+            1,
+            'ilija.studen@activecollab.com',
+            'Ilija Studen',
+            '123'
+        );
 
-        $session_cookie_name = 'test-session-cookie';
+        $userRepository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123'
+                ),
+            ]
+        );
 
-        $session_adapter = new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies, $session_cookie_name);
-        $session = $session_adapter->authenticate($user, []);
+        $sessionRepository = new SessionRepository(
+            [
+                new Session(
+                    'my-session-id',
+                    'ilija.studen@activecollab.com'
+                ),
+            ]
+        );
+
+        $sessionCookieName = 'test-session-cookie';
+
+        $sessionAdapter = new BrowserSessionAdapter(
+            $userRepository,
+            $sessionRepository,
+            $this->cookies,
+            $sessionCookieName
+        );
+        $session = $sessionAdapter->authenticate($user, []);
 
         /** @var ServerRequestInterface $request */
-        $request = $this->request->withAttribute('test_transport', new AuthorizationTransport($session_adapter, $user, $session, [1, 2, 3]));
+        $request = $this->request->withAttribute(
+            'test_transport',
+            new AuthorizationTransport(
+                $sessionAdapter,
+                $user,
+                $session,
+                [
+                    1,
+                    2,
+                    3,
+                ]
+            ));
 
         $middleware = new ApplyAuthenticationMiddleware(new RequestValueContainer('test_transport'));
         $this->assertFalse($middleware->applyOnExit());
@@ -77,11 +115,107 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
 
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
-        $this->assertNotEmpty($set_cookie_header);
-        $this->assertContains($session_cookie_name, $set_cookie_header);
-        $this->assertContains('my-session-id', $set_cookie_header);
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($sessionCookieName, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
+    }
+
+    /**
+     * Test if authentication is applied based on request attribute, when middleware is called as PSR-15 middleware.
+     *
+     * @dataProvider provideDataForPsr15Test
+     * @param bool $applyOnExit
+     */
+    public function testUserIsAuthenticatedPsr15(
+        bool $applyOnExit
+    )
+    {
+        $user = new AuthenticatedUser(
+            1,
+            'ilija.studen@activecollab.com',
+            'Ilija Studen',
+            '123'
+        );
+
+        $userRepository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123'
+                ),
+            ]
+        );
+
+        $sessionRepository = new SessionRepository(
+            [
+                new Session(
+                    'my-session-id',
+                    'ilija.studen@activecollab.com'
+                ),
+            ]
+        );
+
+        $sessionCookieName = 'test-session-cookie';
+
+        $sessionAdapter = new BrowserSessionAdapter(
+            $userRepository,
+            $sessionRepository,
+            $this->cookies,
+            $sessionCookieName
+        );
+        $session = $sessionAdapter->authenticate($user, []);
+
+        /** @var ServerRequestInterface $request */
+        $request = $this->request->withAttribute(
+            'test_transport',
+            new AuthorizationTransport(
+                $sessionAdapter,
+                $user,
+                $session,
+                [
+                    1,
+                    2,
+                    3,
+                ]
+            ));
+
+        $middleware = new ApplyAuthenticationMiddleware(
+            new RequestValueContainer('test_transport'),
+            $applyOnExit
+        );
+
+        $this->assertSame($applyOnExit, $middleware->applyOnExit());
+
+        $response = $middleware->process(
+            $request,
+            new class implements RequestHandlerInterface
+            {
+                public function handle(ServerRequestInterface $request): ResponseInterface
+                {
+                    return (new ResponseFactory())->createResponse();
+                }
+            }
+        );
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
+
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($sessionCookieName, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
+    }
+
+    public function provideDataForPsr15Test(): array
+    {
+        return [
+            [true],
+            [false],
+        ];
     }
 
     /**
@@ -90,18 +224,58 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
     public function testNextIsCalled()
     {
         /** @var ResponseInterface $response */
-        $response = call_user_func(new ApplyAuthenticationMiddleware(new RequestValueContainer('test_transport')), $this->request, $this->response, function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) {
-            $response = $response->withHeader('X-Test', 'Yes, found!');
+        $response = call_user_func(
+            new ApplyAuthenticationMiddleware(
+                new RequestValueContainer('test_transport')
+            ),
+            $this->request,
+            $this->response,
+            function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+                callable $next = null
+            ): ResponseInterface
+            {
+                $response = $response->withHeader('X-Test', 'Yes, found!');
 
-            if ($next) {
-                $response = $next($request, $response);
+                if ($next) {
+                    $response = $next($request, $response);
+                }
+
+                return $response;
             }
-
-            return $response;
-        });
+        );
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('Yes, found!', $response->getHeaderLine('X-Test'));
+    }
+
+    public function testProcessIsCalled()
+    {
+        $middlware = new ApplyAuthenticationMiddleware(
+            new RequestValueContainer('test_transport')
+        );
+
+        $handler = new class implements RequestHandlerInterface
+        {
+            private $handleIsCalled = false;
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->handleIsCalled = true;
+                return (new ResponseFactory())->createResponse();
+            }
+
+            public function isHandleCalled(): bool
+            {
+                return $this->handleIsCalled;
+            }
+        };
+
+        $response = $middlware->process($this->request, $handler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        $this->assertTrue($handler->isHandleCalled());
     }
 
     /**
@@ -109,33 +283,79 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
      */
     public function testUserIsAuthentiatedOnExit()
     {
-        $user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
-        $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
+        $user = new AuthenticatedUser(
+            1,
+            'ilija.studen@activecollab.com',
+            'Ilija Studen',
+            '123'
+        );
+        $user_repository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123'
+                ),
+            ]
+        );
+        $session_repository = new SessionRepository(
+            [
+                new Session('my-session-id', 'ilija.studen@activecollab.com')
+            ]
+        );
 
         $session_cookie_name = 'test-session-cookie';
 
-        $session_adapter = new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies, $session_cookie_name);
+        $session_adapter = new BrowserSessionAdapter(
+            $user_repository,
+            $session_repository,
+            $this->cookies,
+            $session_cookie_name
+        );
         $session = $session_adapter->authenticate($user, []);
 
         /** @var ServerRequestInterface $request */
-        $request = $this->request->withAttribute('test_transport', new AuthorizationTransport($session_adapter, $user, $session, [1, 2, 3]));
+        $request = $this->request->withAttribute(
+            'test_transport',
+            new AuthorizationTransport(
+                $session_adapter,
+                $user,
+                $session,
+                [
+                    1,
+                    2,
+                    3
+                ]
+            )
+        );
 
-        $middleware = new ApplyAuthenticationMiddleware(new RequestValueContainer('test_transport'), true);
+        $middleware = new ApplyAuthenticationMiddleware(
+            new RequestValueContainer('test_transport'),
+            true
+        );
         $this->assertTrue($middleware->applyOnExit());
 
         /** @var ResponseInterface $response */
-        $response = call_user_func($middleware, $request, $this->response, function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) {
-            $this->assertEmpty($response->getHeaderLine('Set-Cookie'));
+        $response = call_user_func(
+            $middleware,
+            $request,
+            $this->response,
+            function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+                callable $next = null
+            ): ResponseInterface
+            {
+                $this->assertEmpty($response->getHeaderLine('Set-Cookie'));
 
-            if ($next) {
-                $response = $next($request, $response);
+                if ($next) {
+                    $response = $next($request, $response);
+                }
+
+                return $response;
             }
-
-            return $response;
-        });
+        );
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
 

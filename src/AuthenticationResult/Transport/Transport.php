@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -13,96 +15,90 @@ use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport
- */
 abstract class Transport implements TransportInterface
 {
-    /**
-     * @var AdapterInterface
-     */
     private $adapter;
-
-    /**
-     * @var mixed
-     */
     private $payload;
 
-    /**
-     * Transport constructor.
-     *
-     * @param AdapterInterface $adapter
-     * @param mixed            $payload
-     */
     public function __construct(AdapterInterface $adapter, $payload = null)
     {
         $this->adapter = $adapter;
         $this->payload = $payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdapter()
+    public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPayload()
     {
         return $this->payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &setPayload($value)
+    public function setPayload($value): TransportInterface
     {
         $this->payload = $value;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return false;
     }
 
-    /**
-     * @var bool
-     */
-    private $is_applied = false;
+    private $is_applied_to_request = false;
+    private $is_applied_to_response = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function applyTo(ServerRequestInterface $request, ResponseInterface $response)
+    public function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
     {
         if ($this->isEmpty()) {
             throw new LogicException('Empty authentication transport cannot be applied');
         }
 
-        if ($this->isApplied()) {
+        if ($this->is_applied_to_request) {
             throw new LogicException('Authentication transport already applied');
         }
 
-        $result = $this->getAdapter()->applyTo($request, $response, $this);
-        $this->is_applied = true;
-
-        return $result;
+        $this->is_applied_to_request = true;
+        return $this->getAdapter()->applyToRequest($request, $this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplied()
+    public function applyToResponse(ResponseInterface $response): ResponseInterface
     {
-        return $this->is_applied;
+        if ($this->isEmpty()) {
+            throw new LogicException('Empty authentication transport cannot be applied');
+        }
+
+        if ($this->is_applied_to_response) {
+            throw new LogicException('Authentication transport already applied');
+        }
+
+        $this->is_applied_to_response = true;
+        return $this->getAdapter()->applyToResponse($response, $this);
+    }
+
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response): array
+    {
+        return [
+            $this->applyToRequest($request),
+            $this->applyToResponse($response),
+        ];
+    }
+
+    public function isApplied(): bool
+    {
+        return $this->is_applied_to_request && $this->is_applied_to_response;
+    }
+
+    public function isAppliedToRequest(): bool
+    {
+        return $this->is_applied_to_request;
+    }
+
+    public function isAppliedToResponse(): bool
+    {
+        return $this->is_applied_to_response;
     }
 }
