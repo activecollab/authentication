@@ -15,8 +15,11 @@ use ActiveCollab\ValueContainer\Request\RequestValueContainerInterface;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\ResponseFactory;
 
-class ApplyAuthenticationMiddleware
+class ApplyAuthenticationMiddleware implements MiddlewareInterface
 {
     private $value_container;
     private $apply_on_exit;
@@ -39,7 +42,7 @@ class ApplyAuthenticationMiddleware
     ): ResponseInterface
     {
         if (!$this->apply_on_exit) {
-            list($request, $response) = $this->apply($request, $response);
+            [$request, $response] = $this->apply($request, $response);
         }
 
         if ($next) {
@@ -53,12 +56,17 @@ class ApplyAuthenticationMiddleware
         return $response;
     }
 
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        return (new ResponseFactory())->createResponse();
+    }
+
     private function apply(ServerRequestInterface $request, ResponseInterface $response): array
     {
         $transport = $this->getTransportFrom($request);
 
         if ($transport instanceof TransportInterface && !$transport->isEmpty() && !$transport->isApplied()) {
-            list($request, $response) = $transport->applyTo($request, $response);
+            [$request, $response] = $transport->applyTo($request, $response);
         }
 
         return [$request, $response];

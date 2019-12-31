@@ -25,6 +25,8 @@ use ActiveCollab\ValueContainer\ValueContainer;
 use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Zend\Diactoros\ResponseFactory;
 
 class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 {
@@ -110,6 +112,84 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 
         /** @var ResponseInterface $response */
         $response = call_user_func($middleware, $request, $this->response);
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
+
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($sessionCookieName, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
+    }
+
+    /**
+     * Test if authentication is applied based on request attribute, when middleware is called as PSR-15 middleware.
+     */
+    public function testUserIsAuthenticatedPsr15()
+    {
+        $user = new AuthenticatedUser(
+            1,
+            'ilija.studen@activecollab.com',
+            'Ilija Studen',
+            '123'
+        );
+
+        $userRepository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123'
+                ),
+            ]
+        );
+
+        $sessionRepository = new SessionRepository(
+            [
+                new Session(
+                    'my-session-id',
+                    'ilija.studen@activecollab.com'
+                ),
+            ]
+        );
+
+        $sessionCookieName = 'test-session-cookie';
+
+        $sessionAdapter = new BrowserSessionAdapter(
+            $userRepository,
+            $sessionRepository,
+            $this->cookies,
+            $sessionCookieName
+        );
+        $session = $sessionAdapter->authenticate($user, []);
+
+        /** @var ServerRequestInterface $request */
+        $request = $this->request->withAttribute(
+            'test_transport',
+            new AuthorizationTransport(
+                $sessionAdapter,
+                $user,
+                $session,
+                [
+                    1,
+                    2,
+                    3,
+                ]
+            ));
+
+        $middleware = new ApplyAuthenticationMiddleware(new RequestValueContainer('test_transport'));
+        $this->assertFalse($middleware->applyOnExit());
+
+        $response = $middleware->process($request,
+            new class implements RequestHandlerInterface
+            {
+                public function handle(ServerRequestInterface $request): ResponseInterface
+                {
+                    return (new ResponseFactory())->createResponse();
+                }
+            }
+        );
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
 

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "activecollab/cookies",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/cookies.git",
-                "reference": "2dbfe1333ad71123bf95038d113de74b230bcf7f"
+                "reference": "1e6b294dc0894ccba332ca38166dd539bf1995d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/cookies/zipball/2dbfe1333ad71123bf95038d113de74b230bcf7f",
-                "reference": "2dbfe1333ad71123bf95038d113de74b230bcf7f",
+                "url": "https://api.github.com/repos/activecollab/cookies/zipball/1e6b294dc0894ccba332ca38166dd539bf1995d0",
+                "reference": "1e6b294dc0894ccba332ca38166dd539bf1995d0",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
                 "activecollab",
                 "cookies"
             ],
-            "time": "2019-12-31T09:51:35+00:00"
+            "time": "2019-12-31T15:46:15+00:00"
         },
         {
             "name": "activecollab/humannameparser",
