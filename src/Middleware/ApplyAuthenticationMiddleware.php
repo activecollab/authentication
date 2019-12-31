@@ -17,7 +17,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\ResponseFactory;
 
 class ApplyAuthenticationMiddleware implements MiddlewareInterface
 {
@@ -58,7 +57,14 @@ class ApplyAuthenticationMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        return (new ResponseFactory())->createResponse();
+        if (!$this->apply_on_exit) {
+            $request = $this->applyToRequest($request);
+        }
+
+        $response = $handler->handle($request);
+        $response = $this->applyToResponse($request, $response);
+
+        return $response;
     }
 
     private function applyToRequest(ServerRequestInterface $request): ServerRequestInterface

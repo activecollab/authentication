@@ -124,8 +124,13 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 
     /**
      * Test if authentication is applied based on request attribute, when middleware is called as PSR-15 middleware.
+     *
+     * @dataProvider provideDataForPsr15Test
+     * @param bool $applyOnExit
      */
-    public function testUserIsAuthenticatedPsr15()
+    public function testUserIsAuthenticatedPsr15(
+        bool $applyOnExit
+    )
     {
         $user = new AuthenticatedUser(
             1,
@@ -178,10 +183,15 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
                 ]
             ));
 
-        $middleware = new ApplyAuthenticationMiddleware(new RequestValueContainer('test_transport'));
-        $this->assertFalse($middleware->applyOnExit());
+        $middleware = new ApplyAuthenticationMiddleware(
+            new RequestValueContainer('test_transport'),
+            $applyOnExit
+        );
 
-        $response = $middleware->process($request,
+        $this->assertSame($applyOnExit, $middleware->applyOnExit());
+
+        $response = $middleware->process(
+            $request,
             new class implements RequestHandlerInterface
             {
                 public function handle(ServerRequestInterface $request): ResponseInterface
@@ -198,6 +208,14 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertNotEmpty($setCookieHeader);
         $this->assertContains($sessionCookieName, $setCookieHeader);
         $this->assertContains('my-session-id', $setCookieHeader);
+    }
+
+    public function provideDataForPsr15Test(): array
+    {
+        return [
+            [true],
+            [false],
+        ];
     }
 
     /**
@@ -230,6 +248,34 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame('Yes, found!', $response->getHeaderLine('X-Test'));
+    }
+
+    public function testProcessIsCalled()
+    {
+        $middlware = new ApplyAuthenticationMiddleware(
+            new RequestValueContainer('test_transport')
+        );
+
+        $handler = new class implements RequestHandlerInterface
+        {
+            private $handleIsCalled = false;
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->handleIsCalled = true;
+                return (new ResponseFactory())->createResponse();
+            }
+
+            public function isHandleCalled(): bool
+            {
+                return $this->handleIsCalled;
+            }
+        };
+
+        $response = $middlware->process($this->request, $handler);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        $this->assertTrue($handler->isHandleCalled());
     }
 
     /**
