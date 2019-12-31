@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -13,27 +15,11 @@ use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport
- */
 abstract class Transport implements TransportInterface
 {
-    /**
-     * @var AdapterInterface
-     */
     private $adapter;
-
-    /**
-     * @var mixed
-     */
     private $payload;
 
-    /**
-     * Transport constructor.
-     *
-     * @param AdapterInterface $adapter
-     * @param mixed            $payload
-     */
     public function __construct(AdapterInterface $adapter, $payload = null)
     {
         $this->adapter = $adapter;
@@ -45,18 +31,12 @@ abstract class Transport implements TransportInterface
         return $this->adapter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPayload()
     {
         return $this->payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function &setPayload($value)
+    public function setPayload($value): TransportInterface
     {
         $this->payload = $value;
 

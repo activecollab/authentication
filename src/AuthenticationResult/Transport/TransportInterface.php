@@ -18,20 +18,8 @@ interface TransportInterface
 {
     public function getAdapter(): AdapterInterface;
 
-    /**
-     * Return a possible response payload after successful authorization.
-     *
-     * @return mixed
-     */
     public function getPayload();
-
-    /**
-     * Set authorization response payload, if neededs.
-     *
-     * @param  mixed $value
-     * @return $this
-     */
-    public function &setPayload($value);
+    public function setPayload($value): TransportInterface;
 
     public function isEmpty(): bool;
 
