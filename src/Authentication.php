@@ -22,6 +22,7 @@ use InvalidArgumentException;
 use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * @package ActiveCollab\Authentication
@@ -96,10 +97,17 @@ class Authentication implements AuthenticationInterface
                 $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
                 $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
 
-                $this->triggerEvent('user_authenticated', $auth_result->getAuthenticatedUser(), $auth_result->getAuthenticatedWith());
+                $this->triggerEvent(
+                    'user_authenticated',
+                    $auth_result->getAuthenticatedUser(),
+                    $auth_result->getAuthenticatedWith()
+                );
             }
 
-            list($request, $response) = $auth_result->applyTo($request, $response);
+            [
+                $request,
+                $response,
+            ] = $auth_result->applyTo($request, $response);
         }
 
         if ($next) {
@@ -107,6 +115,10 @@ class Authentication implements AuthenticationInterface
         }
 
         return $response;
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
     }
 
     /**

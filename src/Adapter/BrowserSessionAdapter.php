@@ -93,10 +93,11 @@ class BrowserSessionAdapter extends Adapter
         return new CleanUpTransport($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function applyTo(ServerRequestInterface $request, ResponseInterface $response, TransportInterface $transport)
+    public function applyTo(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): array
     {
         // Extend session
         if ($transport instanceof AuthenticationTransportInterface) {

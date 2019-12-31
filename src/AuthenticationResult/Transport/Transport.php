@@ -78,11 +78,36 @@ abstract class Transport implements TransportInterface
      * @var bool
      */
     private $is_applied = false;
+    private $is_applied_to_request = false;
+    private $is_applied_to_response = false;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function applyTo(ServerRequestInterface $request, ResponseInterface $response)
+    public function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
+    {
+        if ($this->isEmpty()) {
+            throw new LogicException('Empty authentication transport cannot be applied');
+        }
+
+        if ($this->is_applied_to_request) {
+            throw new LogicException('Authentication transport already applied');
+        }
+
+        return $request;
+    }
+
+    public function applyToResponse(ResponseInterface $response): ResponseInterface
+    {
+        if ($this->isEmpty()) {
+            throw new LogicException('Empty authentication transport cannot be applied');
+        }
+
+        if ($this->is_applied_to_response) {
+            throw new LogicException('Authentication transport already applied');
+        }
+
+        return $response;
+    }
+
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response): array
     {
         if ($this->isEmpty()) {
             throw new LogicException('Empty authentication transport cannot be applied');

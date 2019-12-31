@@ -44,6 +44,9 @@ interface TransportInterface
      */
     public function isEmpty();
 
+    public function applyToRequest(ServerRequestInterface $request): ServerRequestInterface;
+    public function applyToResponse(ResponseInterface $response): ResponseInterface;
+
     /**
      * Apply authentication result to request and response, and return modified objects.
      *
@@ -51,7 +54,7 @@ interface TransportInterface
      * @param  ResponseInterface      $response
      * @return array
      */
-    public function applyTo(ServerRequestInterface $request, ResponseInterface $response);
+    public function applyTo(ServerRequestInterface $request, ResponseInterface $response): array;
 
     /**
      * Return true if this transport has already been applied to request and response.

@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -15,11 +17,9 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
-/**
- * @package ActiveCollab\Authentication
- */
-interface AuthenticationInterface
+interface AuthenticationInterface extends MiddlewareInterface
 {
     /**
      * Authentication can be used as a PSR-7 middleware.
