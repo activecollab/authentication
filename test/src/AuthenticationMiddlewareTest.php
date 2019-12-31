@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
@@ -13,6 +15,7 @@ use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Authentication;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
@@ -22,15 +25,15 @@ use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 use ActiveCollab\Authentication\Token\TokenInterface;
-use ActiveCollab\Cookies\Adapter\Adapter;
 use ActiveCollab\Cookies\Cookies;
 use ActiveCollab\Cookies\CookiesInterface;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use stdClass;
+use Zend\Diactoros\ResponseFactory;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class AuthenticationMiddlewareTest extends RequestResponseTestCase
 {
     /**
@@ -79,32 +82,69 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->cookies = new Cookies();
 
-        $this->user = new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
-        $this->user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
+        $this->user = new AuthenticatedUser(
+            1,
+            'ilija.studen@activecollab.com',
+            'Ilija Studen',
+            '123'
+        );
+        $this->user_repository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1, 'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123'
+                ),
+            ]
+        );
 
-        $this->session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
-        $this->browser_session_adapter = new BrowserSessionAdapter($this->user_repository, $this->session_repository, $this->cookies, $this->browser_session_cookie_name);
+        $this->session_repository = new SessionRepository(
+            [
+                new Session(
+                    'my-session-id',
+                    'ilija.studen@activecollab.com'
+                )
+            ]
+        );
+        $this->browser_session_adapter = new BrowserSessionAdapter(
+            $this->user_repository,
+            $this->session_repository,
+            $this->cookies,
+            $this->browser_session_cookie_name
+        );
 
-        $this->token_repository = new TokenRepository(['awesome-token' => new Token('awesome-token', 'ilija.studen@activecollab.com')]);
-        $this->token_bearer_adapter = new TokenBearerAdapter($this->user_repository, $this->token_repository);
+        $this->token_repository = new TokenRepository(
+            [
+                'awesome-token' => new Token(
+                    'awesome-token',
+                    'ilija.studen@activecollab.com'
+                )
+            ]
+        );
+        $this->token_bearer_adapter = new TokenBearerAdapter(
+            $this->user_repository,
+            $this->token_repository
+        );
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Invalid authentication adapter provided
-     */
     public function testExceptionIfInvalidAdaptersAreSet()
     {
-        new Authentication([new \stdClass()]);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Invalid authentication adapter provided');
+
+        new Authentication([new stdClass()]);
     }
 
     public function testMiddlewareAcceptsMultipleAdapters()
     {
-        $middleware = new Authentication([$this->browser_session_adapter, $this->token_bearer_adapter]);
+        $middleware = new Authentication(
+            [
+                $this->browser_session_adapter,
+                $this->token_bearer_adapter
+            ]
+        );
 
-        $this->assertInternalType('array', $middleware->getAdapters());
+        $this->assertIsArray($middleware->getAdapters());
         $this->assertCount(2, $middleware->getAdapters());
     }
 
@@ -115,31 +155,102 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     {
         /** @var ServerRequestInterface $request */
         /** @var ResponseInterface $response */
-        list($request, $response) = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
+        [
+            $request,
+            $response,
+        ] = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
 
-        $middleware = new Authentication([$this->browser_session_adapter]);
+        $middleware = new Authentication(
+            [
+                $this->browser_session_adapter
+            ]
+        );
 
-        /** @var ServerRequestInterface $modified_request */
-        $modified_request = null;
+        /** @var ServerRequestInterface $modifiedRequest */
+        $modifiedRequest = null;
 
         /** @var ResponseInterface $response */
-        $response = call_user_func($middleware, $request, $response, function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) use (&$modified_request) {
-            $modified_request = $request;
+        $response = call_user_func(
+            $middleware,
+            $request,
+            $response,
+            function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) use (&$modifiedRequest) {
+                $modifiedRequest = $request;
 
-            if ($next) {
-                $response = $next($request, $response);
+                if ($next) {
+                    $response = $next($request, $response);
+                }
+
+                return $response;
             }
+        );
 
-            return $response;
-        });
-
-        $this->assertInstanceOf(ServerRequestInterface::class, $modified_request);
+        $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
         $this->assertInstanceOf(ResponseInterface::class, $response);
 
         // Test if authentication attributes are set
-        $this->assertArrayHasKey('authentication_adapter', $modified_request->getAttributes());
-        $this->assertArrayHasKey('authenticated_user', $modified_request->getAttributes());
-        $this->assertArrayHasKey('authenticated_with', $modified_request->getAttributes());
+        $this->assertArrayHasKey('authentication_adapter', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_user', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
+
+        // Test if session cookie is set
+        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+
+        $this->assertNotEmpty($set_cookie_header);
+        $this->assertContains($this->browser_session_cookie_name, $set_cookie_header);
+        $this->assertContains('my-session-id', $set_cookie_header);
+
+        $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
+        $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
+    }
+
+    /**
+     * Test that user is authenticated when middleware is invoked as PSR-15 middleware.
+     */
+    public function testBrowserSessionAuthenticationPsr15()
+    {
+        /** @var ServerRequestInterface $request */
+        $request = $this->cookies
+            ->createSetter($this->browser_session_cookie_name, 'my-session-id')
+                ->applyToRequest($this->request);
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+
+        $middleware = new Authentication(
+            [
+                $this->browser_session_adapter
+            ]
+        );
+
+        $requestHandler = new class implements RequestHandlerInterface
+        {
+            private $capturedRequest;
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->capturedRequest = $request;
+
+                return (new ResponseFactory())->createResponse();
+            }
+
+            public function getCapturedRequest(): ServerRequestInterface
+            {
+                return $this->capturedRequest;
+            }
+        };
+
+        $response = $middleware->process($request, $requestHandler);
+
+        /** @var ServerRequestInterface $modifiedRequest */
+        $modifiedRequest = $requestHandler->getCapturedRequest();
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        // Test if authentication attributes are set
+        $this->assertArrayHasKey('authentication_adapter', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_user', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
         $set_cookie_header = $response->getHeaderLine('Set-Cookie');
@@ -159,26 +270,35 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $middleware = new Authentication([$this->token_bearer_adapter]);
 
-        /** @var ServerRequestInterface $modified_request */
-        $modified_request = null;
+        /** @var ServerRequestInterface $modifiedRequest */
+        $modifiedRequest = null;
 
-        $response = call_user_func($middleware, $request, $this->response, function (ServerRequestInterface $request, ResponseInterface $response, callable $next = null) use (&$modified_request) {
-            $modified_request = $request;
+        $response = call_user_func(
+            $middleware,
+            $request,
+            $this->response,
+            function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+                callable $next = null
+            ) use (&$modifiedRequest) {
+                $modifiedRequest = $request;
 
-            if ($next) {
-                $response = $next($request, $response);
+                if ($next) {
+                    $response = $next($request, $response);
+                }
+
+                return $response;
             }
+        );
 
-            return $response;
-        });
-
-        $this->assertInstanceOf(ServerRequestInterface::class, $modified_request);
+        $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
         $this->assertInstanceOf(ResponseInterface::class, $response);
 
         // Test if authentication attributes are set
-        $this->assertArrayHasKey('authentication_adapter', $modified_request->getAttributes());
-        $this->assertArrayHasKey('authenticated_user', $modified_request->getAttributes());
-        $this->assertArrayHasKey('authenticated_with', $modified_request->getAttributes());
+        $this->assertArrayHasKey('authentication_adapter', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_user', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
         $set_cookie_header = $response->getHeaderLine('Set-Cookie');
@@ -188,15 +308,59 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
-     * @expectedExceptionMessage You can not be authenticated with more than one authentication method
-     */
-    public function testExceptionOnMultipleIds()
+    public function testTokenBearerAuthenticationPsr15()
     {
         /** @var ServerRequestInterface $request */
+        $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
+
+        $middleware = new Authentication([$this->token_bearer_adapter]);
+
+        $requestHandler = new class implements RequestHandlerInterface
+        {
+            private $capturedRequest;
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->capturedRequest = $request;
+
+                return (new ResponseFactory())->createResponse();
+            }
+
+            public function getCapturedRequest(): ServerRequestInterface
+            {
+                return $this->capturedRequest;
+            }
+        };
+
+        $response = $middleware->process($request, $requestHandler);
+
+        /** @var ServerRequestInterface $modifiedRequest */
+        $modifiedRequest = $requestHandler->getCapturedRequest();
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        // Test if authentication attributes are set
+        $this->assertArrayHasKey('authentication_adapter', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_user', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
+
+        // Test if session cookie is set
+        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+        $this->assertEmpty($set_cookie_header);
+
+        $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
+        $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());
+    }
+
+    public function testExceptionOnMultipleIds()
+    {
+        $this->expectException(InvalidAuthenticationRequestException::class);
+        $this->expectExceptionMessage('You can not be authenticated with more than one authentication method');
+
+        /** @var ServerRequestInterface $request */
         /** @var ResponseInterface $response */
-        list($request, $response) = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
+        [$request, $response] = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
 
         /** @var ServerRequestInterface $request */
         $request = $request->withHeader('Authorization', 'Bearer awesome-token');
