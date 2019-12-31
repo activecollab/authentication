@@ -194,11 +194,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
-        $this->assertNotEmpty($set_cookie_header);
-        $this->assertContains($this->browser_session_cookie_name, $set_cookie_header);
-        $this->assertContains('my-session-id', $set_cookie_header);
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($this->browser_session_cookie_name, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
@@ -253,11 +253,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
-        $this->assertNotEmpty($set_cookie_header);
-        $this->assertContains($this->browser_session_cookie_name, $set_cookie_header);
-        $this->assertContains('my-session-id', $set_cookie_header);
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($this->browser_session_cookie_name, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
@@ -301,8 +301,8 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
-        $this->assertEmpty($set_cookie_header);
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
+        $this->assertEmpty($setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());
@@ -346,8 +346,8 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
 
         // Test if session cookie is set
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
-        $this->assertEmpty($set_cookie_header);
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
+        $this->assertEmpty($setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());

@@ -60,7 +60,8 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
             'Ilija Studen',
             '123'
         );
-        $user_repository = new UserRepository(
+
+        $userRepository = new UserRepository(
             [
                 'ilija.studen@activecollab.com' => new AuthenticatedUser(
                     1,
@@ -70,7 +71,8 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
                 ),
             ]
         );
-        $session_repository = new SessionRepository(
+
+        $sessionRepository = new SessionRepository(
             [
                 new Session(
                     'my-session-id',
@@ -79,21 +81,21 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
             ]
         );
 
-        $session_cookie_name = 'test-session-cookie';
+        $sessionCookieName = 'test-session-cookie';
 
-        $session_adapter = new BrowserSessionAdapter(
-            $user_repository,
-            $session_repository,
+        $sessionAdapter = new BrowserSessionAdapter(
+            $userRepository,
+            $sessionRepository,
             $this->cookies,
-            $session_cookie_name
+            $sessionCookieName
         );
-        $session = $session_adapter->authenticate($user, []);
+        $session = $sessionAdapter->authenticate($user, []);
 
         /** @var ServerRequestInterface $request */
         $request = $this->request->withAttribute(
             'test_transport',
             new AuthorizationTransport(
-                $session_adapter,
+                $sessionAdapter,
                 $user,
                 $session,
                 [
@@ -111,11 +113,11 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
 
-        $set_cookie_header = $response->getHeaderLine('Set-Cookie');
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
-        $this->assertNotEmpty($set_cookie_header);
-        $this->assertContains($session_cookie_name, $set_cookie_header);
-        $this->assertContains('my-session-id', $set_cookie_header);
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($sessionCookieName, $setCookieHeader);
+        $this->assertContains('my-session-id', $setCookieHeader);
     }
 
     /**
