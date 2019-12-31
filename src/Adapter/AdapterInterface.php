@@ -27,6 +27,16 @@ interface AdapterInterface
      */
     public function initialize(ServerRequestInterface $request);
 
+    public function applyToRequest(
+        ServerRequestInterface $request,
+        TransportInterface $transport
+    ): ServerRequestInterface;
+
+    public function applyToResponse(
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): ResponseInterface;
+
     public function applyTo(
         ServerRequestInterface $request,
         ResponseInterface $response,

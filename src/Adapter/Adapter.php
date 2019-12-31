@@ -18,12 +18,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class Adapter implements AdapterInterface
 {
-
-    public function applyTo(
+    public function applyToRequest(
         ServerRequestInterface $request,
-        ResponseInterface $response,
         TransportInterface $transport
-    ): array
+    ): ServerRequestInterface
     {
         if ($transport instanceof AuthenticationTransportInterface
             || $transport instanceof AuthorizationTransportInterface
@@ -34,6 +32,26 @@ abstract class Adapter implements AdapterInterface
                 ->withAttribute('authenticated_with', $transport->getAuthenticatedWith());
         }
 
-        return [$request, $response];
+        return $request;
+    }
+
+    public function applyToResponse(
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): ResponseInterface
+    {
+        return $response;
+    }
+
+    public function applyTo(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TransportInterface $transport
+    ): array
+    {
+        return [
+            $this->applyToRequest($request, $transport),
+            $this->applyToResponse($response, $transport),
+        ];
     }
 }
