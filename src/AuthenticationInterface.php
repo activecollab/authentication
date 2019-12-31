@@ -65,7 +65,7 @@ interface AuthenticationInterface extends MiddlewareInterface
      *
      * @return AuthenticatedUserInterface
      */
-    public function &getAuthenticatedUser();
+    public function getAuthenticatedUser();
 
     /**
      * Override authentication adapter and force set logged user for this request.
@@ -73,7 +73,7 @@ interface AuthenticationInterface extends MiddlewareInterface
      * @param  AuthenticatedUserInterface|null $user
      * @return $this
      */
-    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null);
+    public function setAuthenticatedUser(AuthenticatedUserInterface $user = null);
 
     /**
      * @return AuthenticationResultInterface|null
@@ -84,37 +84,37 @@ interface AuthenticationInterface extends MiddlewareInterface
      * @param  AuthenticationResultInterface $value
      * @return $this
      */
-    public function &setAuthenticatedWith(AuthenticationResultInterface $value);
+    public function setAuthenticatedWith(AuthenticationResultInterface $value);
 
     /**
      * @param  callable $value
      * @return $this
      */
-    public function &onUserAuthenticated(callable $value);
+    public function onUserAuthenticated(callable $value);
 
     /**
      * @param  callable $value
      * @return $this
      */
-    public function &onUserAuthorized(callable $value);
+    public function onUserAuthorized(callable $value);
 
     /**
      * @param  callable $value
      * @return $this
      */
-    public function &onUserAuthorizationFailed(callable $value);
+    public function onUserAuthorizationFailed(callable $value);
 
     /**
      * @param  callable $value
      * @return $this
      */
-    public function &onUserSet(callable $value);
+    public function onUserSet(callable $value);
 
     /**
      * @param  callable $value
      * @return $this
      */
-    public function &onUserDeauthenticated(callable $value);
+    public function onUserDeauthenticated(callable $value);
 
     /**
      * Use onUserSet() instead.
@@ -123,5 +123,5 @@ interface AuthenticationInterface extends MiddlewareInterface
      * @return $this
      * @deprecated
      */
-    public function &setOnAuthenciatedUserChanged(callable $value = null);
+    public function setOnAuthenciatedUserChanged(callable $value = null);
 }

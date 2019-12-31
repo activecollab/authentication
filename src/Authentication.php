@@ -230,7 +230,7 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function &getAuthenticatedUser()
+    public function getAuthenticatedUser()
     {
         return $this->authenticated_user;
     }
@@ -238,7 +238,7 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function &setAuthenticatedUser(AuthenticatedUserInterface $user = null)
+    public function setAuthenticatedUser(AuthenticatedUserInterface $user = null)
     {
         $this->authenticated_user = $user;
 
@@ -258,7 +258,7 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function &setAuthenticatedWith(AuthenticationResultInterface $value)
+    public function setAuthenticatedWith(AuthenticationResultInterface $value)
     {
         $this->authenticated_with = $value;
 
@@ -272,7 +272,7 @@ class Authentication implements AuthenticationInterface
      * @param  array  $arguments
      * @return $this
      */
-    private function &triggerEvent($event_name, ...$arguments)
+    private function triggerEvent($event_name, ...$arguments)
     {
         $property_name = "on_{$event_name}";
 
@@ -287,21 +287,21 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function &onUserAuthenticated(callable $value)
+    public function onUserAuthenticated(callable $value)
     {
         $this->on_user_authenticated[] = $value;
 
         return $this;
     }
 
-    public function &onUserAuthorized(callable $value)
+    public function onUserAuthorized(callable $value)
     {
         $this->on_user_authorized[] = $value;
 
         return $this;
     }
 
-    public function &onUserAuthorizationFailed(callable $value)
+    public function onUserAuthorizationFailed(callable $value)
     {
         $this->on_user_authorization_failed[] = $value;
 
@@ -311,14 +311,14 @@ class Authentication implements AuthenticationInterface
     /**
      * {@inheritdoc}
      */
-    public function &onUserSet(callable $value)
+    public function onUserSet(callable $value)
     {
         $this->on_user_set[] = $value;
 
         return $this;
     }
 
-    public function &onUserDeauthenticated(callable $value)
+    public function onUserDeauthenticated(callable $value)
     {
         $this->on_user_deauthenticated[] = $value;
 
@@ -330,7 +330,7 @@ class Authentication implements AuthenticationInterface
      *
      * {@inheritdoc}
      */
-    public function &setOnAuthenciatedUserChanged(callable $value = null)
+    public function setOnAuthenciatedUserChanged(callable $value = null)
     {
         if (empty($value)) {
             throw new InvalidArgumentException('Value needs to be a callable.');
