@@ -92,7 +92,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setUsernameFormat($value)
+    public function setUsernameFormat($value)
     {
         if (in_array($value, self::VALID_USERNAME_FORMATS)) {
             $this->username_format = $value;
@@ -114,7 +114,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setRememberExtendsSession($value)
+    public function setRememberExtendsSession($value)
     {
         $this->remember_extends_session = (bool) $value;
 
@@ -132,7 +132,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setIsPasswordChangeEnabled($value)
+    public function setIsPasswordChangeEnabled($value)
     {
         $this->password_change_enabled = (bool) $value;
 
@@ -150,7 +150,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setIsPasswordRecoveryEnabled($value)
+    public function setIsPasswordRecoveryEnabled($value)
     {
         $this->password_recovery_enabled = (bool) $value;
 
@@ -168,7 +168,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setExternalLoginUrl($value)
+    public function setExternalLoginUrl($value)
     {
         $this->external_login_url = $this->getValidExternalUrlValue($value);
 
@@ -186,7 +186,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setExternalLogoutUrl($value)
+    public function setExternalLogoutUrl($value)
     {
         $this->external_logout_url = $this->getValidExternalUrlValue($value);
 
@@ -204,7 +204,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setExternalChangePasswordUrl($value)
+    public function setExternalChangePasswordUrl($value)
     {
         $this->external_change_password_url = $this->getValidExternalUrlValue($value);
 
@@ -222,7 +222,7 @@ class LoginPolicy implements LoginPolicyInterface
     /**
      * {@inheritdoc}
      */
-    public function &setExternalUpdateProfileUrl($value)
+    public function setExternalUpdateProfileUrl($value)
     {
         $this->external_update_profile_url = $this->getValidExternalUrlValue($value);
 

@@ -101,7 +101,7 @@ class Session implements SessionInterface
      * @param  bool  $value
      * @return $this
      */
-    public function &setIsExtendedSession($value)
+    public function setIsExtendedSession($value)
     {
         $this->is_extended_session = (bool) $value;
 

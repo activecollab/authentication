@@ -33,7 +33,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  string $value
      * @return $this
      */
-    public function &setUsernameFormat($value);
+    public function setUsernameFormat($value);
 
     /**
      * Enable Remember Me feature to support extended sessions.
@@ -48,7 +48,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  bool  $value
      * @return $this
      */
-    public function &setRememberExtendsSession($value);
+    public function setRememberExtendsSession($value);
 
     /**
      * Password change is supported by this authentication adapter.
@@ -63,7 +63,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  bool  $value
      * @return $this
      */
-    public function &setIsPasswordChangeEnabled($value);
+    public function setIsPasswordChangeEnabled($value);
 
     /**
      * Return true if this authentication adapter supports password recovery.
@@ -78,7 +78,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  bool  $value
      * @return $this
      */
-    public function &setIsPasswordRecoveryEnabled($value);
+    public function setIsPasswordRecoveryEnabled($value);
 
     /**
      * Get login URL.
@@ -93,7 +93,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  string $value
      * @return $this
      */
-    public function &setExternalLoginUrl($value);
+    public function setExternalLoginUrl($value);
 
     /**
      * Get logout URL.
@@ -108,7 +108,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  string $value
      * @return $this
      */
-    public function &setExternalLogoutUrl($value);
+    public function setExternalLogoutUrl($value);
 
     /**
      * Get change password URL.
@@ -123,7 +123,7 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  string $value
      * @return $this
      */
-    public function &setExternalChangePasswordUrl($value);
+    public function setExternalChangePasswordUrl($value);
 
     /**
      * Get update profile URL.
@@ -138,5 +138,5 @@ interface LoginPolicyInterface extends JsonSerializable
      * @param  string $value
      * @return $this
      */
-    public function &setExternalUpdateProfileUrl($value);
+    public function setExternalUpdateProfileUrl($value);
 }
