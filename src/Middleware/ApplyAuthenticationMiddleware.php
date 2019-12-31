@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Middleware;
 
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
@@ -14,46 +16,27 @@ use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\Middleware
- */
 class ApplyAuthenticationMiddleware
 {
-    /**
-     * @var ValueContainerInterface
-     */
     private $value_container;
-
-    /**
-     * @var bool
-     */
     private $apply_on_exit;
 
-    /**
-     * @param ValueContainerInterface $value_container
-     * @param bool                    $apply_on_exit
-     */
-    public function __construct(ValueContainerInterface $value_container, $apply_on_exit = false)
+    public function __construct(ValueContainerInterface $value_container, bool $apply_on_exit = false)
     {
         $this->value_container = $value_container;
         $this->apply_on_exit = (bool) $apply_on_exit;
     }
 
-    /**
-     * @return bool
-     */
-    public function applyOnExit()
+    public function applyOnExit(): bool
     {
         return $this->apply_on_exit;
     }
 
-    /**
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @param  callable|null          $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ): ResponseInterface
     {
         if (!$this->apply_on_exit) {
             list($request, $response) = $this->apply($request, $response);
@@ -70,12 +53,7 @@ class ApplyAuthenticationMiddleware
         return $response;
     }
 
-    /**
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface      $response
-     * @return array
-     */
-    private function apply(ServerRequestInterface $request, ResponseInterface $response)
+    private function apply(ServerRequestInterface $request, ResponseInterface $response): array
     {
         $transport = $this->getTransportFrom($request);
 
@@ -86,13 +64,7 @@ class ApplyAuthenticationMiddleware
         return [$request, $response];
     }
 
-    /**
-     * Get authentication response transport from request.
-     *
-     * @param  ServerRequestInterface  $request
-     * @return TransportInterface|null
-     */
-    protected function getTransportFrom(ServerRequestInterface $request)
+    protected function getTransportFrom(ServerRequestInterface $request): ?TransportInterface
     {
         if ($this->value_container instanceof RequestValueContainerInterface) {
             $this->value_container->setRequest($request);
