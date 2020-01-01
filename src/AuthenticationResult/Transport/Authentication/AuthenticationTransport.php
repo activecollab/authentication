@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -13,30 +15,17 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication
- */
 class AuthenticationTransport extends Transport implements AuthenticationTransportInterface
 {
-    /**
-     * @var AuthenticatedUserInterface
-     */
     private $authenticated_user;
-
-    /**
-     * @var AuthenticationResultInterface
-     */
     private $authenticated_with;
 
-    /**
-     * AuthenticationTransport constructor.
-     *
-     * @param AdapterInterface                   $adapter
-     * @param AuthenticatedUserInterface|null    $authenticated_user
-     * @param AuthenticationResultInterface|null $authenticated_with
-     * @param mixed                              $payload
-     */
-    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user = null, AuthenticationResultInterface $authenticated_with = null, $payload = null)
+    public function __construct(
+        AdapterInterface $adapter,
+        AuthenticatedUserInterface $authenticated_user = null,
+        AuthenticationResultInterface $authenticated_with = null,
+        $payload = null
+    )
     {
         parent::__construct($adapter, $payload);
 
@@ -44,18 +33,12 @@ class AuthenticationTransport extends Transport implements AuthenticationTranspo
         $this->authenticated_with = $authenticated_with;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedUser()
+    public function getAuthenticatedUser(): ?AuthenticatedUserInterface
     {
         return $this->authenticated_user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedWith()
+    public function getAuthenticatedWith(): ?AuthenticationResultInterface
     {
         return $this->authenticated_with;
     }

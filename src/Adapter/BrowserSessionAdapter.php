@@ -122,7 +122,9 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
         } elseif ($transport instanceof DeauthenticationTransportInterface
             || $transport instanceof CleanUpTransportInterface
         ) {
-            return ($this->cookies->createRemover($this->session_cookie_name))->applyToResponse($response);
+            return $this->cookies
+                ->createRemover($this->session_cookie_name)
+                    ->applyToResponse($response);
         }
 
         return $response;

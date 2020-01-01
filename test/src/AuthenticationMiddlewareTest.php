@@ -11,10 +11,12 @@ declare(strict_types=1);
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
+use ActiveCollab\Authentication\Adapter\BrowserSessionAdapterInterface;
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Authentication;
+use ActiveCollab\Authentication\AuthenticationInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
@@ -57,12 +59,12 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     /**
      * @var string
      */
-    private $browser_session_cookie_name = 'test-session-cookie';
+    private $browserSessionCookieName = 'test-session-cookie';
 
     /**
      * @var BrowserSessionAdapter
      */
-    private $browser_session_adapter;
+    private $browserSessionAdapter;
 
     /**
      * @var TokenRepository
@@ -104,11 +106,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
                 )
             ]
         );
-        $this->browser_session_adapter = new BrowserSessionAdapter(
+        $this->browserSessionAdapter = new BrowserSessionAdapter(
             $this->user_repository,
             $this->session_repository,
             $this->cookies,
-            $this->browser_session_cookie_name
+            $this->browserSessionCookieName
         );
 
         $this->token_repository = new TokenRepository(
@@ -128,7 +130,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     public function testMiddlewareAcceptsMultipleAdapters()
     {
         $middleware = new Authentication(
-            $this->browser_session_adapter,
+            $this->browserSessionAdapter,
             $this->token_bearer_adapter
         );
 
@@ -146,10 +148,10 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         [
             $request,
             $response,
-        ] = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
+        ] = $this->cookies->set($this->request, $this->response, $this->browserSessionCookieName, 'my-session-id');
 
         $middleware = new Authentication(
-            $this->browser_session_adapter
+            $this->browserSessionAdapter
         );
 
         /** @var ServerRequestInterface $modifiedRequest */
@@ -183,7 +185,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($this->browser_session_cookie_name, $setCookieHeader);
+        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
         $this->assertContains('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
@@ -197,13 +199,13 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     {
         /** @var ServerRequestInterface $request */
         $request = $this->cookies
-            ->createSetter($this->browser_session_cookie_name, 'my-session-id')
+            ->createSetter($this->browserSessionCookieName, 'my-session-id')
                 ->applyToRequest($this->request);
 
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
 
         $middleware = new Authentication(
-            $this->browser_session_adapter
+            $this->browserSessionAdapter
         );
 
         $requestHandler = new class implements RequestHandlerInterface
@@ -240,11 +242,96 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($this->browser_session_cookie_name, $setCookieHeader);
+        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
         $this->assertContains('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
+    }
+
+    /**
+     * Test that user is authenticated when middleware is invoked as PSR-15 middleware.
+     */
+    public function testBrowserSessionAuthenticationPsr15WithLogout()
+    {
+        /** @var ServerRequestInterface $request */
+        $request = $this->cookies
+            ->createSetter($this->browserSessionCookieName, 'my-session-id')
+            ->applyToRequest($this->request);
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+
+        $middleware = new Authentication($this->browserSessionAdapter);
+
+        $requestHandler = new class ($middleware, $this->browserSessionAdapter) implements RequestHandlerInterface
+        {
+            private $authentication;
+            private $browserSessionAdapter;
+            private $capturedRequest;
+
+            public function __construct(
+                AuthenticationInterface $authentication,
+                BrowserSessionAdapterInterface $browserSessionAdapter
+            )
+            {
+                $this->authentication = $authentication;
+                $this->browserSessionAdapter = $browserSessionAdapter;
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->capturedRequest = $request;
+
+                $this->authentication->terminate(
+                    $this->browserSessionAdapter,
+                    $request->getAttribute('authenticated_with')
+                );
+
+                return (new ResponseFactory())->createResponse();
+            }
+
+            public function getCapturedRequest(): ServerRequestInterface
+            {
+                return $this->capturedRequest;
+            }
+        };
+
+        $response = $middleware->process($request, $requestHandler);
+
+        /** @var ServerRequestInterface $modifiedRequest */
+        $modifiedRequest = $requestHandler->getCapturedRequest();
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+
+        // Test if authentication attributes are set
+        $this->assertArrayHasKey('authentication_adapter', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_user', $modifiedRequest->getAttributes());
+        $this->assertArrayHasKey('authenticated_with', $modifiedRequest->getAttributes());
+
+        // Test if session cookie is set
+        $setCookieHeader = $response->getHeaderLine('Set-Cookie');
+
+        $this->assertNotEmpty($setCookieHeader);
+        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
+
+        $cookieValue = \Dflydev\FigCookies\Cookies::fromCookieString($setCookieHeader)
+            ->get('test-session-cookie')
+                ->getValue();
+
+        $this->assertSame('', $cookieValue);
+
+        $expirationString = \Dflydev\FigCookies\Cookies::fromCookieString($setCookieHeader)
+            ->get('Expires')
+                ->getValue();
+
+        $expirationTimestamp = strtotime($expirationString);
+
+        $this->assertNotFalse($expirationTimestamp);
+        $this->assertLessThan(time() - 1, $expirationTimestamp);
+
+        $this->assertNull($middleware->getAuthenticatedUser());
+        $this->assertNull($middleware->getAuthenticatedWith());
     }
 
     public function testTokenBearerAuthentication()
@@ -350,7 +437,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         ] = $this->cookies->set(
             $this->request,
             $this->response,
-            $this->browser_session_cookie_name,
+            $this->browserSessionCookieName,
             'my-session-id'
         );
 
@@ -358,7 +445,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $request = $request->withHeader('Authorization', 'Bearer awesome-token');
 
         call_user_func(
-            new Authentication($this->browser_session_adapter, $this->token_bearer_adapter),
+            new Authentication($this->browserSessionAdapter, $this->token_bearer_adapter),
             $request,
             $response
         );

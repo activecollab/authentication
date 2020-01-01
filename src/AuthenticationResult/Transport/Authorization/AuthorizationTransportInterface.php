@@ -6,15 +6,14 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization
- */
 interface AuthorizationTransportInterface extends TransportInterface
 {
     /**

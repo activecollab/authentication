@@ -114,36 +114,38 @@ class Authentication implements AuthenticationInterface
         return $response;
     }
 
+    public $lastProcessingResult;
+
     public function process(
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface
     {
-        $auth_result = $this->authenticatedUsingAdapters($request);
+        $this->lastProcessingResult = $this->authenticatedUsingAdapters($request);
 
-        if ($auth_result instanceof TransportInterface 
-            && !$auth_result->isEmpty()
+        if ($this->lastProcessingResult instanceof TransportInterface
+            && !$this->lastProcessingResult->isEmpty()
         ) {
-            if ($auth_result instanceof AuthenticationTransportInterface) {
-                $this->setAuthenticatedUser($auth_result->getAuthenticatedUser());
-                $this->setAuthenticatedWith($auth_result->getAuthenticatedWith());
+            if ($this->lastProcessingResult instanceof AuthenticationTransportInterface) {
+                $this->setAuthenticatedUser($this->lastProcessingResult->getAuthenticatedUser());
+                $this->setAuthenticatedWith($this->lastProcessingResult->getAuthenticatedWith());
 
                 $this->triggerEvent(
                     'user_authenticated',
-                    $auth_result->getAuthenticatedUser(),
-                    $auth_result->getAuthenticatedWith()
+                    $this->lastProcessingResult->getAuthenticatedUser(),
+                    $this->lastProcessingResult->getAuthenticatedWith()
                 );
             }
 
-            $request = $auth_result->applyToRequest($request);
+            $request = $this->lastProcessingResult->applyToRequest($request);
         }
 
         $response = $handler->handle($request);
 
-        if ($auth_result instanceof TransportInterface
-            && !$auth_result->isEmpty()
+        if ($this->lastProcessingResult instanceof TransportInterface
+            && !$this->lastProcessingResult->isEmpty()
         ) {
-            $response = $auth_result->applyToResponse($response);
+            $response = $this->lastProcessingResult->applyToResponse($response);
         }
 
         return $response;
@@ -158,11 +160,14 @@ class Authentication implements AuthenticationInterface
     {
         try {
             $user = $authorizer->verifyCredentials($credentials);
-            $authenticated_with = $adapter->authenticate($user, $credentials);
+            $authenticatedWith = $adapter->authenticate($user, $credentials);
 
-            $this->triggerEvent('user_authorized', $user, $authenticated_with);
+            $this->triggerEvent('user_authorized', $user, $authenticatedWith);
 
-            return new AuthorizationTransport($adapter, $user, $authenticated_with, $payload);
+            $authorizationResult = new AuthorizationTransport($adapter, $user, $authenticatedWith, $payload);
+            $this->lastProcessingResult = $authorizationResult;
+
+            return $authorizationResult;
         } catch (Exception $e) {
             $this->triggerEvent('user_authorization_failed', $credentials, $e);
 
@@ -172,14 +177,18 @@ class Authentication implements AuthenticationInterface
 
     public function terminate(
         AdapterInterface $adapter,
-        AuthenticationResultInterface $authenticated_with
+        AuthenticationResultInterface $authenticatedWith
     ): TransportInterface
     {
-        $termination_result = $adapter->terminate($authenticated_with);
+        $terminationResult = $adapter->terminate($authenticatedWith);
 
-        $this->triggerEvent('user_deauthenticated', $authenticated_with);
+        $this->setAuthenticatedUser(null);
+        $this->setAuthenticatedWith(null);
 
-        return $termination_result;
+        $this->triggerEvent('user_deauthenticated', $authenticatedWith);
+        $this->lastProcessingResult = $terminationResult;
+
+        return $terminationResult;
     }
 
     /**
@@ -242,7 +251,7 @@ class Authentication implements AuthenticationInterface
         return $this->authenticated_with;
     }
 
-    public function setAuthenticatedWith(AuthenticationResultInterface $value): AuthenticationInterface
+    public function setAuthenticatedWith(?AuthenticationResultInterface $value): AuthenticationInterface
     {
         $this->authenticated_with = $value;
 

@@ -36,7 +36,7 @@ interface AuthenticationInterface extends MiddlewareInterface
 
     public function terminate(
         AdapterInterface $adapter,
-        AuthenticationResultInterface $authenticated_with
+        AuthenticationResultInterface $authenticatedWith
     ): TransportInterface;
 
     /**
@@ -44,60 +44,16 @@ interface AuthenticationInterface extends MiddlewareInterface
      */
     public function getAdapters(): iterable;
 
-    /**
-     * Return authenticated in user.
-     *
-     * @return AuthenticatedUserInterface
-     */
     public function getAuthenticatedUser(): ?AuthenticatedUserInterface;
-
-    /**
-     * Override authentication adapter and force set logged user for this request.
-     *
-     * @param  AuthenticatedUserInterface|null $user
-     * @return $this
-     */
     public function setAuthenticatedUser(AuthenticatedUserInterface $user = null): AuthenticationInterface;
 
-    /**
-     * @return AuthenticationResultInterface|null
-     */
     public function getAuthenticatedWith(): ?AuthenticationResultInterface;
+    public function setAuthenticatedWith(?AuthenticationResultInterface $value): AuthenticationInterface;
 
-    /**
-     * @param  AuthenticationResultInterface $value
-     * @return $this
-     */
-    public function setAuthenticatedWith(AuthenticationResultInterface $value): AuthenticationInterface;
-
-    /**
-     * @param  callable $value
-     * @return $this
-     */
     public function onUserAuthenticated(callable $value): AuthenticationInterface;
-
-    /**
-     * @param  callable $value
-     * @return $this
-     */
     public function onUserAuthorized(callable $value): AuthenticationInterface;
-
-    /**
-     * @param  callable $value
-     * @return $this
-     */
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface;
-
-    /**
-     * @param  callable $value
-     * @return $this
-     */
     public function onUserSet(callable $value): AuthenticationInterface;
-
-    /**
-     * @param  callable $value
-     * @return $this
-     */
     public function onUserDeauthenticated(callable $value): AuthenticationInterface;
 
     /**

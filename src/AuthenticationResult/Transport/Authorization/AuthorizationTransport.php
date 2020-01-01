@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -13,9 +15,6 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization
- */
 class AuthorizationTransport extends Transport implements AuthorizationTransportInterface
 {
     /**
@@ -44,10 +43,7 @@ class AuthorizationTransport extends Transport implements AuthorizationTransport
         $this->authenticated_with = $authenticated_with;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedUser()
+    public function getAuthenticatedUser(): ?AuthenticatedUserInterface
     {
         return $this->authenticated_user;
     }

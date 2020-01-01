@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication;
 
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication
- */
 class DeauthenticationTransport extends Transport implements DeauthenticationTransportInterface
 {
 }

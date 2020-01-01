@@ -48,8 +48,8 @@ abstract class Transport implements TransportInterface
         return false;
     }
 
-    private $is_applied_to_request = false;
-    private $is_applied_to_response = false;
+    private $isAppliedToRequest = false;
+    private $isAppliedToResponse = false;
 
     public function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
     {
@@ -57,11 +57,11 @@ abstract class Transport implements TransportInterface
             throw new LogicException('Empty authentication transport cannot be applied');
         }
 
-        if ($this->is_applied_to_request) {
+        if ($this->isAppliedToRequest) {
             throw new LogicException('Authentication transport already applied');
         }
 
-        $this->is_applied_to_request = true;
+        $this->isAppliedToRequest = true;
         return $this->getAdapter()->applyToRequest($request, $this);
     }
 
@@ -71,11 +71,11 @@ abstract class Transport implements TransportInterface
             throw new LogicException('Empty authentication transport cannot be applied');
         }
 
-        if ($this->is_applied_to_response) {
+        if ($this->isAppliedToResponse) {
             throw new LogicException('Authentication transport already applied');
         }
 
-        $this->is_applied_to_response = true;
+        $this->isAppliedToResponse = true;
         return $this->getAdapter()->applyToResponse($response, $this);
     }
 
@@ -89,16 +89,16 @@ abstract class Transport implements TransportInterface
 
     public function isApplied(): bool
     {
-        return $this->is_applied_to_request && $this->is_applied_to_response;
+        return $this->isAppliedToRequest && $this->isAppliedToResponse;
     }
 
     public function isAppliedToRequest(): bool
     {
-        return $this->is_applied_to_request;
+        return $this->isAppliedToRequest;
     }
 
     public function isAppliedToResponse(): bool
     {
-        return $this->is_applied_to_response;
+        return $this->isAppliedToResponse;
     }
 }
