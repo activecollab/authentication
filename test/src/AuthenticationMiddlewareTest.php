@@ -27,11 +27,9 @@ use ActiveCollab\Authentication\Test\Token\Token;
 use ActiveCollab\Authentication\Token\TokenInterface;
 use ActiveCollab\Cookies\Cookies;
 use ActiveCollab\Cookies\CookiesInterface;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use stdClass;
 use Zend\Diactoros\ResponseFactory;
 
 class AuthenticationMiddlewareTest extends RequestResponseTestCase
@@ -127,21 +125,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         );
     }
 
-    public function testExceptionIfInvalidAdaptersAreSet()
-    {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Invalid authentication adapter provided');
-
-        new Authentication([new stdClass()]);
-    }
-
     public function testMiddlewareAcceptsMultipleAdapters()
     {
         $middleware = new Authentication(
-            [
-                $this->browser_session_adapter,
-                $this->token_bearer_adapter
-            ]
+            $this->browser_session_adapter,
+            $this->token_bearer_adapter
         );
 
         $this->assertIsArray($middleware->getAdapters());
@@ -161,9 +149,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         ] = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
 
         $middleware = new Authentication(
-            [
-                $this->browser_session_adapter
-            ]
+            $this->browser_session_adapter
         );
 
         /** @var ServerRequestInterface $modifiedRequest */
@@ -217,9 +203,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
 
         $middleware = new Authentication(
-            [
-                $this->browser_session_adapter
-            ]
+            $this->browser_session_adapter
         );
 
         $requestHandler = new class implements RequestHandlerInterface
@@ -268,7 +252,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         /** @var ServerRequestInterface $request */
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
-        $middleware = new Authentication([$this->token_bearer_adapter]);
+        $middleware = new Authentication($this->token_bearer_adapter);
 
         /** @var ServerRequestInterface $modifiedRequest */
         $modifiedRequest = null;
@@ -313,7 +297,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         /** @var ServerRequestInterface $request */
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
-        $middleware = new Authentication([$this->token_bearer_adapter]);
+        $middleware = new Authentication($this->token_bearer_adapter);
 
         $requestHandler = new class implements RequestHandlerInterface
         {
@@ -360,11 +344,23 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         /** @var ServerRequestInterface $request */
         /** @var ResponseInterface $response */
-        [$request, $response] = $this->cookies->set($this->request, $this->response, $this->browser_session_cookie_name, 'my-session-id');
+        [
+            $request,
+            $response,
+        ] = $this->cookies->set(
+            $this->request,
+            $this->response,
+            $this->browser_session_cookie_name,
+            'my-session-id'
+        );
 
         /** @var ServerRequestInterface $request */
         $request = $request->withHeader('Authorization', 'Bearer awesome-token');
 
-        call_user_func(new Authentication([$this->browser_session_adapter, $this->token_bearer_adapter]), $request, $response);
+        call_user_func(
+            new Authentication($this->browser_session_adapter, $this->token_bearer_adapter),
+            $request,
+            $response
+        );
     }
 }

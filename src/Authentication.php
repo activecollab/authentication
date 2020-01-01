@@ -70,7 +70,7 @@ class Authentication implements AuthenticationInterface
      */
     private $on_user_deauthenticated = [];
 
-    public function __construct(array $adapters)
+    public function __construct(AdapterInterface ...$adapters)
     {
         foreach ($adapters as $adapter) {
             if (!($adapter instanceof AdapterInterface)) {

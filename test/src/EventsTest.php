@@ -249,9 +249,9 @@ class EventsTest extends BrowserSessionTestCase
         ]);
         $session_repository = new SessionRepository([new Session($session_id, 'ilija.studen@activecollab.com')]);
 
-        return new Authentication([
-            new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies),
-        ]);
+        return new Authentication(
+            new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies)
+        );
     }
 
     private function prepareForAuthorization($session_id = 'my-session-id')
@@ -263,7 +263,7 @@ class EventsTest extends BrowserSessionTestCase
         $session_repository = new SessionRepository([new Session($session_id, 'ilija.studen@activecollab.com')]);
 
         $browser_session_adapter = new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies);
-        $authentication = new Authentication([$browser_session_adapter]);
+        $authentication = new Authentication($browser_session_adapter);
 
         return [$authentication, $browser_session_adapter, new LocalAuthorizer($user_repository)];
     }
