@@ -14,18 +14,9 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\Adapter
- */
 interface AdapterInterface
 {
-    /**
-     * Initialize authentication layer and see if we have a user who's already logged in.
-     *
-     * @param  ServerRequestInterface $request
-     * @return TransportInterface
-     */
-    public function initialize(ServerRequestInterface $request);
+    public function initialize(ServerRequestInterface $request): ?TransportInterface;
 
     public function applyToRequest(
         ServerRequestInterface $request,
@@ -43,20 +34,10 @@ interface AdapterInterface
         TransportInterface $transport
     ): array;
 
-    /**
-     * Authenticate user against authentication source.
-     *
-     * @param  AuthenticatedUserInterface    $authenticated_user
-     * @param  array                         $credentials
-     * @return AuthenticationResultInterface
-     */
-    public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = []);
+    public function authenticate(
+        AuthenticatedUserInterface $authenticated_user,
+        array $credentials = []
+    ): AuthenticationResultInterface;
 
-    /**
-     * Terminate an instance that was used to authenticate a user.
-     *
-     * @param  AuthenticationResultInterface $authenticated_with
-     * @return TransportInterface
-     */
-    public function terminate(AuthenticationResultInterface $authenticated_with);
+    public function terminate(AuthenticationResultInterface $authenticated_with): TransportInterface;
 }

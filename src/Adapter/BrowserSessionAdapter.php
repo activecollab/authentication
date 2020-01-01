@@ -53,7 +53,7 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
         $this->session_cookie_name = $session_cookie_name;
     }
 
-    public function initialize(ServerRequestInterface $request)
+    public function initialize(ServerRequestInterface $request): ?TransportInterface
     {
         $session_id = $this->cookies->get($request, $this->session_cookie_name);
 
@@ -128,12 +128,15 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
         return $response;
     }
 
-    public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
+    public function authenticate(
+        AuthenticatedUserInterface $authenticated_user,
+        array $credentials = []
+    ): AuthenticationResultInterface
     {
         return $this->session_repository->createSession($authenticated_user, $credentials);
     }
 
-    public function terminate(AuthenticationResultInterface $authenticated_with)
+    public function terminate(AuthenticationResultInterface $authenticated_with): TransportInterface
     {
         if (!$authenticated_with instanceof SessionInterface) {
             throw new InvalidArgumentException('Instance is not a browser session');

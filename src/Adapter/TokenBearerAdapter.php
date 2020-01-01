@@ -15,6 +15,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRep
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\DeauthenticationTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
@@ -35,10 +36,7 @@ class TokenBearerAdapter extends Adapter implements TokenBearerAdapterInterface
         $this->token_repository = $token_repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(ServerRequestInterface $request)
+    public function initialize(ServerRequestInterface $request): ?TransportInterface
     {
         if (!$request->hasHeader('Authorization')) {
             return null;
@@ -67,18 +65,15 @@ class TokenBearerAdapter extends Adapter implements TokenBearerAdapterInterface
         throw new InvalidTokenException();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
+    public function authenticate(
+        AuthenticatedUserInterface $authenticated_user,
+        array $credentials = []
+    ): AuthenticationResultInterface
     {
         return $this->token_repository->issueToken($authenticated_user, $credentials);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function terminate(AuthenticationResultInterface $authenticated_with)
+    public function terminate(AuthenticationResultInterface $authenticated_with): TransportInterface
     {
         if (!$authenticated_with instanceof TokenInterface) {
             throw new InvalidArgumentException('Instance is not a token');
