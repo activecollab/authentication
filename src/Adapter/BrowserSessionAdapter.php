@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -27,38 +29,19 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\Adapter
- */
-class BrowserSessionAdapter extends Adapter
+class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInterface
 {
-    /**
-     * @var UserRepositoryInterface
-     */
     private $user_repository;
-
-    /**
-     * @var SessionRepositoryInterface
-     */
     private $session_repository;
-
-    /**
-     * @var CookiesInterface
-     */
     private $cookies;
-
-    /**
-     * @var string
-     */
     private $session_cookie_name;
 
-    /**
-     * @param UserRepositoryInterface    $user_repository
-     * @param SessionRepositoryInterface $session_repository
-     * @param CookiesInterface           $cookies
-     * @param string                     $session_cookie_name
-     */
-    public function __construct(UserRepositoryInterface $user_repository, SessionRepositoryInterface $session_repository, CookiesInterface $cookies, $session_cookie_name = 'sessid')
+    public function __construct(
+        UserRepositoryInterface $user_repository,
+        SessionRepositoryInterface $session_repository,
+        CookiesInterface $cookies,
+        string $session_cookie_name = 'sessid'
+    )
     {
         if (empty($session_cookie_name)) {
             throw new InvalidArgumentException('Session cookie name is required');
@@ -70,9 +53,6 @@ class BrowserSessionAdapter extends Adapter
         $this->session_cookie_name = $session_cookie_name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function initialize(ServerRequestInterface $request)
     {
         $session_id = $this->cookies->get($request, $this->session_cookie_name);
@@ -148,17 +128,11 @@ class BrowserSessionAdapter extends Adapter
         return $response;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function authenticate(AuthenticatedUserInterface $authenticated_user, array $credentials = [])
     {
         return $this->session_repository->createSession($authenticated_user, $credentials);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function terminate(AuthenticationResultInterface $authenticated_with)
     {
         if (!$authenticated_with instanceof SessionInterface) {

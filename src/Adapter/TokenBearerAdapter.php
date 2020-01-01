@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Adapter;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -19,26 +21,15 @@ use ActiveCollab\Authentication\Token\TokenInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\Adapter
- */
-class TokenBearerAdapter extends Adapter
+class TokenBearerAdapter extends Adapter implements TokenBearerAdapterInterface
 {
-    /**
-     * @var UserRepositoryInterface
-     */
     private $user_repository;
-
-    /**
-     * @var TokenRepositoryInterface
-     */
     private $token_repository;
 
-    /**
-     * @param UserRepositoryInterface  $user_repository
-     * @param TokenRepositoryInterface $token_repository
-     */
-    public function __construct(UserRepositoryInterface $user_repository, TokenRepositoryInterface $token_repository)
+    public function __construct(
+        UserRepositoryInterface $user_repository,
+        TokenRepositoryInterface $token_repository
+    )
     {
         $this->user_repository = $user_repository;
         $this->token_repository = $token_repository;
@@ -55,11 +46,11 @@ class TokenBearerAdapter extends Adapter
 
         $authorization = $request->getHeaderLine('Authorization');
 
-        if (empty($authorization) || substr($authorization, 0, 6) !== 'Bearer') {
+        if (empty($authorization) || mb_substr($authorization, 0, 6) !== 'Bearer') {
             return null;
         }
 
-        $token_id = trim(substr($authorization, 7));
+        $token_id = trim(mb_substr($authorization, 7));
 
         if ($token_id === null || $token_id === '') {
             throw new InvalidTokenException();
