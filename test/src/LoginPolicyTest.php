@@ -40,29 +40,35 @@ class LoginPolicyTest extends TestCase
         );
     }
 
-//    /**
-//     * Test if flags are properly cast to boolean values.
-//     */
-//    public function testFlagsAreCasterToBool()
-//    {
-//        $this->assertSame(true, (new LoginPolicy())->setRememberExtendsSession('1')->rememberExtendsSession());
-//        $this->assertSame(true, (new LoginPolicy())->setIsPasswordChangeEnabled(1)->isPasswordChangeEnabled());
-//        $this->assertSame(true, (new LoginPolicy())->setIsPasswordRecoveryEnabled('YES')->isPasswordRecoveryEnabled());
-//
-//        $this->assertSame(false, (new LoginPolicy())->setRememberExtendsSession('0')->rememberExtendsSession());
-//        $this->assertSame(false, (new LoginPolicy())->setIsPasswordChangeEnabled(0)->isPasswordChangeEnabled());
-//        $this->assertSame(false, (new LoginPolicy())->setIsPasswordRecoveryEnabled('0')->isPasswordRecoveryEnabled());
-//    }
-
     /**
      * Test if system accepts URLs or NULL.
      */
     public function testValidUrlsOrNull()
     {
-        $this->assertSame('https://www.activecollab.com/login', (new LoginPolicy())->setExternalLoginUrl('https://www.activecollab.com/login')->getExternalLoginUrl());
-        $this->assertSame('https://www.activecollab.com/logout', (new LoginPolicy())->setExternalLogoutUrl('https://www.activecollab.com/logout')->getExternalLogoutUrl());
-        $this->assertSame('https://www.activecollab.com/password', (new LoginPolicy())->setExternalChangePasswordUrl('https://www.activecollab.com/password')->getExternalChangePasswordUrl());
-        $this->assertSame('https://www.activecollab.com/profile', (new LoginPolicy())->setExternalUpdateProfileUrl('https://www.activecollab.com/profile')->getExternalUpdateProfileUrl());
+        $this->assertSame(
+            'https://www.activecollab.com/login',
+            (new LoginPolicy())
+                ->setExternalLoginUrl('https://www.activecollab.com/login')
+                    ->getExternalLoginUrl()
+        );
+        $this->assertSame(
+            'https://www.activecollab.com/logout',
+            (new LoginPolicy())
+                ->setExternalLogoutUrl('https://www.activecollab.com/logout')
+                    ->getExternalLogoutUrl()
+        );
+        $this->assertSame(
+            'https://www.activecollab.com/password',
+            (new LoginPolicy())
+                ->setExternalChangePasswordUrl('https://www.activecollab.com/password')
+                    ->getExternalChangePasswordUrl()
+        );
+        $this->assertSame(
+            'https://www.activecollab.com/profile',
+            (new LoginPolicy())
+                ->setExternalUpdateProfileUrl('https://www.activecollab.com/profile')
+                    ->getExternalUpdateProfileUrl()
+        );
 
         $this->assertNull((new LoginPolicy())->setExternalLoginUrl(null)->getExternalLoginUrl());
         $this->assertNull((new LoginPolicy())->setExternalLogoutUrl(null)->getExternalLogoutUrl());

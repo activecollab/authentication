@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e490d138b7c0d0d9a0f66aaa013c00b",
+    "content-hash": "b23a5093164007249d857014bb7752c1",
     "packages": [
         {
             "name": "activecollab/cookies",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/activecollab/cookies.git",
-                "reference": "1e6b294dc0894ccba332ca38166dd539bf1995d0"
+                "reference": "0cc205313c89a4b463d0854e8861382c1dc9acb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/activecollab/cookies/zipball/1e6b294dc0894ccba332ca38166dd539bf1995d0",
-                "reference": "1e6b294dc0894ccba332ca38166dd539bf1995d0",
+                "url": "https://api.github.com/repos/activecollab/cookies/zipball/0cc205313c89a4b463d0854e8861382c1dc9acb2",
+                "reference": "0cc205313c89a4b463d0854e8861382c1dc9acb2",
                 "shasum": ""
             },
             "require": {
@@ -2887,56 +2887,6 @@
                 }
             ],
             "time": "2020-07-13T17:55:55+00:00"
-        },
-        {
-            "name": "pimple/pimple",
-            "version": "v3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/silexphp/Pimple.git",
-                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Pimple/zipball/e55d12f9d6a0e7f9c85992b73df1267f46279930",
-                "reference": "e55d12f9d6a0e7f9c85992b73df1267f46279930",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2.5",
-                "psr/container": "^1.0"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "^3.4|^4.4|^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Pimple": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Pimple, a simple Dependency Injection Container",
-            "homepage": "https://pimple.symfony.com",
-            "keywords": [
-                "container",
-                "dependency injection"
-            ],
-            "time": "2020-03-03T09:12:48+00:00"
         },
         {
             "name": "psr/container",
