@@ -15,9 +15,6 @@ use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserReposit
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Token\RepositoryInterface as TokenRepositoryInterface;
 
-/**
- * @package ActiveCollab\Authentication\Test\TestCase
- */
 abstract class TokenBearerTestCase extends RequestResponseTestCase
 {
     /**
@@ -30,10 +27,7 @@ abstract class TokenBearerTestCase extends RequestResponseTestCase
      */
     protected $empty_token_repository;
 
-    /**
-     * Set up test environment.
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

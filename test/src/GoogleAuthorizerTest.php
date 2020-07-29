@@ -9,9 +9,12 @@
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\GoogleAuthorizer;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
+use RuntimeException;
 
 /**
  * @package ActiveCollab\Authentication\Test
@@ -30,7 +33,7 @@ class GoogleAuthorizerTest extends TestCase
      */
     private $google_auth_login_ticket;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -41,12 +44,13 @@ class GoogleAuthorizerTest extends TestCase
 
     /**
      * @dataProvider providerInvalidCredentials
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
-     * @expectedExceptionMessage Authentication request data not valid
      * @param array $credentials
      */
     public function testInvalidCredentialsThrowsException($credentials)
     {
+        $this->expectException(InvalidAuthenticationRequestException::class);
+        $this->expectExceptionMessage("Authentication request data not valid");
+
         $google_authorizer = new GoogleAuthorizer(new Repository(), $this->google_client, $this->client_id);
 
         $google_authorizer->verifyCredentials($credentials);
@@ -62,12 +66,11 @@ class GoogleAuthorizerTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Unrecognized google_client
-     */
     public function testExceptionIsThrownForInvalidAud()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Unrecognized google_client");
+
         $this->google_client
             ->method('verifyIdToken')
             ->willReturn(['aud' => '111a']);
@@ -79,12 +82,11 @@ class GoogleAuthorizerTest extends TestCase
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Wrong issuer
-     */
     public function testExceptionIsThrownForInvalidIss()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Wrong issuer");
+
         $this->google_client
             ->method('verifyIdToken')
             ->willReturn(['aud' => '123abc', 'iss' => 'www.example.com']);
@@ -96,12 +98,11 @@ class GoogleAuthorizerTest extends TestCase
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Email is not verified by Google
-     */
     public function testExceptionIsThrownForInvalidUsername()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Email is not verified by Google");
+
         $this->google_client
             ->method('verifyIdToken')
             ->willReturn(['aud' => '123abc', 'iss' => 'accounts.google.com', 'email' => 'john123@doe.com']);
@@ -116,12 +117,11 @@ class GoogleAuthorizerTest extends TestCase
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
-     * @expectedExceptionMessage User not found
-     */
     public function testExceptionIsThrownForNotFoundUser()
     {
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage("User not found");
+
         $payload = [
             'aud' => '123abc',
             'iss' => 'accounts.google.com',
@@ -139,12 +139,11 @@ class GoogleAuthorizerTest extends TestCase
         $google_authorizer->verifyCredentials(['token' => '123abacu', 'username' => 'john@doe.com']);
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
-     * @expectedExceptionMessage User not found
-     */
     public function testExceptionIsThrownForNotAuthenticatedUser()
     {
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage("User not found");
+
         $payload = [
             'aud' => '123abc',
             'iss' => 'accounts.google.com',

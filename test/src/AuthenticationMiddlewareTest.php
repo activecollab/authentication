@@ -32,7 +32,7 @@ use ActiveCollab\Cookies\CookiesInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ResponseFactory;
 
 class AuthenticationMiddlewareTest extends RequestResponseTestCase
 {
@@ -76,7 +76,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
      */
     private $token_bearer_adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -185,8 +185,8 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
-        $this->assertContains('my-session-id', $setCookieHeader);
+        $this->assertStringContainsString($this->browserSessionCookieName, $setCookieHeader);
+        $this->assertStringContainsString('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
@@ -242,8 +242,8 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
-        $this->assertContains('my-session-id', $setCookieHeader);
+        $this->assertStringContainsString($this->browserSessionCookieName, $setCookieHeader);
+        $this->assertStringContainsString('my-session-id', $setCookieHeader);
 
         $this->assertInstanceOf(AuthenticatedUserInterface::class, $middleware->getAuthenticatedUser());
         $this->assertInstanceOf(SessionInterface::class, $middleware->getAuthenticatedWith());
@@ -313,7 +313,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($this->browserSessionCookieName, $setCookieHeader);
+        $this->assertStringContainsString($this->browserSessionCookieName, $setCookieHeader);
 
         $cookieValue = \Dflydev\FigCookies\Cookies::fromCookieString($setCookieHeader)
             ->get('test-session-cookie')

@@ -6,27 +6,29 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Authorizer\LocalAuthorizer;
+use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
+use ActiveCollab\Authentication\Exception\InvalidPasswordException;
+use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class LocalAuthorizerTest extends TestCase
 {
     /**
-     * @param array $credentials
      * @dataProvider providerInvalidCredentials
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
-     * @expectedExceptionMessage Authentication request data not valid
+     * @param array $credentials
      */
     public function testInvalidCredentialsThrowsException($credentials)
     {
+        $this->expectException(InvalidAuthenticationRequestException::class);
+        $this->expectExceptionMessage("Authentication request data not valid");
         $local_authorizer = new LocalAuthorizer(new Repository());
 
         $local_authorizer->verifyCredentials($credentials);
@@ -43,19 +45,25 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
-     * @param array $username
      * @dataProvider providerInvalidAlphaNumUsername
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
-     * @expectedExceptionMessage Authentication request data not valid
+     * @param array $username
      */
     public function testInvalidAlphaNumUsernameThrowsException($username)
     {
-        $local_authorizer = new LocalAuthorizer(new Repository(), AuthorizerInterface::USERNAME_FORMAT_ALPHANUM);
+        $this->expectException(InvalidAuthenticationRequestException::class);
+        $this->expectExceptionMessage("Authentication request data not valid");
 
-        $local_authorizer->verifyCredentials([
-            'username' => $username,
-            'password' => 'Easy to remember, Hard to guess',
-        ]);
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(),
+            AuthorizerInterface::USERNAME_FORMAT_ALPHANUM
+        );
+
+        $local_authorizer->verifyCredentials(
+            [
+                'username' => $username,
+                'password' => 'Easy to remember, Hard to guess',
+            ]
+        );
     }
 
     public function providerInvalidAlphaNumUsername()
@@ -70,14 +78,18 @@ class LocalAuthorizerTest extends TestCase
     }
 
     /**
-     * @param array $username
      * @dataProvider providerInvalidEmailUsername
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException
-     * @expectedExceptionMessage Authentication request data not valid
+     * @param array $username
      */
     public function testInvalidEmailUsernameThrowsException($username)
     {
-        $local_authorizer = new LocalAuthorizer(new Repository(), AuthorizerInterface::USERNAME_FORMAT_EMAIL);
+        $this->expectException(InvalidAuthenticationRequestException::class);
+        $this->expectExceptionMessage("Authentication request data not valid");
+
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(),
+            AuthorizerInterface::USERNAME_FORMAT_EMAIL
+        );
 
         $local_authorizer->verifyCredentials([
             'username' => $username,
@@ -96,36 +108,48 @@ class LocalAuthorizerTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
-     * @expectedExceptionMessage User not found
-     */
     public function testUserNotFoundThrowsException()
     {
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage("User not found");
+
         $local_authorizer = new LocalAuthorizer(new Repository());
 
-        $local_authorizer->verifyCredentials(['username' => 'user', 'password' => 'password']);
+        $local_authorizer->verifyCredentials(
+            [
+                'username' => 'user',
+                'password' => 'password'
+            ]
+        );
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidPasswordException
-     * @expectedExceptionMessage Password not valid
-     */
     public function testInvalidPasswordThrowsException()
     {
-        $local_authorizer = new LocalAuthorizer(new Repository([
-            'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'invalid_password', true),
-        ]));
+        $this->expectException(InvalidPasswordException::class);
+        $this->expectExceptionMessage("Password not valid");
+
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(
+                [
+                    'john@doe.com' => new AuthenticatedUser(
+                        1,
+                        'john@doe.com',
+                        'John',
+                        'invalid_password',
+                        true
+                    ),
+                ]
+            )
+        );
 
         $local_authorizer->verifyCredentials(['username' => 'john@doe.com', 'password' => 'password']);
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\UserNotFoundException
-     * @expectedExceptionMessage User not found
-     */
     public function testUserCanNotAuthenticateThrowsException()
     {
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage("User not found");
+
         $local_authorizer = new LocalAuthorizer(new Repository([
             'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', false),
         ]));
@@ -135,9 +159,19 @@ class LocalAuthorizerTest extends TestCase
 
     public function testUserIsAuthenticated()
     {
-        $local_authorizer = new LocalAuthorizer(new Repository([
-            'john@doe.com' => new AuthenticatedUser(1, 'johndoe', 'John', 'password', true),
-        ]));
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(
+                [
+                    'john@doe.com' => new AuthenticatedUser(
+                        1,
+                        'johndoe',
+                        'John',
+                        'password',
+                        true
+                    ),
+                ]
+            )
+        );
 
         $user = $local_authorizer->verifyCredentials(['username' => 'johndoe', 'password' => 'password']);
 
@@ -146,22 +180,54 @@ class LocalAuthorizerTest extends TestCase
 
     public function testUserWithAlphanumUsernameIsAuthenticated()
     {
-        $local_authorizer = new LocalAuthorizer(new Repository([
-            'john@doe.com' => new AuthenticatedUser(1, 'JohnDoe1983', 'John', 'password', true),
-        ]), AuthorizerInterface::USERNAME_FORMAT_ALPHANUM);
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(
+                [
+                    'john@doe.com' => new AuthenticatedUser(
+                        1,
+                        'JohnDoe1983',
+                        'John',
+                        'password',
+                        true
+                    ),
+                ]
+            ),
+            AuthorizerInterface::USERNAME_FORMAT_ALPHANUM
+        );
 
-        $user = $local_authorizer->verifyCredentials(['username' => 'JohnDoe1983', 'password' => 'password']);
+        $user = $local_authorizer->verifyCredentials(
+            [
+                'username' => 'JohnDoe1983',
+                'password' => 'password'
+            ]
+        );
 
         $this->assertSame(1, $user->getId());
     }
 
     public function testUserWithEmailUsernameIsAuthenticated()
     {
-        $local_authorizer = new LocalAuthorizer(new Repository([
-            'john@doe.com' => new AuthenticatedUser(1, 'john@doe.com', 'John', 'password', true),
-        ]), AuthorizerInterface::USERNAME_FORMAT_EMAIL);
+        $local_authorizer = new LocalAuthorizer(
+            new Repository(
+                [
+                    'john@doe.com' => new AuthenticatedUser(
+                        1,
+                        'john@doe.com',
+                        'John',
+                        'password',
+                        true
+                    ),
+                ]
+            ),
+            AuthorizerInterface::USERNAME_FORMAT_EMAIL
+        );
 
-        $user = $local_authorizer->verifyCredentials(['username' => 'john@doe.com', 'password' => 'password']);
+        $user = $local_authorizer->verifyCredentials(
+            [
+                'username' => 'john@doe.com',
+                'password' => 'password'
+            ]
+        );
 
         $this->assertSame(1, $user->getId());
     }

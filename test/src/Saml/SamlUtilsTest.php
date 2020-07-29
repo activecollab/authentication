@@ -25,7 +25,7 @@ class SamlUtilsTest extends TestCase
      */
     private $raw_saml_response;
 
-    protected function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

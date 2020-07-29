@@ -10,6 +10,7 @@ namespace ActiveCollab\Authentication\Test\Saml;
 
 use ActiveCollab\Authentication\Saml\AuthnRequestResolver;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
+use LightSaml\Error\LightSamlSecurityException;
 use LightSaml\Model\Protocol\AuthnRequest;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,7 +26,7 @@ class AuthnRequestResolverTest extends TestCase
      */
     private $get;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -46,12 +47,11 @@ class AuthnRequestResolverTest extends TestCase
         $this->assertInstanceOf(AuthnRequest::class, $authn_request);
     }
 
-    /**
-     * @expectedException \LightSaml\Error\LightSamlSecurityException
-     * @expectedExceptionMessage Unable to validate signature on query string
-     */
     public function testSamlRequestSignatureIsNotValid()
     {
+        $this->expectException(LightSamlSecurityException::class);
+        $this->expectExceptionMessage("Unable to validate signature on query string");
+
         $this->get['Signature'] = 'invalid';
 
         $request = Request::create('http://localhost:8887', 'GET', $this->get);

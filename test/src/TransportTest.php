@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
@@ -16,10 +18,8 @@ use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserReposit
 use ActiveCollab\Authentication\Test\TestCase\RequestResponseTestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
+use LogicException;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class TransportTest extends RequestResponseTestCase
 {
     /**
@@ -47,10 +47,7 @@ class TransportTest extends RequestResponseTestCase
      */
     private $token_bearer_adapter;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -86,24 +83,22 @@ class TransportTest extends RequestResponseTestCase
         $this->assertSame($payload, $transport->getPayload());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Empty authentication transport cannot be applied
-     */
     public function testEmptyTransportCantBeApplied()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Empty authentication transport cannot be applied");
+
         $transport = new AuthenticationTransport($this->token_bearer_adapter);
         $this->assertTrue($transport->isEmpty());
 
         $transport->applyTo($this->request, $this->response);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Authentication transport already applied
-     */
     public function testTransportCantBeAppliedTwice()
     {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Authentication transport already applied");
+
         $transport = new AuthenticationTransport($this->token_bearer_adapter, $this->user, $this->token);
         $this->assertFalse($transport->isApplied());
 

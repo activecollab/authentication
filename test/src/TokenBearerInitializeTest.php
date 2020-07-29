@@ -6,19 +6,19 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
+use ActiveCollab\Authentication\Exception\InvalidTokenException;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
 use ActiveCollab\Authentication\Test\TestCase\TokenBearerTestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class TokenBearerInitializeTest extends TokenBearerTestCase
 {
     /**
@@ -45,19 +45,17 @@ class TokenBearerInitializeTest extends TokenBearerTestCase
         $this->assertNull((new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Basic 123')));
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidTokenException
-     */
     public function testExceptionWhenTokenIsNotSet()
     {
+        $this->expectException(InvalidTokenException::class);
+
         (new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Bearer'));
     }
 
-    /**
-     * @expectedException \ActiveCollab\Authentication\Exception\InvalidTokenException
-     */
     public function testExceptionWhenTokenIsNotValid()
     {
+        $this->expectException(InvalidTokenException::class);
+
         (new TokenBearerAdapter($this->empty_user_repository, $this->empty_token_repository))->initialize($this->request->withHeader('Authorization', 'Bearer 123'));
     }
 

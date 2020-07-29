@@ -6,15 +6,14 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Password\Policy\PasswordPolicy;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use JsonSerializable;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class PasswordPolicySerializationTest extends TestCase
 {
     public function testPasswordPolicyCanBeSerialized()
@@ -27,7 +26,7 @@ class PasswordPolicySerializationTest extends TestCase
         $default_policy = new PasswordPolicy();
 
         $data = json_decode(json_encode($default_policy), true);
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
 
         $this->assertArrayHasKey('min_length', $data);
         $this->assertArrayHasKey('require_numbers', $data);
@@ -39,7 +38,12 @@ class PasswordPolicySerializationTest extends TestCase
         $this->assertSame(false, $data['require_mixed_case']);
         $this->assertSame(false, $data['require_symbols']);
 
-        $customized_policy = new PasswordPolicy(32, true, true, true);
+        $customized_policy = new PasswordPolicy(
+            32,
+            true,
+            true,
+            true
+        );
 
         $data = json_decode(json_encode($customized_policy), true);
 

@@ -49,10 +49,7 @@ class TokenBearerAdapterApplyTest extends RequestResponseTestCase
      */
     private $token_bearer_adapter;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

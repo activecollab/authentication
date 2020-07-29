@@ -26,7 +26,7 @@ use ActiveCollab\ValueContainer\ValueContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ResponseFactory;
 
 class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
 {
@@ -40,10 +40,7 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
      */
     private $value_container;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -118,8 +115,8 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($sessionCookieName, $setCookieHeader);
-        $this->assertContains('my-session-id', $setCookieHeader);
+        $this->assertStringContainsString($sessionCookieName, $setCookieHeader);
+        $this->assertStringContainsString('my-session-id', $setCookieHeader);
     }
 
     /**
@@ -206,8 +203,8 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
         $setCookieHeader = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($setCookieHeader);
-        $this->assertContains($sessionCookieName, $setCookieHeader);
-        $this->assertContains('my-session-id', $setCookieHeader);
+        $this->assertStringContainsString($sessionCookieName, $setCookieHeader);
+        $this->assertStringContainsString('my-session-id', $setCookieHeader);
     }
 
     public function provideDataForPsr15Test(): array
@@ -362,7 +359,7 @@ class ApplyAuthenticationMiddlewareTest extends RequestResponseTestCase
         $set_cookie_header = $response->getHeaderLine('Set-Cookie');
 
         $this->assertNotEmpty($set_cookie_header);
-        $this->assertContains($session_cookie_name, $set_cookie_header);
-        $this->assertContains('my-session-id', $set_cookie_header);
+        $this->assertStringContainsString($session_cookie_name, $set_cookie_header);
+        $this->assertStringContainsString('my-session-id', $set_cookie_header);
     }
 }

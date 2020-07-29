@@ -15,10 +15,10 @@
         }
     ],
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "activecollab/cookies": "^2.0",
+        "activecollab/cookies": "^3.0",
         "activecollab/user": "^4.0",
         "google/apiclient": "^2.1",
         "psr/http-server-middleware": "^1.0"
@@ -26,9 +26,9 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
         "lightsaml/lightsaml": "^1.1",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^9.0",
         "satooshi/php-coveralls": "^1.0",
-        "zendframework/zend-diactoros": "^2.2",
+        "laminas/laminas-diactoros": "^2.0",
         "pimple/pimple": "^3.2"
     },
     "suggest": {

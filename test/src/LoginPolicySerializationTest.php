@@ -28,7 +28,7 @@ class LoginPolicySerializationTest extends TestCase
         $default_policy = new LoginPolicy();
 
         $data = json_decode(json_encode($default_policy), true);
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
 
         $this->assertArrayHasKey('username_format', $data);
         $this->assertArrayHasKey('remember_extends_session', $data);
@@ -51,7 +51,7 @@ class LoginPolicySerializationTest extends TestCase
         $customized_policy = new LoginPolicy(LoginPolicyInterface::USERNAME_FORMAT_EMAIL, false, false, false, 'http://google.com/login', 'http://google.com/logout', 'http://google.com/change-password', 'http://google.com/update-profile');
 
         $data = json_decode(json_encode($customized_policy), true);
-        $this->assertInternalType('array', $data);
+        $this->assertIsArray($data);
 
         $this->assertArrayHasKey('username_format', $data);
         $this->assertArrayHasKey('remember_extends_session', $data);

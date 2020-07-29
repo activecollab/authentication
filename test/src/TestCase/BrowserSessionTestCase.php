@@ -34,10 +34,7 @@ abstract class BrowserSessionTestCase extends RequestResponseTestCase
      */
     protected $cookies;
 
-    /**
-     * Set up test environment.
-     */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

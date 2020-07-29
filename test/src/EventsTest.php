@@ -23,6 +23,7 @@ use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use ActiveCollab\Authentication\Test\TestCase\BrowserSessionTestCase;
 use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -143,12 +144,11 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($deprecated_callback_called);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value needs to be a callable.
-     */
     public function testInvalidUserChangedMethodCall()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Value needs to be a callable.");
+
         $this->prepareForAuthentication()->setOnAuthenciatedUserChanged();
     }
 
@@ -164,7 +164,7 @@ class EventsTest extends BrowserSessionTestCase
         /** @var AuthenticationInterface $authentication */
         /** @var AdapterInterface $adapter */
         /** @var AuthorizerInterface $authorizer */
-        list ($authentication, $adapter, $authorizer) = $this->prepareForAuthorization();
+        [$authentication, $adapter, $authorizer] = $this->prepareForAuthorization();
 
         $first_callback_called = false;
         $authentication->onUserAuthorized(function () use (&$first_callback_called) {
@@ -203,7 +203,7 @@ class EventsTest extends BrowserSessionTestCase
         /** @var AuthenticationInterface $authentication */
         /** @var AdapterInterface $adapter */
         /** @var AuthorizerInterface $authorizer */
-        list ($authentication, $adapter, $authorizer) = $this->prepareForAuthorization();
+        [$authentication, $adapter, $authorizer] = $this->prepareForAuthorization();
 
         $first_callback_called = false;
         $authentication->onUserAuthorizationFailed(function () use (&$first_callback_called) {
@@ -235,7 +235,7 @@ class EventsTest extends BrowserSessionTestCase
     {
         $this->assertCount(2, $event_arguments);
 
-        $this->assertInternalType('array', $event_arguments[0]);
+        $this->assertIsArray($event_arguments[0]);
         $this->assertInstanceOf(Exception::class, $event_arguments[1]);
     }
 

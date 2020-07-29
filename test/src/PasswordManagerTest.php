@@ -17,21 +17,19 @@ use ActiveCollab\Authentication\Test\TestCase\TestCase;
  */
 class PasswordManagerTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Hashing mechanism 'unknown hash algo' is not supported
-     */
     public function testVerifyExceptionOnInvalidMechanism()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Hashing mechanism 'unknown hash algo' is not supported");
+
         (new PasswordManager())->verify('123', '1234567890', 'unknown hash algo');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Hashing mechanism 'unknown hash algo' is not supported
-     */
     public function testHashExceptionOnInvalidMechanism()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Hashing mechanism 'unknown hash algo' is not supported");
+
         (new PasswordManager())->hash('123', 'unknown hash algo');
     }
 
@@ -44,7 +42,7 @@ class PasswordManagerTest extends TestCase
 
         $hash = $manager->hash('123', PasswordManagerInterface::HASHED_WITH_PHP);
 
-        $this->assertInternalType('string', $hash);
+        $this->assertIsString($hash);
         $this->assertGreaterThan(40, strlen($hash));
 
         $this->assertTrue($manager->verify('123', $hash, PasswordManagerInterface::HASHED_WITH_PHP));
@@ -59,7 +57,7 @@ class PasswordManagerTest extends TestCase
 
         $hash = $manager->hash('123', PasswordManagerInterface::HASHED_WITH_PBKDF2);
 
-        $this->assertInternalType('string', $hash);
+        $this->assertIsString($hash);
         $this->assertGreaterThan(40, strlen($hash));
         $this->assertStringEndsWith('==', $hash);
 
@@ -75,7 +73,7 @@ class PasswordManagerTest extends TestCase
 
         $hash = $manager->hash('123', PasswordManagerInterface::HASHED_WITH_SHA1);
 
-        $this->assertInternalType('string', $hash);
+        $this->assertIsString($hash);
         $this->assertEquals(40, strlen($hash));
 
         $this->assertTrue($manager->verify('123', $hash, PasswordManagerInterface::HASHED_WITH_SHA1));

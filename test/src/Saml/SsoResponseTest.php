@@ -12,6 +12,7 @@ use ActiveCollab\Authentication\Saml\AuthnRequestResolver;
 use ActiveCollab\Authentication\Saml\SamlDataManagerInterface;
 use ActiveCollab\Authentication\Saml\SsoResponse;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
 class SsoResponseTest extends TestCase
@@ -26,7 +27,7 @@ class SsoResponseTest extends TestCase
      */
     private $saml_data_manager;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -35,12 +36,11 @@ class SsoResponseTest extends TestCase
         $this->sso_response = new SsoResponse($this->saml_data_manager, __DIR__ . '/../Fixtures/saml.crt', __DIR__ . '/../Fixtures/saml.key');
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Authentication message does not exist
-     */
     public function testExceptionIsThrownForNotfoundMesage()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Authentication message does not exist");
+
         $this->saml_data_manager->expects($this->once())->method('get')->with('123abc')->will($this->returnValue(null));
 
         $this->sso_response->send('john@doe.com', '123abc');
