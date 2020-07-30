@@ -116,7 +116,11 @@ class ApplyAuthenticationMiddleware implements MiddlewareInterface
         }
 
         if ($this->value_container->hasValue()) {
-            return $this->value_container->getValue();
+            $transport = $this->value_container->getValue();
+
+            if ($transport instanceof TransportInterface) {
+                return $transport;
+            }
         }
 
         return null;
