@@ -8,11 +8,9 @@
 
 namespace ActiveCollab\Authentication\Authorizer;
 
-use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Exception\RuntimeException;
-use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Google_Client;
 
 /**
@@ -21,6 +19,7 @@ use Google_Client;
 class GoogleAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;
+    use VerifyUserTrait;
 
     /**
      * @var RepositoryInterface
@@ -107,16 +106,6 @@ class GoogleAuthorizer extends Authorizer
 
         if ($username !== $payload['email']) {
             throw new RuntimeException('Email is not verified by Google');
-        }
-    }
-
-    /**
-     * @param AuthenticatedUserInterface|null $user
-     */
-    private function verifyUser(AuthenticatedUserInterface $user = null)
-    {
-        if (!$user || !$user->canAuthenticate()) {
-            throw new UserNotFoundException();
         }
     }
 
