@@ -20,8 +20,9 @@
         "ext-mbstring": "*",
         "activecollab/cookies": "^3.0",
         "activecollab/user": "^4.0",
-        "google/apiclient": "^2.1",
-        "psr/http-server-middleware": "^1.0"
+        "google/apiclient": "^2.9",
+        "psr/http-server-middleware": "^1.0",
+        "azimolabs/apple-sign-in-php-sdk": "^2.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
