@@ -189,7 +189,7 @@ class LoginPolicy implements LoginPolicyInterface
         throw new InvalidArgumentException('URL is not valid');
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'username_format' => $this->getUsernameFormat(),

@@ -108,10 +108,7 @@ class Session implements SessionInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $expires_at = null;
 
@@ -121,7 +118,11 @@ class Session implements SessionInterface
             $expires_at = $this->expires_at->getTimestamp();
         }
 
-        return ['session_id' => $this->session_id, 'user_id' => $this->user_id, 'expires_at' => $expires_at];
+        return [
+            'session_id' => $this->session_id,
+            'user_id' => $this->user_id,
+            'expires_at' => $expires_at,
+        ];
     }
 
     /**

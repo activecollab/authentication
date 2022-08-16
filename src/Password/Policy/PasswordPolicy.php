@@ -79,10 +79,7 @@ class PasswordPolicy implements PasswordPolicyInterface
         return $this->require_symbols;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'min_length' => $this->getMinLength(),

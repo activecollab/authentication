@@ -85,10 +85,7 @@ class Token implements TokenInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $expires_at = null;
 

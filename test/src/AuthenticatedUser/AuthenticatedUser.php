@@ -119,11 +119,12 @@ class AuthenticatedUser implements AuthenticatedUserInterface
         return $this->can_authenticate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return ['id' => $this->getId(), 'name' => $this->getFullName(), 'email' => $this->getEmail()];
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getFullName(),
+            'email' => $this->getEmail(),
+        ];
     }
 }

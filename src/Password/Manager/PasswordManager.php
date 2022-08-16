@@ -87,7 +87,7 @@ class PasswordManager implements PasswordManagerInterface
      */
     private function pbkdf2($p, $s, $c, $kl, $a = 'sha256')
     {
-        $hl = strlen(hash($a, null, true)); // Hash length
+        $hl = strlen(hash($a, '', true)); // Hash length
         $kb = ceil($kl / $hl);              // Key blocks to compute
         $dk = '';                           // Derived key
 
