@@ -132,7 +132,7 @@ class EventsTest extends BrowserSessionTestCase
         });
 
         $deprecated_callback_called = false;
-        $middleware->setOnAuthenciatedUserChanged(function () use (&$deprecated_callback_called) {
+        $middleware->onUserSet(function () use (&$deprecated_callback_called) {
             $this->validateOnUserSetArguments(func_get_args());
 
             $deprecated_callback_called = true;
@@ -142,14 +142,6 @@ class EventsTest extends BrowserSessionTestCase
 
         $this->assertTrue($first_callback_called);
         $this->assertTrue($deprecated_callback_called);
-    }
-
-    public function testInvalidUserChangedMethodCall()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Value needs to be a callable.");
-
-        $this->prepareForAuthentication()->setOnAuthenciatedUserChanged();
     }
 
     private function validateOnUserSetArguments(array $event_arguments)

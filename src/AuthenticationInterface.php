@@ -40,12 +40,12 @@ interface AuthenticationInterface extends MiddlewareInterface
     ): TransportInterface;
 
     /**
-     * @return AdapterInterface[]|iterable
+     * @return AdapterInterface[]
      */
     public function getAdapters(): iterable;
 
     public function getAuthenticatedUser(): ?AuthenticatedUserInterface;
-    public function setAuthenticatedUser(AuthenticatedUserInterface $user = null): AuthenticationInterface;
+    public function setAuthenticatedUser(?AuthenticatedUserInterface $user): AuthenticationInterface;
 
     public function getAuthenticatedWith(): ?AuthenticationResultInterface;
     public function setAuthenticatedWith(?AuthenticationResultInterface $value): AuthenticationInterface;
@@ -55,13 +55,4 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface;
     public function onUserSet(callable $value): AuthenticationInterface;
     public function onUserDeauthenticated(callable $value): AuthenticationInterface;
-
-    /**
-     * Use onUserSet() instead.
-     *
-     * @param  callable|null $value
-     * @return $this
-     * @deprecated
-     */
-    public function setOnAuthenciatedUserChanged(callable $value = null): AuthenticationInterface;
 }

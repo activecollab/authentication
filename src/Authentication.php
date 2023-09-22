@@ -20,64 +20,23 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterfac
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 use Exception;
-use InvalidArgumentException;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class Authentication implements AuthenticationInterface
 {
-    /**
-     * @var AdapterInterface[]
-     */
-    private $adapters;
-
-    /**
-     * Authenticated user instance.
-     *
-     * @var AuthenticatedUserInterface|null
-     */
-    private $authenticated_user;
-
-    /**
-     * @var AuthenticationResultInterface|null
-     */
-    private $authenticated_with;
-
-    /**
-     * @var callable[]
-     */
-    private $on_user_authenticated = [];
-
-    /**
-     * @var callable[]
-     */
-    private $on_user_authorized = [];
-
-    /**
-     * @var callable[]
-     */
-    private $on_user_authorization_failed = [];
-
-    /**
-     * @var callable[]
-     */
-    private $on_user_set = [];
-
-    /**
-     * @var callable[]
-     */
-    private $on_user_deauthenticated = [];
+    private array $adapters;
+    private ?AuthenticatedUserInterface $authenticated_user = null;
+    private ?AuthenticationResultInterface $authenticated_with = null;
+    private array $on_user_authenticated = [];
+    private array $on_user_authorized = [];
+    private array $on_user_authorization_failed = [];
+    private array $on_user_set = [];
+    private array $on_user_deauthenticated = [];
 
     public function __construct(AdapterInterface ...$adapters)
     {
-        foreach ($adapters as $adapter) {
-            if (!($adapter instanceof AdapterInterface)) {
-                throw new LogicException('Invalid authentication adapter provided');
-            }
-        }
-
         $this->adapters = $adapters;
     }
 
@@ -114,7 +73,7 @@ class Authentication implements AuthenticationInterface
         return $response;
     }
 
-    public $lastProcessingResult;
+    public ?TransportInterface $lastProcessingResult = null;
 
     public function process(
         ServerRequestInterface $request,
@@ -204,7 +163,6 @@ class Authentication implements AuthenticationInterface
         $last_exception = null;
         $results = [];
 
-        /** @var AdapterInterface $adapter */
         foreach ($this->adapters as $adapter) {
             try {
                 $initialization_result = $adapter->initialize($request);
@@ -237,7 +195,7 @@ class Authentication implements AuthenticationInterface
         return $this->authenticated_user;
     }
 
-    public function setAuthenticatedUser(AuthenticatedUserInterface $user = null): AuthenticationInterface
+    public function setAuthenticatedUser(?AuthenticatedUserInterface $user): AuthenticationInterface
     {
         $this->authenticated_user = $user;
 
@@ -258,16 +216,14 @@ class Authentication implements AuthenticationInterface
         return $this;
     }
 
-    private function triggerEvent(string $event_name, ...$arguments): AuthenticationInterface
+    private function triggerEvent(string $event_name, ...$arguments): void
     {
-        $property_name = "on_{$event_name}";
+        $property_name = sprintf("on_%s", $event_name);
 
         /** @var callable $handler */
         foreach ($this->$property_name as $handler) {
             call_user_func_array($handler, $arguments);
         }
-
-        return $this;
     }
 
     public function onUserAuthenticated(callable $value): AuthenticationInterface
@@ -303,19 +259,5 @@ class Authentication implements AuthenticationInterface
         $this->on_user_deauthenticated[] = $value;
 
         return $this;
-    }
-
-    /**
-     * Kept for backward compatibility reasons. Will be removed.
-     *
-     * {@inheritdoc}
-     */
-    public function setOnAuthenciatedUserChanged(callable $value = null): AuthenticationInterface
-    {
-        if (empty($value)) {
-            throw new InvalidArgumentException('Value needs to be a callable.');
-        }
-
-        return $this->onUserSet($value);
     }
 }
