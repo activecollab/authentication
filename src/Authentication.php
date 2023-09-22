@@ -150,9 +150,6 @@ class Authentication implements AuthenticationInterface
         return $terminationResult;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAdapters(): iterable
     {
         return $this->adapters;

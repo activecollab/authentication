@@ -17,25 +17,15 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 
 class AuthorizationTransport extends Transport implements AuthorizationTransportInterface
 {
-    /**
-     * @var AuthenticatedUserInterface
-     */
-    private $authenticated_user;
+    private AuthenticatedUserInterface $authenticated_user;
+    private AuthenticationResultInterface $authenticated_with;
 
-    /**
-     * @var AuthenticationResultInterface
-     */
-    private $authenticated_with;
-
-    /**
-     * AuthenticationTransport constructor.
-     *
-     * @param AdapterInterface              $adapter
-     * @param AuthenticatedUserInterface    $authenticated_user
-     * @param AuthenticationResultInterface $authenticated_with
-     * @param mixed                         $payload
-     */
-    public function __construct(AdapterInterface $adapter, AuthenticatedUserInterface $authenticated_user, AuthenticationResultInterface $authenticated_with, $payload = null)
+    public function __construct(
+        AdapterInterface $adapter,
+        AuthenticatedUserInterface $authenticated_user,
+        AuthenticationResultInterface $authenticated_with,
+        array $payload = null,
+    )
     {
         parent::__construct($adapter, $payload);
 
@@ -43,15 +33,12 @@ class AuthorizationTransport extends Transport implements AuthorizationTransport
         $this->authenticated_with = $authenticated_with;
     }
 
-    public function getAuthenticatedUser(): ?AuthenticatedUserInterface
+    public function getAuthenticatedUser(): AuthenticatedUserInterface
     {
         return $this->authenticated_user;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedWith()
+    public function getAuthenticatedWith(): AuthenticationResultInterface
     {
         return $this->authenticated_with;
     }

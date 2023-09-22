@@ -19,10 +19,10 @@ interface AuthorizationTransportInterface extends TransportInterface
     /**
      * @return AuthenticatedUserInterface
      */
-    public function getAuthenticatedUser();
+    public function getAuthenticatedUser(): AuthenticatedUserInterface;
 
     /**
      * @return AuthenticationResultInterface
      */
-    public function getAuthenticatedWith();
+    public function getAuthenticatedWith(): AuthenticationResultInterface;
 }
