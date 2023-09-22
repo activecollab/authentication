@@ -10,33 +10,27 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Password\Policy;
 
-interface PasswordPolicyInterface extends \JsonSerializable
+use JsonSerializable;
+
+interface PasswordPolicyInterface extends JsonSerializable
 {
     /**
      * Return min password length. If this function returns 0, system will not check password length.
-     *
-     * @return int
      */
-    public function getMinLength();
+    public function getMinLength(): int;
 
     /**
      * Returns true if system requires that passwords contain numbers.
-     *
-     * @return bool
      */
-    public function requireNumbers();
+    public function requireNumbers(): bool;
 
     /**
      * Returns true if system requires that passwords contain numbers.
-     *
-     * @return bool
      */
-    public function requireMixedCase();
+    public function requireMixedCase(): bool;
 
     /**
      * Returns true if system requires that passwords contain symbols.
-     *
-     * @return bool
      */
-    public function requireSymbols();
+    public function requireSymbols(): bool;
 }

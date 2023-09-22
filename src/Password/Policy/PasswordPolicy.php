@@ -12,68 +12,31 @@ namespace ActiveCollab\Authentication\Password\Policy;
 
 class PasswordPolicy implements PasswordPolicyInterface
 {
-    /**
-     * @var int
-     */
-    private $min_length;
-
-    /**
-     * @var bool
-     */
-    private $require_numbers;
-
-    /**
-     * @var bool
-     */
-    private $require_mixed_case;
-
-    /**
-     * @var bool
-     */
-    private $require_symbols;
-
-    /**
-     * @param int  $min_length
-     * @param bool $require_numbers
-     * @param bool $require_mixed_case
-     * @param bool $require_symbols
-     */
-    public function __construct($min_length = 0, $require_numbers = false, $require_mixed_case = false, $require_symbols = false)
+    public function __construct(
+        private int $min_length = 0,
+        private bool $require_numbers = false,
+        private bool $require_mixed_case = false,
+        private bool $require_symbols = false,
+    )
     {
-        $this->min_length = $min_length;
-        $this->require_numbers = $require_numbers;
-        $this->require_mixed_case = $require_mixed_case;
-        $this->require_symbols = $require_symbols;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMinLength()
+    public function getMinLength(): int
     {
         return $this->min_length;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requireNumbers()
+    public function requireNumbers(): bool
     {
         return $this->require_numbers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requireMixedCase()
+    public function requireMixedCase(): bool
     {
         return $this->require_mixed_case;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requireSymbols()
+    public function requireSymbols(): bool
     {
         return $this->require_symbols;
     }

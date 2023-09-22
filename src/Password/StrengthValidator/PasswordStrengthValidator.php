@@ -17,19 +17,11 @@ use RuntimeException;
 
 class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
 {
-    /**
-     * Return true if password meets the criteria set by the password policy.
-     *
-     * @param  string                  $password
-     * @param  PasswordPolicyInterface $policy
-     * @return bool
-     */
-    public function validate($password, PasswordPolicyInterface $policy)
+    public function validate(
+        string $password,
+        PasswordPolicyInterface $policy
+    ): bool
     {
-        if (!is_string($password)) {
-            throw new InvalidPasswordException('Password is not a string');
-        }
-
         $password = trim($password);
 
         if (empty($password)) {
@@ -61,10 +53,10 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateValid($length, PasswordPolicyInterface $policy)
+    public function generateValid(
+        int $length,
+        PasswordPolicyInterface $policy,
+    ): string
     {
         if ($length < 16) {
             throw new LogicException('Minimal password length that this utility can generate is 16 characters');
@@ -89,7 +81,7 @@ class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
                 if ($this->validate($password, $policy)) {
                     return $password;
                 }
-            } catch (InvalidPasswordException $e) {
+            } catch (InvalidPasswordException) {
             }
         }
 

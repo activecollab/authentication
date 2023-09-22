@@ -21,19 +21,17 @@ interface PasswordStrengthValidatorInterface
 
     /**
      * Return true if password meets the criteria set by the password policy.
-     *
-     * @param  string                  $password
-     * @param  PasswordPolicyInterface $policy
-     * @return bool
      */
-    public function validate($password, PasswordPolicyInterface $policy);
+    public function validate(
+        string $password,
+        PasswordPolicyInterface $policy,
+    ): bool;
 
     /**
      * Generate a new password of the required strength and length.
-     *
-     * @param  int                     $length
-     * @param  PasswordPolicyInterface $policy
-     * @return string
      */
-    public function generateValid($length, PasswordPolicyInterface $policy);
+    public function generateValid(
+        int $length,
+        PasswordPolicyInterface $policy,
+    ): string;
 }
