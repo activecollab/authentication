@@ -17,14 +17,14 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 
 class AuthenticationTransport extends Transport implements AuthenticationTransportInterface
 {
-    private $authenticated_user;
-    private $authenticated_with;
+    private ?AuthenticatedUserInterface $authenticated_user;
+    private ? AuthenticationResultInterface$authenticated_with;
 
     public function __construct(
         AdapterInterface $adapter,
         AuthenticatedUserInterface $authenticated_user = null,
         AuthenticationResultInterface $authenticated_with = null,
-        $payload = null
+        array $payload = null,
     )
     {
         parent::__construct($adapter, $payload);

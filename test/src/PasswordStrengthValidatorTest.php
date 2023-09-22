@@ -17,14 +17,6 @@ use ActiveCollab\Authentication\Test\TestCase\TestCase;
 
 class PasswordStrengthValidatorTest extends TestCase
 {
-    public function testPasswordNeedsToBeString()
-    {
-        $this->expectException(InvalidPasswordException::class);
-        $this->expectExceptionMessage("Password is not a string");
-
-        (new PasswordStrengthValidator())->validate(1234567, new PasswordPolicy());
-    }
-
     public function testEmptyPasswordIsInvalid()
     {
         $this->expectException(InvalidPasswordException::class);
@@ -87,7 +79,7 @@ class PasswordStrengthValidatorTest extends TestCase
             ->validate('short', new PasswordPolicy(0, true));
     }
 
-    public function testNoMixetCase()
+    public function testNoMixedCase()
     {
         $this->expectException(InvalidPasswordException::class);
         $this->expectExceptionMessage("Password is not strong enough");

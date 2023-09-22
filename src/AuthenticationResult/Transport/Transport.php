@@ -17,12 +17,13 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class Transport implements TransportInterface
 {
-    private $adapter;
-    private $payload;
+    private ?array $payload;
 
-    public function __construct(AdapterInterface $adapter, $payload = null)
+    public function __construct(
+        private AdapterInterface $adapter,
+        array $payload = null,
+    )
     {
-        $this->adapter = $adapter;
         $this->payload = $payload;
     }
 
@@ -31,7 +32,7 @@ abstract class Transport implements TransportInterface
         return $this->adapter;
     }
 
-    public function getPayload()
+    public function getPayload(): ?array
     {
         return $this->payload;
     }
@@ -48,8 +49,8 @@ abstract class Transport implements TransportInterface
         return false;
     }
 
-    private $isAppliedToRequest = false;
-    private $isAppliedToResponse = false;
+    private bool $isAppliedToRequest = false;
+    private bool $isAppliedToResponse = false;
 
     public function applyToRequest(ServerRequestInterface $request): ServerRequestInterface
     {

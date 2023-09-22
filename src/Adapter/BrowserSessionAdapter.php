@@ -23,7 +23,6 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Deauthentication\
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Session\RepositoryInterface as SessionRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
-use ActiveCollab\Cookies\Adapter\CookieSetterInterface;
 use ActiveCollab\Cookies\CookiesInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -31,15 +30,12 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInterface
 {
-    private $user_repository;
-    private $session_repository;
-    private $cookies;
-    private $session_cookie_name;
+    private string $session_cookie_name;
 
     public function __construct(
-        UserRepositoryInterface $user_repository,
-        SessionRepositoryInterface $session_repository,
-        CookiesInterface $cookies,
+        private UserRepositoryInterface $user_repository,
+        private SessionRepositoryInterface $session_repository,
+        private CookiesInterface $cookies,
         string $session_cookie_name = 'sessid'
     )
     {
@@ -47,9 +43,6 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
             throw new InvalidArgumentException('Session cookie name is required');
         }
 
-        $this->user_repository = $user_repository;
-        $this->session_repository = $session_repository;
-        $this->cookies = $cookies;
         $this->session_cookie_name = $session_cookie_name;
     }
 
@@ -86,7 +79,6 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
 
             $authenticated_with->extendSession();
 
-            /** @var CookieSetterInterface $cookieSetter */
             $cookieSetter = $this->cookies->createSetter(
                 $this->session_cookie_name,
                 $authenticated_with->getSessionId(),
@@ -106,7 +98,6 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
                 throw new InvalidArgumentException('Only user sessions are supported');
             }
 
-            /** @var CookieSetterInterface $cookieSetter */
             $cookieSetter = $this->cookies->createSetter(
                 $this->session_cookie_name,
                 $authenticated_with->getSessionId(),

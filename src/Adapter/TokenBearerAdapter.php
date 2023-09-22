@@ -24,16 +24,11 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class TokenBearerAdapter extends Adapter implements TokenBearerAdapterInterface
 {
-    private $user_repository;
-    private $token_repository;
-
     public function __construct(
-        UserRepositoryInterface $user_repository,
-        TokenRepositoryInterface $token_repository
+        private UserRepositoryInterface $user_repository,
+        private TokenRepositoryInterface $token_repository,
     )
     {
-        $this->user_repository = $user_repository;
-        $this->token_repository = $token_repository;
     }
 
     public function initialize(ServerRequestInterface $request): ?TransportInterface
@@ -50,7 +45,7 @@ class TokenBearerAdapter extends Adapter implements TokenBearerAdapterInterface
 
         $token_id = trim(mb_substr($authorization, 7));
 
-        if ($token_id === null || $token_id === '') {
+        if (empty($token_id)) {
             throw new InvalidTokenException();
         }
 
