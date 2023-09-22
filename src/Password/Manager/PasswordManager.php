@@ -61,16 +61,13 @@ class PasswordManager implements PasswordManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function needsRehash($hash, $hashed_with)
+    public function needsRehash(string $hash, string $hashed_with): bool
     {
         if ($hashed_with === self::HASHED_WITH_PHP) {
             return password_needs_rehash($hash, PASSWORD_DEFAULT);
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**

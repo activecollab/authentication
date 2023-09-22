@@ -38,10 +38,6 @@ interface PasswordManagerInterface
 
     /**
      * Check if password needs rehashing.
-     *
-     * @param  string $hash
-     * @param  string $hashed_with
-     * @return bool
      */
-    public function needsRehash($hash, $hashed_with);
+    public function needsRehash(string $hash, string $hashed_with): bool;
 }
