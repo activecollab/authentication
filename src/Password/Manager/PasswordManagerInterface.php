@@ -12,31 +12,7 @@ namespace ActiveCollab\Authentication\Password\Manager;
 
 interface PasswordManagerInterface
 {
-    const HASHED_WITH_SHA1 = 'sha1';
-    const HASHED_WITH_PBKDF2 = 'pbkdf2';
-    const HASHED_WITH_PHP = 'php';
-
-    /**
-     * Verify if $password matches the value that we have hashed.
-     *
-     * @param  string $password
-     * @param  string $hash
-     * @param  string $hashed_with
-     * @return bool
-     */
-    public function verify($password, $hash, $hashed_with);
-
-    /**
-     * Hash the password using given hashing mechanism.
-     *
-     * @param  string $password
-     * @param  string $hash_with
-     * @return string
-     */
-    public function hash($password, $hash_with = self::HASHED_WITH_PHP);
-
-    /**
-     * Check if password needs rehashing.
-     */
-    public function needsRehash(string $hash, string $hashed_with): bool;
+    public function verify(string $password, string $hash): bool;
+    public function hash(string $password): string;
+    public function needsRehash(string $hash): bool;
 }
