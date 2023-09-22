@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -14,44 +16,19 @@ use ActiveCollab\Authentication\Token\TokenInterface;
 use DateTimeInterface;
 use JsonSerializable;
 
-/**
- * @package ActiveCollab\Authentication\Test\Token
- */
 class Token implements TokenInterface
 {
-    /**
-     * @var string
-     */
-    private $token;
+    private mixed $extra_attribute;
 
-    /**
-     * @var string
-     */
-    private $user_id;
-
-    /**
-     * @var DateTimeInterface
-     */
-    private $expires_at;
-
-    /**
-     * @var mixed
-     */
-    private $extra_attribute;
-
-    /**
-     * @param string                 $token
-     * @param string                 $user_id
-     * @param DateTimeInterface|null $expires_at
-     */
-    public function __construct($token, $user_id, DateTimeInterface $expires_at = null)
+    public function __construct(
+        private string $token,
+        private string $user_id,
+        private ?DateTimeInterface $expires_at = null,
+    )
     {
-        $this->token = $token;
-        $this->user_id = $user_id;
-        $this->expires_at = $expires_at;
     }
 
-    public function getTokenId()
+    public function getTokenId(): string
     {
         return $this->token;
     }
@@ -61,19 +38,12 @@ class Token implements TokenInterface
         return $repository->findByUsername($this->user_id);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getExtraAttribute()
+    public function getExtraAttribute(): mixed
     {
         return $this->extra_attribute;
     }
 
-    /**
-     * @param  mixed $value
-     * @return $this
-     */
-    public function setExtraAttribute($value)
+    public function setExtraAttribute(mixed $value): static
     {
         $this->extra_attribute = $value;
 

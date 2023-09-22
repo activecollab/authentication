@@ -17,56 +17,40 @@ interface RepositoryInterface
 {
     /**
      * Find session by session ID.
-     *
-     * @param  string              $token_id
-     * @return TokenInterface|null
      */
-    public function getById($token_id);
+    public function getById(string $token_id): ?TokenInterface;
 
     /**
      * Return number of times that a token with the given ID was used.
-     *
-     * @param  string $token_id
-     * @return int
      */
-    public function getUsageById($token_id);
+    public function getUsageById(string $token_id): int;
 
     /**
      * Return number of times that a token with the given ID was used.
-     *
-     * @param  TokenInterface $token
-     * @return int
      */
-    public function getUsageByToken(TokenInterface $token);
+    public function getUsageByToken(TokenInterface $token): int;
 
     /**
      * Record that token with the given ID was used.
-     *
-     * @param string $token_id
      */
-    public function recordUsageById($token_id);
+    public function recordUsageById(string $token_id): void;
 
     /**
      * Record that token with the given ID was used.
-     *
-     * @param TokenInterface $token
      */
-    public function recordUsageByToken(TokenInterface $token);
+    public function recordUsageByToken(TokenInterface $token): void;
 
     /**
      * Issue a new token.
-     *
-     * @param  AuthenticatedUserInterface $user
-     * @param  array                      $credentials
-     * @param  DateTimeInterface|null     $expires_at
-     * @return TokenInterface
      */
-    public function issueToken(AuthenticatedUserInterface $user, array $credentials = [], DateTimeInterface $expires_at = null);
+    public function issueToken(
+        AuthenticatedUserInterface $user,
+        array $credentials = [],
+        DateTimeInterface $expires_at = null,
+    ): TokenInterface;
 
     /**
      * Terminate a token.
-     *
-     * @param TokenInterface $token
      */
-    public function terminateToken(TokenInterface $token);
+    public function terminateToken(TokenInterface $token): void;
 }

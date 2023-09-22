@@ -37,7 +37,7 @@ class TokenBearerTerminateTest extends TokenBearerTestCase
     {
         $test_token = '123';
 
-        $token = new Token($test_token, 123);
+        $token = new Token($test_token, '123');
         $user_repository = new UserRepository(
             [
                 new AuthenticatedUser(

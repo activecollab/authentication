@@ -14,8 +14,5 @@ use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterfa
 
 interface TokenInterface extends AuthenticationResultInterface
 {
-    /**
-     * @return string
-     */
-    public function getTokenId();
+    public function getTokenId(): string;
 }
