@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Password\StrengthValidator;
 
 use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 
-/**
- * @package ActiveCollab\Authentication\Password
- */
 interface PasswordStrengthValidatorInterface
 {
     const TOO_SHORT = 1;

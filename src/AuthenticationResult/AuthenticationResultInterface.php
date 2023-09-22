@@ -6,15 +6,14 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticationResult;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use JsonSerializable;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticationResult
- */
 interface AuthenticationResultInterface extends JsonSerializable
 {
     /**

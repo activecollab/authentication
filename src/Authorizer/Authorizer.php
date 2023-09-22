@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandler as DelegatesToExceptionHandlerImplementation;
@@ -13,9 +15,6 @@ use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\Del
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAware as ExceptionAwareImplementation;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionAwareInterface;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer
- */
 abstract class Authorizer implements
     AuthorizerInterface,
     DelegatesToHandlerInterface,

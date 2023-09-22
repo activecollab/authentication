@@ -6,19 +6,19 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Exception;
 
 use Exception as PhpException;
 
-/**
- * @package ActiveCollab\Authentication\Exception
- */
 class UserNotFoundException extends RuntimeException
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($message = 'User not found', $code = 0, PhpException $previous = null)
+    public function __construct(
+        string $message = 'User not found',
+        int $code = 0,
+        PhpException $previous = null,
+    )
     {
         parent::__construct($message, $code, $previous);
     }

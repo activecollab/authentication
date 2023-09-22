@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Token;
 
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 
-/**
- * @package ActiveCollab\Authentication\Token
- */
 interface TokenInterface extends AuthenticationResultInterface
 {
     /**

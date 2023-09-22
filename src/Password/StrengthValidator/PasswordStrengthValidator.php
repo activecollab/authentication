@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Password\StrengthValidator;
 
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
@@ -13,9 +15,6 @@ use ActiveCollab\Authentication\Password\Policy\PasswordPolicyInterface;
 use LogicException;
 use RuntimeException;
 
-/**
- * @package ActiveCollab\Authentication\Password
- */
 class PasswordStrengthValidator implements PasswordStrengthValidatorInterface
 {
     /**

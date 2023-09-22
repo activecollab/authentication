@@ -6,11 +6,10 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Password\Policy;
 
-/**
- * @package ActiveCollab\Authentication\Password
- */
 interface PasswordPolicyInterface extends \JsonSerializable
 {
     /**

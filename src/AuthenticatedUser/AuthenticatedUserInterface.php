@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\AuthenticatedUser;
 
 use ActiveCollab\User\UserInterface;
 
-/**
- * @package ActiveCollab\Authentication\AuthenticatedUser
- */
 interface AuthenticatedUserInterface extends UserInterface
 {
     /**

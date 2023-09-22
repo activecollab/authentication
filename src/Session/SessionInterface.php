@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Session;
 
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 
-/**
- * @package ActiveCollab\Authentication\Session
- */
 interface SessionInterface extends AuthenticationResultInterface
 {
     const SESSION_DURATION_SHORT = 'short';

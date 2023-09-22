@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Saml;
 
 use ActiveCollab\Authentication\Session\SessionInterface;
@@ -25,9 +27,6 @@ use LightSaml\Model\Protocol\Response;
 use LightSaml\Model\XmlDSig\SignatureWriter;
 use LightSaml\SamlConstants;
 
-/**
- * @package ActiveCollab\Authentication\Saml
- */
 class SamlUtils
 {
     const SESSION_DURATION_TYPE_ATTRIBUTE_NAME = 'session_duration_type';

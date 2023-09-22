@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer\ExceptionAware;
 
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer\ExceptionAware
- */
 trait ExceptionAware
 {
     /**

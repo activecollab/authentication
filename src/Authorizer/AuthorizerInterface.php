@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer
- */
 interface AuthorizerInterface
 {
     const USERNAME_FORMAT_ANY = 'any';

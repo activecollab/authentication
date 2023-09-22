@@ -6,14 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer\ExceptionAware;
 
 use Exception;
 use Throwable;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer\ExceptionAware
- */
 interface ExceptionAwareInterface
 {
     /**

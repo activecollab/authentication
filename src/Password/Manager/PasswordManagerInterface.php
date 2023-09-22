@@ -6,11 +6,10 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Password\Manager;
 
-/**
- * @package ActiveCollab\Authentication\Password
- */
 interface PasswordManagerInterface
 {
     const HASHED_WITH_SHA1 = 'sha1';

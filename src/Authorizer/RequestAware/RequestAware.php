@@ -6,13 +6,12 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer\RequestAware;
 
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInterface;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer\RequestAware
- */
 trait RequestAware
 {
     /**

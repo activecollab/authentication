@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
@@ -16,9 +18,6 @@ use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInte
 use ActiveCollab\Authentication\Exception\InvalidCredentialsException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer
- */
 class SamlAuthorizer extends Authorizer implements RequestAwareInterface
 {
     use RequestAware;

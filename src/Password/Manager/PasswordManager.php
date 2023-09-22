@@ -10,22 +10,12 @@ namespace ActiveCollab\Authentication\Password\Manager;
 
 use InvalidArgumentException;
 
-/**
- * @package ActiveCollab\Authentication\Password
- */
 class PasswordManager implements PasswordManagerInterface
 {
-    /**
-     * @var string
-     */
-    private $global_salt;
-
-    /**
-     * @param string $global_salt
-     */
-    public function __construct($global_salt = '')
+    public function __construct(
+        private string $global_salt = '',
+    )
     {
-        $this->global_salt = (string) $global_salt;
     }
 
     /**

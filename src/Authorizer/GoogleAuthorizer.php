@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -15,9 +17,6 @@ use ActiveCollab\Authentication\Exception\RuntimeException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 use Google_Client;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer
- */
 class GoogleAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;

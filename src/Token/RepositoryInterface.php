@@ -6,14 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Token;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use DateTimeInterface;
 
-/**
- * @package ActiveCollab\Authentication\Token
- */
 interface RepositoryInterface
 {
     /**

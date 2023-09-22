@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Authorizer;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -14,9 +16,6 @@ use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\Excep
 use ActiveCollab\Authentication\Exception\InvalidPasswordException;
 use ActiveCollab\Authentication\Exception\UserNotFoundException;
 
-/**
- * @package ActiveCollab\Authentication\Authorizer
- */
 class LocalAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;
