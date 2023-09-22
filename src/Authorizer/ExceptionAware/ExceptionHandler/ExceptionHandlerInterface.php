@@ -10,15 +10,12 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler;
 
-use Exception;
 use Throwable;
 
 interface ExceptionHandlerInterface
 {
-    /**
-     * @param  array               $credentials
-     * @param  Throwable|Exception $error_or_exception
-     * @return void|mixed
-     */
-    public function handleException(array $credentials, $error_or_exception);
+    public function handleException(
+        array $credentials,
+        Throwable $error_or_exception,
+    ): void;
 }

@@ -17,56 +17,40 @@ interface RepositoryInterface
 {
     /**
      * Find session by session ID.
-     *
-     * @param  string                $session_id
-     * @return SessionInterface|null
      */
-    public function getById($session_id);
+    public function getById(string $session_id): ?SessionInterface;
 
     /**
      * Return number of times that session with the given ID was used.
-     *
-     * @param  string $session_id
-     * @return int
      */
-    public function getUsageById($session_id);
+    public function getUsageById(string $session_id): int;
 
     /**
      * Return number of times that session with the given ID was used.
-     *
-     * @param  SessionInterface $session
-     * @return int
      */
-    public function getUsageBySession(SessionInterface $session);
+    public function getUsageBySession(SessionInterface $session): int;
 
     /**
      * Record that session with the given ID was used.
-     *
-     * @param string $session_id
      */
-    public function recordUsageById($session_id);
+    public function recordUsageById(string $session_id): void;
 
     /**
      * Record that session with the given ID was used.
-     *
-     * @param SessionInterface $session
      */
-    public function recordUsageBySession(SessionInterface $session);
+    public function recordUsageBySession(SessionInterface $session): void;
 
     /**
      * Create a new session.
-     *
-     * @param  AuthenticatedUserInterface $user
-     * @param  array                      $credentials
-     * @param  DateTimeInterface|null     $expires_at
-     * @return SessionInterface
      */
-    public function createSession(AuthenticatedUserInterface $user, array $credentials = [], DateTimeInterface $expires_at = null);
+    public function createSession(
+        AuthenticatedUserInterface $user,
+        array $credentials = [],
+        DateTimeInterface $expires_at = null,
+    ): SessionInterface;
 
     /**
      * Terminate a session.
-     *
-     * @param SessionInterface $session
      */
-    public function terminateSession(SessionInterface $session);
+    public function terminateSession(SessionInterface $session): void;
 }

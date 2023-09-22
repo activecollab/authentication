@@ -8,6 +8,7 @@
 
 namespace ActiveCollab\Authentication\Test\Token;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface as UserRepositoryInterface;
 use ActiveCollab\Authentication\Token\TokenInterface;
 use DateTimeInterface;
@@ -50,18 +51,12 @@ class Token implements TokenInterface
         $this->expires_at = $expires_at;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTokenId()
     {
         return $this->token;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAuthenticatedUser(UserRepositoryInterface $repository)
+    public function getAuthenticatedUser(UserRepositoryInterface $repository): AuthenticatedUserInterface
     {
         return $repository->findByUsername($this->user_id);
     }

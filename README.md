@@ -228,10 +228,11 @@ namespace MyApp;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\ExceptionHandlerInterface;
 use ActiveCollab\Authentication\Authorizer\LocalAuthorizer;
+use Throwable;
 
 class MyExceptionHandler implements ExceptionHandlerInterface
 {
-    public function handleException(array $credentials, $error_or_exception)
+    public function handleException(array $credentials, Throwable $error_or_exception): void
     {
         // Do something with an exception.
     }

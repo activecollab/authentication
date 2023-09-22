@@ -14,24 +14,14 @@ use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInte
 
 trait RequestAware
 {
-    /**
-     * @var RequestProcessorInterface
-     */
-    private $request_processor;
+    private ?RequestProcessorInterface $request_processor = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequestProcessor()
+    public function getRequestProcessor(): ?RequestProcessorInterface
     {
         return $this->request_processor;
     }
-
-    /**
-     * @param  RequestProcessorInterface|null $request_processor
-     * @return $this
-     */
-    protected function &setRequestProcessor(RequestProcessorInterface $request_processor = null)
+    
+    protected function setRequestProcessor(RequestProcessorInterface $request_processor = null): static
     {
         $this->request_processor = $request_processor;
 

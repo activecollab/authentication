@@ -14,11 +14,7 @@ use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
 
 trait CredentialFieldsCheckTrait
 {
-    /**
-     * @param array $credentials
-     * @param array $fields
-     */
-    private function verifyRequiredFields(array $credentials, array $fields)
+    private function verifyRequiredFields(array $credentials, array $fields): void
     {
         foreach ($fields as $field) {
             if (empty($credentials[$field])) {
@@ -27,11 +23,7 @@ trait CredentialFieldsCheckTrait
         }
     }
 
-    /**
-     * @param array $credentials
-     * @param array $fields
-     */
-    private function verifyAlphanumFields(array $credentials, array $fields)
+    private function verifyAlphanumFields(array $credentials, array $fields): void
     {
         foreach ($fields as $field) {
             if (empty($credentials[$field]) || !ctype_alnum($credentials[$field])) {
@@ -40,11 +32,7 @@ trait CredentialFieldsCheckTrait
         }
     }
 
-    /**
-     * @param array $credentials
-     * @param array $fields
-     */
-    private function verifyEmailFields(array $credentials, array $fields)
+    private function verifyEmailFields(array $credentials, array $fields): void
     {
         foreach ($fields as $field) {
             if (empty($credentials[$field]) || !filter_var($credentials[$field], FILTER_VALIDATE_EMAIL)) {

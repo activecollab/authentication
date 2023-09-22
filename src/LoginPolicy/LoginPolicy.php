@@ -14,59 +14,25 @@ use InvalidArgumentException;
 
 class LoginPolicy implements LoginPolicyInterface
 {
-    /**
-     * @var string
-     */
-    private $username_format;
+    private string $username_format;
+    private bool $remember_extends_session;
+    private bool $password_change_enabled;
+    private bool $password_recovery_enabled;
+    private ?string $external_login_url;
+    private ?string $external_logout_url;
+    private ?string $external_change_password_url;
+    private ?string $external_update_profile_url;
 
-    /**
-     * @var bool
-     */
-    private $remember_extends_session;
-
-    /**
-     * @var bool
-     */
-    private $password_change_enabled;
-
-    /**
-     * @var bool
-     */
-    private $password_recovery_enabled;
-
-    /**
-     * @var string
-     */
-    private $external_login_url;
-
-    /**
-     * @var string
-     */
-    private $external_logout_url;
-
-    /**
-     * @var string
-     */
-    private $external_change_password_url;
-
-    /**
-     * @var string
-     */
-    private $external_update_profile_url;
-
-    /**
-     * LoginPolicy constructor.
-     *
-     * @param string      $username_format
-     * @param bool        $remember_extends_session
-     * @param bool        $password_change_enabled
-     * @param bool        $password_recovery_enabled
-     * @param string|null $external_login_url
-     * @param string|null $external_logout_url
-     * @param string|null $external_change_password_url
-     * @param string|null $external_update_profile_url
-     */
-    public function __construct($username_format = self::USERNAME_FORMAT_TEXT, $remember_extends_session = true, $password_change_enabled = true, $password_recovery_enabled = true, $external_login_url = null, $external_logout_url = null, $external_change_password_url = null, $external_update_profile_url = null)
+    public function __construct(
+        string $username_format = self::USERNAME_FORMAT_TEXT,
+        bool $remember_extends_session = true,
+        bool $password_change_enabled = true,
+        bool $password_recovery_enabled = true,
+        string $external_login_url = null,
+        string $external_logout_url = null,
+        string $external_change_password_url = null,
+        string $external_update_profile_url = null,
+    )
     {
         $this->setUsernameFormat($username_format);
 
@@ -87,11 +53,11 @@ class LoginPolicy implements LoginPolicyInterface
 
     public function setUsernameFormat(string $value): LoginPolicyInterface
     {
-        if (in_array($value, self::VALID_USERNAME_FORMATS)) {
-            $this->username_format = $value;
-        } else {
+        if (!in_array($value, self::VALID_USERNAME_FORMATS)) {
             throw new InvalidArgumentException('Username format is not valid');
         }
+
+        $this->username_format = $value;
 
         return $this;
     }
@@ -127,7 +93,7 @@ class LoginPolicy implements LoginPolicyInterface
 
     public function setIsPasswordRecoveryEnabled(bool $value): LoginPolicyInterface
     {
-        $this->password_recovery_enabled = (bool) $value;
+        $this->password_recovery_enabled = $value;
 
         return $this;
     }
@@ -182,7 +148,7 @@ class LoginPolicy implements LoginPolicyInterface
 
     private function getValidExternalUrlValue(?string $url): ?string
     {
-        if ($url === null || (is_string($url) && filter_var($url, FILTER_VALIDATE_URL))) {
+        if ($url === null || filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
         }
 

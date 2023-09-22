@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Saml;
 
 use Exception;
@@ -20,24 +22,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AuthnRequestResolver
 {
-    /**
-     * @var string
-     */
-    private $saml_crt;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param string          $saml_crt
-     * @param LoggerInterface $logger
-     */
-    public function __construct($saml_crt, LoggerInterface $logger = null)
+    public function __construct(
+        private string $saml_crt,
+        private ?LoggerInterface $logger = null,
+    )
     {
-        $this->saml_crt = $saml_crt;
-        $this->logger = $logger;
     }
 
     /**

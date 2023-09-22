@@ -15,24 +15,17 @@ use ActiveCollab\User\UserInterface;
 interface AuthenticatedUserInterface extends UserInterface
 {
     /**
-     * Return username that is used for authentication.
-     *
-     * @return string
+     * Return username that is used for authentication (email, unique username, phone number...).
      */
-    public function getUsername();
+    public function getUsername(): string;
 
     /**
      * Check if $password is a valid password of this user.
-     *
-     * @param  string $password
-     * @return bool
      */
-    public function isValidPassword($password);
+    public function isValidPassword(string $password): bool;
 
     /**
      * Return true if this user can authenticate.
-     *
-     * @return bool
      */
-    public function canAuthenticate();
+    public function canAuthenticate(): bool;
 }

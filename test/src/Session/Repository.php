@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test\Session;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
@@ -14,66 +16,38 @@ use ActiveCollab\Authentication\Session\SessionInterface;
 use DateTimeInterface;
 use InvalidArgumentException;
 
-/**
- * @package ActiveCollab\Authentication\Test\Session
- */
 class Repository implements RepositoryInterface
 {
-    /**
-     * @var SessionInterface[]
-     */
-    private $sessions = [];
+    private array $sessions = [];
+    private array $used_session = [];
 
-    /**
-     * @var array
-     */
-    private $used_session = [];
-
-    /**
-     * @param Session[] $sessions
-     */
     public function __construct(array $sessions = [])
     {
         foreach ($sessions as $session) {
-            if ($session instanceof Session) {
-                $this->sessions[$session->getSessionId()] = $session;
-            } else {
+            if (!$session instanceof Session) {
                 throw new InvalidArgumentException('Invalid session instance');
             }
+
+            $this->sessions[$session->getSessionId()] = $session;
         }
     }
 
-    /**
-     * Find session by session ID.
-     *
-     * @param  string                $session_id
-     * @return SessionInterface|null
-     */
-    public function getById($session_id)
+    public function getById(string $session_id): ?SessionInterface
     {
-        return isset($this->sessions[$session_id]) ? $this->sessions[$session_id] : null;
+        return $this->sessions[$session_id] ?? null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsageById($session_id)
+    public function getUsageById(string $session_id): int
     {
         return empty($this->used_session[$session_id]) ? 0 : $this->used_session[$session_id];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsageBySession(SessionInterface $session)
+    public function getUsageBySession(SessionInterface $session): int
     {
         return $this->getUsageById($session->getSessionId());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function recordUsageById($session_id)
+    public function recordUsageById(string $session_id): void
     {
         if (empty($this->used_session[$session_id])) {
             $this->used_session[$session_id] = 0;
@@ -82,23 +56,16 @@ class Repository implements RepositoryInterface
         ++$this->used_session[$session_id];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function recordUsageBySession(SessionInterface $session)
+    public function recordUsageBySession(SessionInterface $session): void
     {
         $this->recordUsageById($session->getSessionId());
     }
 
-    /**
-     * Create a new session.
-     *
-     * @param  AuthenticatedUserInterface $user
-     * @param  array                      $credentials
-     * @param  DateTimeInterface|null     $expires_at
-     * @return SessionInterface
-     */
-    public function createSession(AuthenticatedUserInterface $user, array $credentials = [], DateTimeInterface $expires_at = null)
+    public function createSession(
+        AuthenticatedUserInterface $user,
+        array $credentials = [],
+        DateTimeInterface $expires_at = null,
+    ): SessionInterface
     {
         /** @var Session $session */
         foreach ($this->sessions as $session) {
@@ -107,7 +74,7 @@ class Repository implements RepositoryInterface
             }
         }
 
-        $session = new Session(sha1(time()), $user->getUsername(), $expires_at);
+        $session = new Session(sha1((string) time()), $user->getUsername(), $expires_at);
 
         if (!empty($credentials['remember'])) {
             $session->setIsExtendedSession(true);
@@ -116,12 +83,7 @@ class Repository implements RepositoryInterface
         return $session;
     }
 
-    /**
-     * Terminate a session.
-     *
-     * @param SessionInterface $session
-     */
-    public function terminateSession(SessionInterface $session)
+    public function terminateSession(SessionInterface $session): void
     {
         foreach ($this->sessions as $k => $v) {
             if ($session->getSessionId() === $v->getSessionId()) {

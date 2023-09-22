@@ -6,14 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test\AuthenticatedUser;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\User\UserInterface\ImplementationUsingFullName;
 
-/**
- * @package ActiveCollab\Authentication\Test\AuthenticatedUser
- */
 class AuthenticatedUser implements AuthenticatedUserInterface
 {
     use ImplementationUsingFullName;
@@ -95,26 +94,17 @@ class AuthenticatedUser implements AuthenticatedUserInterface
         return $this->password;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->getEmail();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidPassword($password)
+    public function isValidPassword(string $password): bool
     {
         return $password === $this->password;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function canAuthenticate()
+    public function canAuthenticate(): bool
     {
         return $this->can_authenticate;
     }

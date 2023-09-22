@@ -12,15 +12,6 @@ namespace ActiveCollab\Authentication\AuthenticatedUser;
 
 interface RepositoryInterface
 {
-    /**
-     * @param  int                             $user_id
-     * @return AuthenticatedUserInterface|null
-     */
-    public function findById($user_id);
-
-    /**
-     * @param  string                          $username
-     * @return AuthenticatedUserInterface|null
-     */
-    public function findByUsername($username);
+    public function findById(string|int $user_id): ?AuthenticatedUserInterface;
+    public function findByUsername(string $username): ?AuthenticatedUserInterface;
 }

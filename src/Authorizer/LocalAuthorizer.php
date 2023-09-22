@@ -20,37 +20,20 @@ class LocalAuthorizer extends Authorizer
 {
     use CredentialFieldsCheckTrait;
 
-    /**
-     * @var RepositoryInterface
-     */
-    private $user_repository;
-
-    /**
-     * @var bool
-     */
-    private $username_format;
-
-    /**
-     * LocalAuthorizer constructor.
-     *
-     * @param RepositoryInterface            $user_repository
-     * @param string                         $username_format
-     * @param ExceptionHandlerInterface|null $exception_handler
-     */
-    public function __construct(RepositoryInterface $user_repository, $username_format = AuthorizerInterface::USERNAME_FORMAT_ANY, ExceptionHandlerInterface $exception_handler = null)
+    public function __construct(
+        private RepositoryInterface $user_repository,
+        private string $username_format = AuthorizerInterface::USERNAME_FORMAT_ANY,
+        ExceptionHandlerInterface $exception_handler = null,
+    )
     {
-        $this->user_repository = $user_repository;
-        $this->username_format = $username_format;
         $this->setExceptionHandler($exception_handler);
     }
 
     /**
      * Credentials should be in array format with keys: token and username.
      * Example: ['username' => 'john.doe.123@gmail.com', 'password' => '123abc'].
-     *
-     * {@inheritdoc}
      */
-    public function verifyCredentials(array $credentials)
+    public function verifyCredentials(array $credentials): ?AuthenticatedUserInterface
     {
         $this->verifyRequiredFields($credentials, ['username', 'password']);
 
@@ -70,11 +53,7 @@ class LocalAuthorizer extends Authorizer
         return $user;
     }
 
-    /**
-     * @param AuthenticatedUserInterface|null $user
-     * @param string                          $password
-     */
-    private function verifyUser(AuthenticatedUserInterface $user = null, $password)
+    private function verifyUser(?AuthenticatedUserInterface $user, string $password): void
     {
         if (!$user) {
             throw new UserNotFoundException();

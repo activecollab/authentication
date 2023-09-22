@@ -14,24 +14,14 @@ use ActiveCollab\Authentication\Authorizer\ExceptionAware\ExceptionHandler\Excep
 
 trait DelegatesToHandler
 {
-    /**
-     * @var ExceptionHandlerInterface
-     */
-    private $exception_handler;
+    private ?ExceptionHandlerInterface $exception_handler = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExceptionHandler()
+    public function getExceptionHandler(): ?ExceptionHandlerInterface
     {
         return $this->exception_handler;
     }
 
-    /**
-     * @param  ExceptionHandlerInterface|null $exception_handler
-     * @return $this
-     */
-    protected function &setExceptionHandler(ExceptionHandlerInterface $exception_handler = null)
+    protected function setExceptionHandler(ExceptionHandlerInterface $exception_handler = null): static
     {
         $this->exception_handler = $exception_handler;
 

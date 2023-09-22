@@ -20,13 +20,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ApplyAuthenticationMiddleware implements MiddlewareInterface
 {
-    private $value_container;
-    private $apply_on_exit;
-
-    public function __construct(ValueContainerInterface $value_container, bool $apply_on_exit = false)
+    public function __construct(
+        private ValueContainerInterface $value_container,
+        private bool $apply_on_exit = false,
+    )
     {
-        $this->value_container = $value_container;
-        $this->apply_on_exit = (bool) $apply_on_exit;
     }
 
     public function applyOnExit(): bool
@@ -55,16 +53,16 @@ class ApplyAuthenticationMiddleware implements MiddlewareInterface
         return $response;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler,
+    ): ResponseInterface
     {
         if (!$this->apply_on_exit) {
             $request = $this->applyToRequest($request);
         }
 
-        $response = $handler->handle($request);
-        $response = $this->applyToResponse($request, $response);
-
-        return $response;
+        return $this->applyToResponse($request, $handler->handle($request));
     }
 
     private function applyToRequest(ServerRequestInterface $request): ServerRequestInterface

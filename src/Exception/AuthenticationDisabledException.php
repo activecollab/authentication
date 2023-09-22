@@ -16,7 +16,7 @@ class AuthenticationDisabledException extends RuntimeException
 {
     public function __construct(
         string $message = 'Authentication is temporary disabled',
-        $code = 0,
+        int $code = 0,
         PhpException $previous = null,
     )
     {

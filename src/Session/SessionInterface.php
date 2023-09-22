@@ -23,20 +23,11 @@ interface SessionInterface extends AuthenticationResultInterface
         self::SESSION_DURATION_LONG,
     ];
 
-    /**
-     * @return string
-     */
-    public function getSessionId();
-
-    /**
-     * @return int
-     */
-    public function getSessionTtl();
+    public function getSessionId(): string;
+    public function getSessionTtl(): int;
 
     /**
      * Extend session for the set TTL while using $timestamp as reference (defaults to time() when empty).
-     *
-     * @param int|null $reference_timestamp
      */
-    public function extendSession($reference_timestamp = null);
+    public function extendSession(int $reference_timestamp = null): void;
 }

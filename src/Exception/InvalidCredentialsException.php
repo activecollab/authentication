@@ -15,8 +15,8 @@ use Exception as PhpException;
 class InvalidCredentialsException extends RuntimeException
 {
     public function __construct(
-        $message = 'Invalid credentials provided',
-        $code = 0,
+        string $message = 'Invalid credentials provided',
+        int $code = 0,
         PhpException $previous = null,
     )
     {

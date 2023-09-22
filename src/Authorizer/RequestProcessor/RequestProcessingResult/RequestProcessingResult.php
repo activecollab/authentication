@@ -12,40 +12,19 @@ namespace ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcess
 
 class RequestProcessingResult implements RequestProcessingResultInterface
 {
-    /**
-     * @var array
-     */
-    private $credentials;
-
-    /**
-     * @var mixed|null
-     */
-    private $default_payload;
-
-    /**
-     * RequestProcessingResult constructor.
-     *
-     * @param array $credentials
-     * @param mixed $default_payload
-     */
-    public function __construct(array $credentials, $default_payload = null)
+    public function __construct(
+        private array $credentials,
+        private mixed $default_payload = null,
+    )
     {
-        $this->credentials = $credentials;
-        $this->default_payload = $default_payload;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCredentials()
+    public function getCredentials(): array
     {
         return $this->credentials;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefaultPayload()
+    public function getDefaultPayload(): mixed
     {
         return $this->default_payload;
     }

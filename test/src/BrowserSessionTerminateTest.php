@@ -37,7 +37,7 @@ class BrowserSessionTerminateTest extends BrowserSessionTestCase
     {
         $test_session_id = 's123';
 
-        $session = new Session($test_session_id, 123);
+        $session = new Session($test_session_id, '123');
         $user_repository = new UserRepository(
             [
                 new AuthenticatedUser(

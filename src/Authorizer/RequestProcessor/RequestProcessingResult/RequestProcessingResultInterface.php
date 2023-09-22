@@ -12,13 +12,6 @@ namespace ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcess
 
 interface RequestProcessingResultInterface
 {
-    /**
-     * @return array
-     */
-    public function getCredentials();
-
-    /**
-     * @return mixed
-     */
-    public function getDefaultPayload();
+    public function getCredentials(): array;
+    public function getDefaultPayload(): mixed;
 }

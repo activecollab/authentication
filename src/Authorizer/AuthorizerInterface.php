@@ -20,9 +20,6 @@ interface AuthorizerInterface
 
     /**
      * Perform user credentials verification against the real user database provider.
-     *
-     * @param  array                           $credentials
-     * @return AuthenticatedUserInterface|null
      */
-    public function verifyCredentials(array $credentials);
+    public function verifyCredentials(array $credentials): ?AuthenticatedUserInterface;
 }

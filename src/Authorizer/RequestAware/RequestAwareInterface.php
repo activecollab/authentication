@@ -14,8 +14,5 @@ use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessorInte
 
 interface RequestAwareInterface
 {
-    /**
-     * @return RequestProcessorInterface
-     */
-    public function getRequestProcessor();
+    public function getRequestProcessor(): ?RequestProcessorInterface;
 }

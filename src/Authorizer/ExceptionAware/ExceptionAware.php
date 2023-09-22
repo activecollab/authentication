@@ -11,18 +11,16 @@ declare(strict_types=1);
 namespace ActiveCollab\Authentication\Authorizer\ExceptionAware;
 
 use ActiveCollab\Authentication\Authorizer\ExceptionAware\DelegatesToHandler\DelegatesToHandlerInterface;
+use Throwable;
 
 trait ExceptionAware
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function handleException(array $credentials, $error_or_exception)
+    public function handleException(array $credentials, Throwable $error_or_exception): void
     {
-        if ($this instanceof DelegatesToHandlerInterface && $this->getExceptionHandler()) {
-            return $this->getExceptionHandler()->handleException($credentials, $error_or_exception);
+        if (!$this instanceof DelegatesToHandlerInterface) {
+            return;
         }
 
-        return null;
+        $this->getExceptionHandler()->handleException($credentials, $error_or_exception);
     }
 }

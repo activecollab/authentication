@@ -16,8 +16,6 @@ interface DelegatesToHandlerInterface
 {
     /**
      * Return exception handler.
-     *
-     * @return ExceptionHandlerInterface|null
      */
-    public function getExceptionHandler();
+    public function getExceptionHandler(): ?ExceptionHandlerInterface;
 }

@@ -15,9 +15,5 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RequestProcessorInterface
 {
-    /**
-     * @param  ServerRequestInterface           $request
-     * @return RequestProcessingResultInterface
-     */
-    public function processRequest(ServerRequestInterface $request);
+    public function processRequest(ServerRequestInterface $request): RequestProcessingResultInterface;
 }
