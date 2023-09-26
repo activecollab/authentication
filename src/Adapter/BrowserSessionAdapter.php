@@ -56,15 +56,19 @@ class BrowserSessionAdapter extends Adapter implements BrowserSessionAdapterInte
 
         $session = $this->session_repository->getById($session_id);
 
-        if ($session instanceof SessionInterface) {
-            if ($user = $session->getAuthenticatedUser($this->user_repository)) {
-                $this->session_repository->recordUsageBySession($session);
-
-                return new AuthenticationTransport($this, $user, $session);
-            }
+        if (!$session) {
+            return new CleanUpTransport($this);
         }
 
-        return new CleanUpTransport($this);
+        $user = $session->getAuthenticatedUser($this->user_repository);
+
+        if (!$user) {
+            return new CleanUpTransport($this);
+        }
+
+        $this->session_repository->recordUsageBySession($session);
+
+        return new AuthenticationTransport($this, $user, $session);
     }
 
     public function applyToResponse(ResponseInterface $response, TransportInterface $transport): ResponseInterface
