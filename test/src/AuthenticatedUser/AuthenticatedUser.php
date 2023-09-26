@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace ActiveCollab\Authentication\Test\AuthenticatedUser;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\Username\UsernameInterface;
 use ActiveCollab\User\UserInterface\ImplementationUsingFullName;
 
 class AuthenticatedUser implements AuthenticatedUserInterface
@@ -94,9 +95,31 @@ class AuthenticatedUser implements AuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getUsername(): string
+    private ?UsernameInterface $username = null;
+
+    public function getUsername(): UsernameInterface
     {
-        return $this->getEmail();
+        if (empty($this->username)) {
+            $this->username = new class ($this->getEmail()) implements UsernameInterface {
+                public function __construct(
+                    private string $email,
+                )
+                {
+                }
+
+                public function __toString()
+                {
+                    return $this->getUsername();
+                }
+
+                public function getUsername(): string
+                {
+                    return $this->email;
+                }
+            };
+        }
+
+        return $this->username;
     }
 
     public function isValidPassword(string $password): bool
