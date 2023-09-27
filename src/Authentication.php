@@ -19,6 +19,8 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
+use ActiveCollab\Authentication\Intent\IntentInterface;
+use ActiveCollab\Authentication\Intent\RepositoryInterface as IntentRepositoryInterface;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,17 +28,24 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class Authentication implements AuthenticationInterface
 {
+    private IntentRepositoryInterface $intent_repository;
     private array $adapters;
     private ?AuthenticatedUserInterface $authenticated_user = null;
     private ?AuthenticationResultInterface $authenticated_with = null;
     private array $on_user_authenticated = [];
     private array $on_user_authorized = [];
     private array $on_user_authorization_failed = [];
+    private array $on_intent_authorized = [];
+    private array $on_intent_authorization_failed = [];
     private array $on_user_set = [];
     private array $on_user_deauthenticated = [];
 
-    public function __construct(AdapterInterface ...$adapters)
+    public function __construct(
+        IntentRepositoryInterface $intent_repository,
+        AdapterInterface ...$adapters,
+    )
     {
+        $this->intent_repository = $intent_repository;
         $this->adapters = $adapters;
     }
 
@@ -129,6 +138,32 @@ class Authentication implements AuthenticationInterface
             return $authorizationResult;
         } catch (Exception $e) {
             $this->triggerEvent('user_authorization_failed', $credentials, $e);
+
+            throw $e;
+        }
+    }
+
+    public function authorizeIntent(
+        AuthorizerInterface $authorizer,
+        string $intentType,
+        array $intentOptions,
+        array $credentials,
+    ): IntentInterface
+    {
+        try {
+            $user = $authorizer->verifyCredentials($credentials);
+
+            $intent = $this->intent_repository->createIntent(
+                $intentType,
+                $intentOptions,
+                $user,
+            );
+
+            $this->triggerEvent('intent_authorized', $user, $intent);
+
+            return $intent;
+        } catch (Exception $e) {
+            $this->triggerEvent('intent_authorization_failed', $credentials, $e);
 
             throw $e;
         }
@@ -240,6 +275,20 @@ class Authentication implements AuthenticationInterface
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface
     {
         $this->on_user_authorization_failed[] = $value;
+
+        return $this;
+    }
+
+    public function onIntentAuthorized(callable $value): AuthenticationInterface
+    {
+        $this->on_intent_authorized[] = $value;
+
+        return $this;
+    }
+
+    public function onIntentAuthorizationFailed(callable $value): AuthenticationInterface
+    {
+        $this->on_intent_authorization_failed[] = $value;
 
         return $this;
     }

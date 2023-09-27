@@ -15,6 +15,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Intent\IntentInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -33,6 +34,13 @@ interface AuthenticationInterface extends MiddlewareInterface
         array $credentials,
         $payload = null
     ): TransportInterface;
+
+    public function authorizeIntent(
+        AuthorizerInterface $authorizer,
+        string $intentType,
+        array $intentOptions,
+        array $credentials,
+    ): IntentInterface;
 
     public function terminate(
         AdapterInterface $adapter,
@@ -53,6 +61,8 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function onUserAuthenticated(callable $value): AuthenticationInterface;
     public function onUserAuthorized(callable $value): AuthenticationInterface;
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface;
+    public function onIntentAuthorized(callable $value): AuthenticationInterface;
+    public function onIntentAuthorizationFailed(callable $value): AuthenticationInterface;
     public function onUserSet(callable $value): AuthenticationInterface;
     public function onUserDeauthenticated(callable $value): AuthenticationInterface;
 }
