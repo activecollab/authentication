@@ -25,26 +25,19 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        callable $next = null
+        callable $next = null,
     ): ResponseInterface;
 
     public function authorize(
         AuthorizerInterface $authorizer,
         AdapterInterface $adapter,
         array $credentials,
-        $payload = null
-    ): TransportInterface;
-
-    public function authorizeIntent(
-        AuthorizerInterface $authorizer,
-        string $intentType,
-        array $intentOptions,
-        array $credentials,
-    ): IntentInterface;
+        $payload = null,
+    ): TransportInterface|IntentInterface;
 
     public function terminate(
         AdapterInterface $adapter,
-        AuthenticationResultInterface $authenticatedWith
+        AuthenticationResultInterface $authenticatedWith,
     ): TransportInterface;
 
     /**

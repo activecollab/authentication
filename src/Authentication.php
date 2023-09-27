@@ -123,11 +123,22 @@ class Authentication implements AuthenticationInterface
         AuthorizerInterface $authorizer,
         AdapterInterface $adapter,
         array $credentials,
-        $payload = null
-    ): TransportInterface
+        $payload = null,
+    ): TransportInterface|IntentInterface
     {
         try {
             $user = $authorizer->verifyCredentials($credentials);
+
+            if ($user->requiresSecondFactor()) {
+                $intent = $this->intent_repository->createSecondFactorIntent(
+                    $user,
+                );
+
+                $this->triggerEvent('intent_authorized', $user, $intent);
+
+                return $intent;
+            }
+
             $authenticatedWith = $adapter->authenticate($user, $credentials);
 
             $this->triggerEvent('user_authorized', $user, $authenticatedWith);
@@ -138,32 +149,6 @@ class Authentication implements AuthenticationInterface
             return $authorizationResult;
         } catch (Exception $e) {
             $this->triggerEvent('user_authorization_failed', $credentials, $e);
-
-            throw $e;
-        }
-    }
-
-    public function authorizeIntent(
-        AuthorizerInterface $authorizer,
-        string $intentType,
-        array $intentOptions,
-        array $credentials,
-    ): IntentInterface
-    {
-        try {
-            $user = $authorizer->verifyCredentials($credentials);
-
-            $intent = $this->intent_repository->createIntent(
-                $intentType,
-                $intentOptions,
-                $user,
-            );
-
-            $this->triggerEvent('intent_authorized', $user, $intent);
-
-            return $intent;
-        } catch (Exception $e) {
-            $this->triggerEvent('intent_authorization_failed', $credentials, $e);
 
             throw $e;
         }

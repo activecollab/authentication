@@ -14,9 +14,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 
 interface RepositoryInterface
 {
-    public function createIntent(
-        string $intentType,
-        array $intentOptions,
+    public function createSecondFactorIntent(
         AuthenticatedUserInterface $user,
     ): IntentInterface;
 }

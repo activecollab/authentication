@@ -172,10 +172,14 @@ class EventsTest extends BrowserSessionTestCase
             $second_callback_called = true;
         });
 
-        $authorization = $authentication->authorize($authorizer, $adapter, [
-            'username' => 'ilija.studen@activecollab.com',
-            'password' => '123',
-        ]);
+        $authorization = $authentication->authorize(
+            $authorizer,
+            $adapter,
+            [
+                'username' => 'ilija.studen@activecollab.com',
+                'password' => '123',
+            ]
+        );
         $this->assertInstanceOf(AuthorizationTransportInterface::class, $authorization);
 
         $this->assertTrue($first_callback_called);
@@ -212,10 +216,14 @@ class EventsTest extends BrowserSessionTestCase
         });
 
         try {
-            $authentication->authorize($authorizer, $adapter, [
-                'username' => 'ilija.studen@activecollab.com',
-                'password' => 'invalid password',
-            ]);
+            $authentication->authorize(
+                $authorizer,
+                $adapter,
+                [
+                    'username' => 'ilija.studen@activecollab.com',
+                    'password' => 'invalid password',
+                ]
+            );
         } catch (Exception) {
         }
 

@@ -29,4 +29,9 @@ interface AuthenticatedUserInterface extends UserInterface
      * Return true if this user can authenticate.
      */
     public function canAuthenticate(): bool;
+
+    /**
+     * Return true if this user requires second factor to authenticate.
+     */
+    public function requiresSecondFactor(): bool;
 }
