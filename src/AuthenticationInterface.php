@@ -65,6 +65,8 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface;
     public function onIntentAuthorized(callable $value): AuthenticationInterface;
     public function onIntentAuthorizationFailed(callable $value): AuthenticationInterface;
+    public function onIntentFulfilled(callable $value): AuthenticationInterface;
+    public function onIntentFulfillmentFailed(callable $value): AuthenticationInterface;
     public function onUserSet(callable $value): AuthenticationInterface;
     public function onUserDeauthenticated(callable $value): AuthenticationInterface;
 }

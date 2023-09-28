@@ -42,6 +42,8 @@ class Authentication implements AuthenticationInterface
     private array $on_user_authorization_failed = [];
     private array $on_intent_authorized = [];
     private array $on_intent_authorization_failed = [];
+    private array $on_intent_fulfilled = [];
+    private array $on_intent_fulfillment_failed = [];
     private array $on_user_set = [];
     private array $on_user_deauthenticated = [];
 
@@ -184,6 +186,7 @@ class Authentication implements AuthenticationInterface
             }
 
             $intent->fulfill($user, $credentials);
+            $this->triggerEvent('intent_fulfilled', $user, $intent);
 
             return $this->completeAuthentication(
                 $adapter,
@@ -192,7 +195,7 @@ class Authentication implements AuthenticationInterface
                 $payload,
             );
         } catch (Exception $e) {
-            $this->triggerEvent('user_authorization_failed', $credentials, $e);
+            $this->triggerEvent('intent_fulfillment_failed', $credentials, $e);
             throw $e;
         }
     }
@@ -334,6 +337,20 @@ class Authentication implements AuthenticationInterface
     public function onIntentAuthorizationFailed(callable $value): AuthenticationInterface
     {
         $this->on_intent_authorization_failed[] = $value;
+
+        return $this;
+    }
+
+    public function onIntentFulfilled(callable $value): AuthenticationInterface
+    {
+        $this->on_intent_fulfilled[] = $value;
+
+        return $this;
+    }
+
+    public function onIntentFulfillmentFailed(callable $value): AuthenticationInterface
+    {
+        $this->on_intent_fulfillment_failed[] = $value;
 
         return $this;
     }
