@@ -19,7 +19,11 @@ use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\Aut
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Exception\IntentExpiredException;
+use ActiveCollab\Authentication\Exception\IntentFulfilledException;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
+use ActiveCollab\Authentication\Exception\InvalidIntentUserException;
+use ActiveCollab\Authentication\Exception\SecondFactorNotRequiredException;
 use ActiveCollab\Authentication\Intent\IntentInterface;
 use ActiveCollab\Authentication\Intent\RepositoryInterface as IntentRepositoryInterface;
 use Exception;
@@ -163,6 +167,22 @@ class Authentication implements AuthenticationInterface
     ): TransportInterface
     {
         try {
+            if ($intent->isFulfilled()) {
+                throw new IntentFulfilledException();
+            }
+
+            if ($intent->isExpired()) {
+                throw new IntentExpiredException();
+            }
+
+            if (!$intent->belongsToUser($user)) {
+                throw new InvalidIntentUserException();
+            }
+
+            if (!$user->requiresSecondFactor()) {
+                throw new SecondFactorNotRequiredException();
+            }
+
             $intent->fulfill($user, $credentials);
 
             return $this->completeAuthentication(

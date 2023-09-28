@@ -12,10 +12,10 @@ namespace ActiveCollab\Authentication\Exception;
 
 use Exception;
 
-class InvalidAuthenticationRequestException extends RuntimeException
+class SecondFactorNotRequiredException extends RuntimeException
 {
     public function __construct(
-        string $message = 'Authentication request data not valid',
+        string $message = 'Second factor authentication not required for user',
         int $code = 0,
         Exception $previous = null,
     )

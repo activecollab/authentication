@@ -14,6 +14,9 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 
 interface IntentInterface
 {
+    public function isFulfilled(): bool;
+    public function isExpired(): bool;
+    public function belongsToUser(AuthenticatedUserInterface $user): bool;
     public function fulfill(
         AuthenticatedUserInterface $user,
         array $credentials,

@@ -12,10 +12,10 @@ namespace ActiveCollab\Authentication\Exception;
 
 use Exception;
 
-class InvalidAuthenticationRequestException extends RuntimeException
+class IntentFulfilledException extends RuntimeException
 {
     public function __construct(
-        string $message = 'Authentication request data not valid',
+        string $message = 'Intent already fulfilled',
         int $code = 0,
         Exception $previous = null,
     )
