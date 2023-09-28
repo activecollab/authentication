@@ -32,8 +32,17 @@ interface AuthenticationInterface extends MiddlewareInterface
         AuthorizerInterface $authorizer,
         AdapterInterface $adapter,
         array $credentials,
-        $payload = null,
+        array $payload = null,
     ): TransportInterface|IntentInterface;
+
+    public function fulfillIntent(
+        AuthorizerInterface $authorizer,
+        AdapterInterface $adapter,
+        IntentInterface $intent,
+        AuthenticatedUserInterface $user,
+        array $credentials,
+        array $payload,
+    ): TransportInterface;
 
     public function terminate(
         AdapterInterface $adapter,

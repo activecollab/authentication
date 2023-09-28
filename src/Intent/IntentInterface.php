@@ -10,6 +10,12 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Intent;
 
+use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+
 interface IntentInterface
 {
+    public function fulfill(
+        AuthenticatedUserInterface $user,
+        array $credentials,
+    ): bool;
 }

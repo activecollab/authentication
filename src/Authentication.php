@@ -15,6 +15,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authentication\AuthenticationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransport;
+use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Transport;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
@@ -123,7 +124,7 @@ class Authentication implements AuthenticationInterface
         AuthorizerInterface $authorizer,
         AdapterInterface $adapter,
         array $credentials,
-        $payload = null,
+        array $payload = null,
     ): TransportInterface|IntentInterface
     {
         try {
@@ -139,19 +140,58 @@ class Authentication implements AuthenticationInterface
                 return $intent;
             }
 
-            $authenticatedWith = $adapter->authenticate($user, $credentials);
-
-            $this->triggerEvent('user_authorized', $user, $authenticatedWith);
-
-            $authorizationResult = new AuthorizationTransport($adapter, $user, $authenticatedWith, $payload);
-            $this->lastProcessingResult = $authorizationResult;
-
-            return $authorizationResult;
+            return $this->completeAuthentication(
+                $adapter,
+                $user,
+                $credentials,
+                $payload,
+            );
         } catch (Exception $e) {
             $this->triggerEvent('user_authorization_failed', $credentials, $e);
 
             throw $e;
         }
+    }
+
+    public function fulfillIntent(
+        AuthorizerInterface $authorizer,
+        AdapterInterface $adapter,
+        IntentInterface $intent,
+        AuthenticatedUserInterface $user,
+        array $credentials,
+        array $payload = null,
+    ): TransportInterface
+    {
+        try {
+            $intent->fulfill($user, $credentials);
+
+            return $this->completeAuthentication(
+                $adapter,
+                $user,
+                $credentials,
+                $payload,
+            );
+        } catch (Exception $e) {
+            $this->triggerEvent('user_authorization_failed', $credentials, $e);
+            throw $e;
+        }
+    }
+
+    private function completeAuthentication(
+        AdapterInterface $adapter,
+        AuthenticatedUserInterface $user,
+        array $credentials,
+        ?array $payload,
+    ): AuthorizationTransportInterface
+    {
+        $authenticatedWith = $adapter->authenticate($user, $credentials);
+
+        $this->triggerEvent('user_authorized', $user, $authenticatedWith);
+
+        $authorizationResult = new AuthorizationTransport($adapter, $user, $authenticatedWith, $payload);
+        $this->lastProcessingResult = $authorizationResult;
+
+        return $authorizationResult;
     }
 
     public function terminate(
