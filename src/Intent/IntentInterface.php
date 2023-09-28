@@ -17,5 +17,5 @@ interface IntentInterface
     public function fulfill(
         AuthenticatedUserInterface $user,
         array $credentials,
-    ): bool;
+    ): void;
 }
