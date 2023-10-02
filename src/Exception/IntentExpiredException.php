@@ -10,16 +10,10 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Exception;
 
-use Exception;
-
 class IntentExpiredException extends RuntimeException
 {
-    public function __construct(
-        string $message = 'Intent expired',
-        int $code = 0,
-        Exception $previous = null,
-    )
+    protected function getAuthExceptionMessage(): string
     {
-        parent::__construct($message, $code, $previous);
+        return 'Intent expired.';
     }
 }

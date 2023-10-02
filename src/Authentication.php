@@ -27,6 +27,7 @@ use ActiveCollab\Authentication\Exception\SecondFactorNotRequiredException;
 use ActiveCollab\Authentication\Intent\IntentInterface;
 use ActiveCollab\Authentication\Intent\RepositoryInterface as IntentRepositoryInterface;
 use Exception;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -299,6 +300,10 @@ class Authentication implements AuthenticationInterface
     private function triggerEvent(string $event_name, ...$arguments): void
     {
         $property_name = sprintf("on_%s", $event_name);
+
+        if (!property_exists($this, $property_name)) {
+            throw new LogicException(sprintf('Event %s does not exist.', $event_name));
+        }
 
         /** @var callable $handler */
         foreach ($this->$property_name as $handler) {

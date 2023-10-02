@@ -10,16 +10,10 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Exception;
 
-use Exception;
-
 class SecondFactorNotRequiredException extends RuntimeException
 {
-    public function __construct(
-        string $message = 'Second factor authentication not required for user',
-        int $code = 0,
-        Exception $previous = null,
-    )
+    protected function getAuthExceptionMessage(): string
     {
-        parent::__construct($message, $code, $previous);
+        return 'Second factor authentication not required for user.';
     }
 }
