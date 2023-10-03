@@ -56,7 +56,7 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($second_callback_called);
     }
 
-    private function validateOnUserAuthenticatedArguments(array $event_arguments)
+    private function validateOnUserAuthenticatedArguments(array $event_arguments): void
     {
         $this->assertCount(2, $event_arguments);
 
@@ -113,7 +113,7 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($second_callback_called);
     }
 
-    private function validateOnUserDeauthenticatedArguments(array $event_arguments)
+    private function validateOnUserDeauthenticatedArguments(array $event_arguments): void
     {
         $this->assertCount(1, $event_arguments);
 
@@ -144,7 +144,7 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($deprecated_callback_called);
     }
 
-    private function validateOnUserSetArguments(array $event_arguments)
+    private function validateOnUserSetArguments(array $event_arguments): void
     {
         $this->assertCount(1, $event_arguments);
 
@@ -186,7 +186,7 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($second_callback_called);
     }
 
-    private function validateOnUserAuthorizedArguments(array $event_arguments)
+    private function validateOnUserAuthorizedArguments(array $event_arguments): void
     {
         $this->assertCount(2, $event_arguments);
 
@@ -194,12 +194,16 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertInstanceOf(AuthenticationResultInterface::class, $event_arguments[1]);
     }
 
-    public function testOnUserAuthorizationFailed()
+    public function testOnUserAuthorizationFailed(): void
     {
         /** @var AuthenticationInterface $authentication */
         /** @var AdapterInterface $adapter */
         /** @var AuthorizerInterface $authorizer */
-        [$authentication, $adapter, $authorizer] = $this->prepareForAuthorization();
+        [
+            $authentication,
+            $adapter,
+            $authorizer,
+        ] = $this->prepareForAuthorization();
 
         $first_callback_called = false;
         $authentication->onUserAuthorizationFailed(function () use (&$first_callback_called) {
@@ -231,7 +235,7 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertTrue($second_callback_called);
     }
 
-    private function validateOnUserAuthorizationFailedArguments(array $event_arguments)
+    private function validateOnUserAuthorizationFailedArguments(array $event_arguments): void
     {
         $this->assertCount(2, $event_arguments);
 
@@ -239,15 +243,21 @@ class EventsTest extends BrowserSessionTestCase
         $this->assertInstanceOf(Exception::class, $event_arguments[1]);
     }
 
-    private function prepareForAuthentication(string $session_id = 'my-session-id'): AuthenticationInterface
+    private function prepareForAuthentication(): AuthenticationInterface
     {
-        $this->setCookie('sessid', $session_id);
+        $this->setCookie('sessid', 'my-session-id');
 
-        new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
-        $session_repository = new SessionRepository([new Session($session_id, 'ilija.studen@activecollab.com')]);
+        $user_repository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123',
+                ),
+            ]
+        );
+        $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
 
         return new Authentication(
             $this->createMock(IntentRepositoryInterface::class),
@@ -255,13 +265,19 @@ class EventsTest extends BrowserSessionTestCase
         );
     }
 
-    private function prepareForAuthorization(string $session_id = 'my-session-id'): array
+    private function prepareForAuthorization(): array
     {
-        new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123');
-        $user_repository = new UserRepository([
-            'ilija.studen@activecollab.com' => new AuthenticatedUser(1, 'ilija.studen@activecollab.com', 'Ilija Studen', '123'),
-        ]);
-        $session_repository = new SessionRepository([new Session($session_id, 'ilija.studen@activecollab.com')]);
+        $user_repository = new UserRepository(
+            [
+                'ilija.studen@activecollab.com' => new AuthenticatedUser(
+                    1,
+                    'ilija.studen@activecollab.com',
+                    'Ilija Studen',
+                    '123',
+                ),
+            ]
+        );
+        $session_repository = new SessionRepository([new Session('my-session-id', 'ilija.studen@activecollab.com')]);
 
         $browser_session_adapter = new BrowserSessionAdapter($user_repository, $session_repository, $this->cookies);
         $authentication = new Authentication(
