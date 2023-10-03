@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
@@ -16,9 +18,6 @@ use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 use ActiveCollab\Authentication\Token\TokenInterface;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class TokenBearerAuthenticateTest extends TokenBearerTestCase
 {
     /**

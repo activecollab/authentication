@@ -6,14 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test\Fixtures;
 
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 
-/**
- * @package ActiveCollab\Authentication\Test\Authorizer
- */
 class Authorizer implements AuthorizerInterface
 {
     private $username = 'john@doe.com';

@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
@@ -17,9 +19,6 @@ use ActiveCollab\Authentication\Test\Session\Repository as SessionRepository;
 use ActiveCollab\Authentication\Test\Session\Session;
 use ActiveCollab\Authentication\Test\TestCase\BrowserSessionTestCase;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class BrowserSessionInitializeTest extends BrowserSessionTestCase
 {
     /**

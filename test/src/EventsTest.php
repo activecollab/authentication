@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\AdapterInterface;
@@ -27,9 +29,6 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class EventsTest extends BrowserSessionTestCase
 {
     public function testOnUserAuthenticated()
