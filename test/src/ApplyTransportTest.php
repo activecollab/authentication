@@ -63,7 +63,7 @@ class ApplyTransportTest extends RequestResponseTestCase
         $this->user = new AuthenticatedUser(1, 'test@example.com', 'John Doe', 'secret');
 
         $this->token_repository = new TokenRepository();
-        $this->token = new Token('123', 1);
+        $this->token = new Token('123', '1');
         $this->token_bearer_adapter = new TokenBearerAdapter($this->user_repository, $this->token_repository);
     }
 
