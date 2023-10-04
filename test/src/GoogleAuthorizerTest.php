@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\GoogleAuthorizer;
@@ -17,9 +19,6 @@ use ActiveCollab\Authentication\Test\TestCase\TestCase;;
 use PHPUnit\Framework\MockObject\MockObject;
 use RuntimeException;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class GoogleAuthorizerTest extends TestCase
 {
     private string $client_id;

@@ -15,6 +15,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\AuthenticationResult\AuthenticationResultInterface;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\TransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Intent\IntentInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -24,19 +25,28 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        callable $next = null
+        callable $next = null,
     ): ResponseInterface;
 
     public function authorize(
         AuthorizerInterface $authorizer,
         AdapterInterface $adapter,
         array $credentials,
-        $payload = null
+        array $payload = null,
+    ): TransportInterface|IntentInterface;
+
+    public function fulfillIntent(
+        AuthorizerInterface $authorizer,
+        AdapterInterface $adapter,
+        IntentInterface $intent,
+        AuthenticatedUserInterface $user,
+        array $credentials,
+        array $payload,
     ): TransportInterface;
 
     public function terminate(
         AdapterInterface $adapter,
-        AuthenticationResultInterface $authenticatedWith
+        AuthenticationResultInterface $authenticatedWith,
     ): TransportInterface;
 
     /**
@@ -53,6 +63,10 @@ interface AuthenticationInterface extends MiddlewareInterface
     public function onUserAuthenticated(callable $value): AuthenticationInterface;
     public function onUserAuthorized(callable $value): AuthenticationInterface;
     public function onUserAuthorizationFailed(callable $value): AuthenticationInterface;
+    public function onIntentAuthorized(callable $value): AuthenticationInterface;
+    public function onIntentAuthorizationFailed(callable $value): AuthenticationInterface;
+    public function onIntentFulfilled(callable $value): AuthenticationInterface;
+    public function onIntentFulfillmentFailed(callable $value): AuthenticationInterface;
     public function onUserSet(callable $value): AuthenticationInterface;
     public function onUserDeauthenticated(callable $value): AuthenticationInterface;
 }

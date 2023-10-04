@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\LoginPolicy\LoginPolicy;
@@ -13,9 +15,6 @@ use ActiveCollab\Authentication\LoginPolicy\LoginPolicyInterface;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use JsonSerializable;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class LoginPolicySerializationTest extends TestCase
 {
     public function testLoginPolicyCanBeSerialized()

@@ -6,6 +6,8 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
@@ -16,17 +18,32 @@ use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use ActiveCollab\Authentication\Test\Token\Repository as TokenRepository;
 use ActiveCollab\Authentication\Test\Token\Token;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class AuthenticationResultTransportTest extends TestCase
 {
     public function testIsEmpty()
     {
-        $empty_transport = new AuthenticationTransport(new TokenBearerAdapter(new UserRepository(), new TokenRepository()), null, null);
+        $empty_transport = new AuthenticationTransport(
+            new TokenBearerAdapter(
+                new UserRepository(),
+                new TokenRepository(),
+            ),
+            null,
+            null,
+        );
         $this->assertTrue($empty_transport->isEmpty());
 
-        $not_empty_transport = new AuthenticationTransport(new TokenBearerAdapter(new UserRepository(), new TokenRepository()), new AuthenticatedUser(1, 'test@example.com', 'John Doe', 'secret'), new Token('123', 1));
+        $not_empty_transport = new AuthenticationTransport(
+            new TokenBearerAdapter(
+                new UserRepository(),
+                new TokenRepository()),
+            new AuthenticatedUser(
+                1,
+                'test@example.com',
+                'John Doe',
+                'secret',
+            ),
+            new Token('123', '1'),
+        );
         $this->assertFalse($not_empty_transport->isEmpty());
     }
 }

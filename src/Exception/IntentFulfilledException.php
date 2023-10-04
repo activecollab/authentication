@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Exception;
 
-class AuthenticationDisabledException extends RuntimeException
+class IntentFulfilledException extends RuntimeException
 {
     protected function getAuthExceptionMessage(): string
     {
-        return 'Authentication is temporary disabled.';
+        return 'Intent already fulfilled.';
     }
 }

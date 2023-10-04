@@ -25,7 +25,7 @@ class Repository implements RepositoryInterface
                 throw new LogicException('Users by username can only include users');
             }
 
-            $this->users_by_username[$user->getUsername()] = $user;
+            $this->users_by_username[(string) $user->getUsername()] = $user;
         }
     }
 

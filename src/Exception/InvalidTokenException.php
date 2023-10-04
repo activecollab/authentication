@@ -10,16 +10,10 @@ declare(strict_types=1);
 
 namespace ActiveCollab\Authentication\Exception;
 
-use Exception as PhpException;
-
 class InvalidTokenException extends RuntimeException
 {
-    public function __construct(
-        string $message = 'Authorization token is not valid',
-        int $code = 0,
-        PhpException $previous = null,
-    )
+    protected function getAuthExceptionMessage(): string
     {
-        parent::__construct($message, $code, $previous);
+        return 'Authorization token is not valid.';
     }
 }

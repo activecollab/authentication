@@ -74,7 +74,7 @@ class Repository implements RepositoryInterface
             }
         }
 
-        $session = new Session(sha1((string) time()), $user->getUsername(), $expires_at);
+        $session = new Session(sha1((string) time()), (string) $user->getUsername(), $expires_at);
 
         if (!empty($credentials['remember'])) {
             $session->setIsExtendedSession(true);

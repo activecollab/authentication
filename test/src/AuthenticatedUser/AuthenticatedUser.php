@@ -11,51 +11,22 @@ declare(strict_types=1);
 namespace ActiveCollab\Authentication\Test\AuthenticatedUser;
 
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
+use ActiveCollab\Authentication\AuthenticatedUser\Username\UsernameInterface;
 use ActiveCollab\User\UserInterface\ImplementationUsingFullName;
 
 class AuthenticatedUser implements AuthenticatedUserInterface
 {
     use ImplementationUsingFullName;
 
-    /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var string
-     */
-    private $email;
-
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
-     * @var bool
-     */
-    private $can_authenticate;
-
-    /**
-     * @param int    $id
-     * @param string $email
-     * @param string $name
-     * @param string $password
-     * @param bool   $can_authenticate
-     */
-    public function __construct($id, $email, $name, $password, $can_authenticate = true)
+    public function __construct(
+        private int $id,
+        private string $email,
+        private string $name,
+        private string $password,
+        private bool $can_authenticate = true,
+        private bool $requires_second_factor = false,
+    )
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->email = $email;
-        $this->password = $password;
-        $this->can_authenticate = $can_authenticate;
     }
 
     /**
@@ -94,9 +65,31 @@ class AuthenticatedUser implements AuthenticatedUserInterface
         return $this->password;
     }
 
-    public function getUsername(): string
+    private ?UsernameInterface $username = null;
+
+    public function getUsername(): UsernameInterface
     {
-        return $this->getEmail();
+        if (empty($this->username)) {
+            $this->username = new class ($this->getEmail()) implements UsernameInterface {
+                public function __construct(
+                    private string $email,
+                )
+                {
+                }
+
+                public function __toString()
+                {
+                    return $this->getUsername();
+                }
+
+                public function getUsername(): string
+                {
+                    return $this->email;
+                }
+            };
+        }
+
+        return $this->username;
     }
 
     public function isValidPassword(string $password): bool
@@ -107,6 +100,11 @@ class AuthenticatedUser implements AuthenticatedUserInterface
     public function canAuthenticate(): bool
     {
         return $this->can_authenticate;
+    }
+
+    public function requiresSecondFactor(): bool
+    {
+        return $this->requires_second_factor;
     }
 
     public function jsonSerialize(): array

@@ -62,7 +62,7 @@ class Repository implements RepositoryInterface
     {
         $token_id = $this->tokens[$user->getEmail()] ?? sha1((string) time());
 
-        $token = new Token($token_id, $user->getUsername(), $expires_at);
+        $token = new Token($token_id, (string) $user->getUsername(), $expires_at);
 
         if (!empty($credentials['extra_attribute'])) {
             $token->setExtraAttribute($credentials['extra_attribute']);

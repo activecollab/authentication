@@ -18,6 +18,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
+use ActiveCollab\Authentication\Intent\RepositoryInterface as IntentRepositoryInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\AuthenticatedUser;
 use ActiveCollab\Authentication\Test\AuthenticatedUser\Repository as UserRepository;
@@ -130,6 +131,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     public function testMiddlewareAcceptsMultipleAdapters()
     {
         $middleware = new Authentication(
+            $this->createMock(IntentRepositoryInterface::class),
             $this->browserSessionAdapter,
             $this->token_bearer_adapter
         );
@@ -151,6 +153,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         ] = $this->cookies->set($this->request, $this->response, $this->browserSessionCookieName, 'my-session-id');
 
         $middleware = new Authentication(
+            $this->createMock(IntentRepositoryInterface::class),
             $this->browserSessionAdapter
         );
 
@@ -205,7 +208,8 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
 
         $middleware = new Authentication(
-            $this->browserSessionAdapter
+            $this->createMock(IntentRepositoryInterface::class),
+            $this->browserSessionAdapter,
         );
 
         $requestHandler = new class implements RequestHandlerInterface
@@ -261,7 +265,10 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
 
-        $middleware = new Authentication($this->browserSessionAdapter);
+        $middleware = new Authentication(
+            $this->createMock(IntentRepositoryInterface::class),
+            $this->browserSessionAdapter,
+        );
 
         $requestHandler = new class ($middleware, $this->browserSessionAdapter) implements RequestHandlerInterface
         {
@@ -336,10 +343,12 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
     public function testTokenBearerAuthentication()
     {
-        /** @var ServerRequestInterface $request */
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
-        $middleware = new Authentication($this->token_bearer_adapter);
+        $middleware = new Authentication(
+            $this->createMock(IntentRepositoryInterface::class),
+            $this->token_bearer_adapter,
+        );
 
         /** @var ServerRequestInterface $modifiedRequest */
         $modifiedRequest = null;
@@ -381,10 +390,12 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
     public function testTokenBearerAuthenticationPsr15()
     {
-        /** @var ServerRequestInterface $request */
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
-        $middleware = new Authentication($this->token_bearer_adapter);
+        $middleware = new Authentication(
+            $this->createMock(IntentRepositoryInterface::class),
+            $this->token_bearer_adapter,
+        );
 
         $requestHandler = new class implements RequestHandlerInterface
         {
@@ -445,7 +456,11 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $request = $request->withHeader('Authorization', 'Bearer awesome-token');
 
         call_user_func(
-            new Authentication($this->browserSessionAdapter, $this->token_bearer_adapter),
+            new Authentication(
+                $this->createMock(IntentRepositoryInterface::class),
+                $this->browserSessionAdapter,
+                $this->token_bearer_adapter,
+            ),
             $request,
             $response
         );

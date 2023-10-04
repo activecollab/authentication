@@ -6,14 +6,13 @@
  * (c) A51 doo <info@activecollab.com>. All rights reserved.
  */
 
+declare(strict_types=1);
+
 namespace ActiveCollab\Authentication\Test;
 
 use ActiveCollab\Authentication\Authorizer\RequestProcessor\RequestProcessingResult\RequestProcessingResult;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 
-/**
- * @package ActiveCollab\Authentication\Test
- */
 class RequestProcessorTest extends TestCase
 {
     public function testDefaultPayloadIsNull()
