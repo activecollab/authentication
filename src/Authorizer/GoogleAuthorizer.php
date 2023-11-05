@@ -35,8 +35,6 @@ class GoogleAuthorizer extends Authorizer
     /**
      * Credentials should be in array format with keys: token and username.
      * Example: ['token' => '123abc', 'username' => 'john.doe.123@gmail.com'].
-     *
-     * {@inheritdoc}
      */
     public function verifyCredentials(array $credentials): ?AuthenticatedUserInterface
     {
@@ -55,18 +53,11 @@ class GoogleAuthorizer extends Authorizer
         return $user;
     }
 
-    /**
-     * @return array
-     */
     public function getUserProfile(): array
     {
         return $this->user_profile;
     }
 
-    /**
-     * @param array $payload
-     * @param string|null $username
-     */
     private function verifyGoogleProfile(array $payload, ?string $username): void
     {
         if ($this->client_id !== $payload['aud']) {
@@ -82,9 +73,6 @@ class GoogleAuthorizer extends Authorizer
         }
     }
 
-    /**
-     * @param AuthenticatedUserInterface|null $user
-     */
     private function verifyUser(AuthenticatedUserInterface $user = null): void
     {
         if (!$user || !$user->canAuthenticate()) {
@@ -92,11 +80,11 @@ class GoogleAuthorizer extends Authorizer
         }
     }
 
-    /**
-     * @return array
-     */
     private function getDomains(): array
     {
-        return ['accounts.google.com', 'https://accounts.google.com'];
+        return [
+            'accounts.google.com',
+            'https://accounts.google.com',
+        ];
     }
 }
