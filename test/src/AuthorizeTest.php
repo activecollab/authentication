@@ -108,7 +108,7 @@ class AuthorizeTest extends TestCase
             $credentials,
         );
 
-        $this->assertInstanceOf(IntentInterface::class, $intent,);
+        $this->assertInstanceOf(IntentInterface::class, $intent);
     }
 
     public function testWillNotIssueIntentIfAuthorizerDoesNotSupportSecondFactor(): void
