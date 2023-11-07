@@ -14,7 +14,6 @@ use ActiveCollab\Authentication\Adapter\BrowserSessionAdapter;
 use ActiveCollab\Authentication\Adapter\BrowserSessionAdapterInterface;
 use ActiveCollab\Authentication\Adapter\TokenBearerAdapter;
 use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
-use ActiveCollab\Authentication\AuthenticatedUser\RepositoryInterface;
 use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationInterface;
 use ActiveCollab\Authentication\Exception\InvalidAuthenticationRequestException;
@@ -37,45 +36,10 @@ use Laminas\Diactoros\ResponseFactory;
 
 class AuthenticationMiddlewareTest extends RequestResponseTestCase
 {
-    /**
-     * @var CookiesInterface
-     */
-    private $cookies;
-
-    /**
-     * @var AuthenticatedUserInterface
-     */
-    private $user;
-
-    /**
-     * @var RepositoryInterface
-     */
-    private $user_repository;
-
-    /**
-     * @var \ActiveCollab\Authentication\Session\RepositoryInterface
-     */
-    private $session_repository;
-
-    /**
-     * @var string
-     */
-    private $browserSessionCookieName = 'test-session-cookie';
-
-    /**
-     * @var BrowserSessionAdapter
-     */
-    private $browserSessionAdapter;
-
-    /**
-     * @var TokenRepository
-     */
-    private $token_repository;
-
-    /**
-     * @var TokenBearerAdapter
-     */
-    private $token_bearer_adapter;
+    private CookiesInterface $cookies;
+    private string $browserSessionCookieName = 'test-session-cookie';
+    private BrowserSessionAdapter $browserSessionAdapter;
+    private TokenBearerAdapter $token_bearer_adapter;
 
     public function setUp(): void
     {
@@ -83,13 +47,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $this->cookies = new Cookies();
 
-        $this->user = new AuthenticatedUser(
-            1,
-            'ilija.studen@activecollab.com',
-            'Ilija Studen',
-            '123'
-        );
-        $this->user_repository = new UserRepository(
+        $user_repository = new UserRepository(
             [
                 'ilija.studen@activecollab.com' => new AuthenticatedUser(
                     1, 'ilija.studen@activecollab.com',
@@ -99,7 +57,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
             ]
         );
 
-        $this->session_repository = new SessionRepository(
+        $session_repository = new SessionRepository(
             [
                 new Session(
                     'my-session-id',
@@ -108,13 +66,13 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
             ]
         );
         $this->browserSessionAdapter = new BrowserSessionAdapter(
-            $this->user_repository,
-            $this->session_repository,
+            $user_repository,
+            $session_repository,
             $this->cookies,
             $this->browserSessionCookieName
         );
 
-        $this->token_repository = new TokenRepository(
+        $token_repository = new TokenRepository(
             [
                 'awesome-token' => new Token(
                     'awesome-token',
@@ -123,12 +81,12 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
             ]
         );
         $this->token_bearer_adapter = new TokenBearerAdapter(
-            $this->user_repository,
-            $this->token_repository
+            $user_repository,
+            $token_repository
         );
     }
 
-    public function testMiddlewareAcceptsMultipleAdapters()
+    public function testMiddlewareAcceptsMultipleAdapters(): void
     {
         $middleware = new Authentication(
             $this->createMock(IntentRepositoryInterface::class),
@@ -143,7 +101,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     /**
      * Test that user is authenticated.
      */
-    public function testBrowserSessionAuthentication()
+    public function testBrowserSessionAuthentication(): void
     {
         /** @var ServerRequestInterface $request */
         /** @var ResponseInterface $response */
@@ -198,7 +156,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     /**
      * Test that user is authenticated when middleware is invoked as PSR-15 middleware.
      */
-    public function testBrowserSessionAuthenticationPsr15()
+    public function testBrowserSessionAuthenticationPsr15(): void
     {
         /** @var ServerRequestInterface $request */
         $request = $this->cookies
@@ -214,7 +172,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $requestHandler = new class implements RequestHandlerInterface
         {
-            private $capturedRequest;
+            private ServerRequestInterface $capturedRequest;
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
@@ -231,7 +189,6 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $response = $middleware->process($request, $requestHandler);
 
-        /** @var ServerRequestInterface $modifiedRequest */
         $modifiedRequest = $requestHandler->getCapturedRequest();
 
         $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
@@ -256,7 +213,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
     /**
      * Test that user is authenticated when middleware is invoked as PSR-15 middleware.
      */
-    public function testBrowserSessionAuthenticationPsr15WithLogout()
+    public function testBrowserSessionAuthenticationPsr15WithLogout(): void
     {
         /** @var ServerRequestInterface $request */
         $request = $this->cookies
@@ -272,17 +229,13 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $requestHandler = new class ($middleware, $this->browserSessionAdapter) implements RequestHandlerInterface
         {
-            private $authentication;
-            private $browserSessionAdapter;
-            private $capturedRequest;
+            private ?ServerRequestInterface $capturedRequest = null;
 
             public function __construct(
-                AuthenticationInterface $authentication,
-                BrowserSessionAdapterInterface $browserSessionAdapter
+                private AuthenticationInterface $authentication,
+                private BrowserSessionAdapterInterface $browserSessionAdapter
             )
             {
-                $this->authentication = $authentication;
-                $this->browserSessionAdapter = $browserSessionAdapter;
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
@@ -305,7 +258,6 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $response = $middleware->process($request, $requestHandler);
 
-        /** @var ServerRequestInterface $modifiedRequest */
         $modifiedRequest = $requestHandler->getCapturedRequest();
 
         $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
@@ -341,7 +293,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertNull($middleware->getAuthenticatedWith());
     }
 
-    public function testTokenBearerAuthentication()
+    public function testTokenBearerAuthentication(): void
     {
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
@@ -388,7 +340,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());
     }
 
-    public function testTokenBearerAuthenticationPsr15()
+    public function testTokenBearerAuthenticationPsr15(): void
     {
         $request = $this->request->withHeader('Authorization', 'Bearer awesome-token');
 
@@ -399,7 +351,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $requestHandler = new class implements RequestHandlerInterface
         {
-            private $capturedRequest;
+            private ServerRequestInterface $capturedRequest;
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
@@ -416,7 +368,6 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
 
         $response = $middleware->process($request, $requestHandler);
 
-        /** @var ServerRequestInterface $modifiedRequest */
         $modifiedRequest = $requestHandler->getCapturedRequest();
 
         $this->assertInstanceOf(ServerRequestInterface::class, $modifiedRequest);
@@ -435,7 +386,7 @@ class AuthenticationMiddlewareTest extends RequestResponseTestCase
         $this->assertInstanceOf(TokenInterface::class, $middleware->getAuthenticatedWith());
     }
 
-    public function testExceptionOnMultipleIds()
+    public function testExceptionOnMultipleIds(): void
     {
         $this->expectException(InvalidAuthenticationRequestException::class);
         $this->expectExceptionMessage('You can not be authenticated with more than one authentication method');
