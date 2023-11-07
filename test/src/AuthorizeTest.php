@@ -113,11 +113,98 @@ class AuthorizeTest extends TestCase
 
     public function testWillNotIssueIntentIfAuthorizerDoesNotSupportSecondFactor(): void
     {
-        $this->markTestSkipped();
+        $credentials = [
+            'username' => 'user',
+            'password' => 'pass',
+        ];
+
+        $user = $this->createMock(AuthenticatedUserInterface::class);
+        $user
+            ->expects($this->never())
+            ->method('requiresSecondFactor');
+
+        $authorizer = $this->createMock(AuthorizerInterface::class);
+        $authorizer
+            ->expects($this->once())
+            ->method('verifyCredentials')
+            ->with($credentials)
+            ->willReturn($user);
+        $authorizer
+            ->expects($this->once())
+            ->method('supportsSecondFactor')
+            ->willReturn(false);
+
+        $session = $this->createMock(SessionInterface::class);
+
+        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter
+            ->expects($this->once())
+            ->method('authenticate')
+            ->willReturn($session);
+
+        $transport = (new Authentication(
+            $this->createMock(IntentRepositoryInterface::class)
+        ))->authorize(
+            $authorizer,
+            $adapter,
+            $credentials,
+        );
+
+        $this->assertInstanceOf(
+            AuthorizationTransportInterface::class,
+            $transport,
+        );
+
+        $this->assertInstanceOf(AuthenticatedUserInterface::class, $transport->getAuthenticatedUser());
+        $this->assertInstanceOf(SessionInterface::class, $transport->getAuthenticatedWith());
     }
 
     public function testWillNotIssueIntentIfUserDoesNotRequireSecondFactor(): void
     {
-        $this->markTestSkipped();
+        $credentials = [
+            'username' => 'user',
+            'password' => 'pass',
+        ];
+
+        $user = $this->createMock(AuthenticatedUserInterface::class);
+        $user
+            ->expects($this->once())
+            ->method('requiresSecondFactor')
+            ->willReturn(false);
+
+        $authorizer = $this->createMock(AuthorizerInterface::class);
+        $authorizer
+            ->expects($this->once())
+            ->method('verifyCredentials')
+            ->with($credentials)
+            ->willReturn($user);
+        $authorizer
+            ->expects($this->once())
+            ->method('supportsSecondFactor')
+            ->willReturn(true);
+
+        $session = $this->createMock(SessionInterface::class);
+
+        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter
+            ->expects($this->once())
+            ->method('authenticate')
+            ->willReturn($session);
+
+        $transport = (new Authentication(
+            $this->createMock(IntentRepositoryInterface::class)
+        ))->authorize(
+            $authorizer,
+            $adapter,
+            $credentials,
+        );
+
+        $this->assertInstanceOf(
+            AuthorizationTransportInterface::class,
+            $transport,
+        );
+
+        $this->assertInstanceOf(AuthenticatedUserInterface::class, $transport->getAuthenticatedUser());
+        $this->assertInstanceOf(SessionInterface::class, $transport->getAuthenticatedWith());
     }
 }
