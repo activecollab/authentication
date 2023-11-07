@@ -24,8 +24,11 @@ class LocalAuthorizer extends Authorizer
         private RepositoryInterface $user_repository,
         private string $username_format = AuthorizerInterface::USERNAME_FORMAT_ANY,
         ExceptionHandlerInterface $exception_handler = null,
+        private bool $supports_second_factor = true,
     )
     {
+        parent::__construct($supports_second_factor);
+
         $this->setExceptionHandler($exception_handler);
     }
 

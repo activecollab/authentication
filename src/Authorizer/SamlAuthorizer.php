@@ -27,8 +27,11 @@ class SamlAuthorizer extends Authorizer implements RequestAwareInterface
         private RepositoryInterface $user_repository,
         RequestProcessorInterface $request_processor = null,
         ExceptionHandlerInterface $exception_handler = null,
+        private bool $supports_second_factor = true,
     )
     {
+        parent::__construct($supports_second_factor);
+
         $this->setRequestProcessor($request_processor);
         $this->setExceptionHandler($exception_handler);
     }

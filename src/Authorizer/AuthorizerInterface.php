@@ -22,4 +22,5 @@ interface AuthorizerInterface
      * Perform user credentials verification against the real user database provider.
      */
     public function verifyCredentials(array $credentials): ?AuthenticatedUserInterface;
+    public function supportsSecondFactor(): bool;
 }

@@ -21,4 +21,15 @@ abstract class Authorizer implements
     ExceptionAwareInterface
 {
     use DelegatesToExceptionHandlerImplementation, ExceptionAwareImplementation;
+
+    public function __construct(
+        private bool $supports_second_factor = true,
+    )
+    {
+    }
+
+    public function supportsSecondFactor(): bool
+    {
+        return $this->supports_second_factor;
+    }
 }

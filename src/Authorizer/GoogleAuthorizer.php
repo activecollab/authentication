@@ -28,7 +28,10 @@ class GoogleAuthorizer extends Authorizer
         private Google_Client $google_client,
         private string $client_id,
         ExceptionHandlerInterface $exception_handler = null,
+        private bool $supports_second_factor = true,
     ) {
+        parent::__construct($supports_second_factor);
+
         $this->setExceptionHandler($exception_handler);
     }
 
