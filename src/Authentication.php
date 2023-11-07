@@ -137,7 +137,7 @@ class Authentication implements AuthenticationInterface
         try {
             $user = $authorizer->verifyCredentials($credentials);
 
-            if ($user->requiresSecondFactor()) {
+            if ($authorizer->supportsSecondFactor() && $user->requiresSecondFactor()) {
                 $intent = $this->intent_repository->createIntent(
                     $user,
                 );
