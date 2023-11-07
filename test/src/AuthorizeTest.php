@@ -15,6 +15,7 @@ use ActiveCollab\Authentication\AuthenticatedUser\AuthenticatedUserInterface;
 use ActiveCollab\Authentication\Authentication;
 use ActiveCollab\Authentication\AuthenticationResult\Transport\Authorization\AuthorizationTransportInterface;
 use ActiveCollab\Authentication\Authorizer\AuthorizerInterface;
+use ActiveCollab\Authentication\Intent\IntentInterface;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use ActiveCollab\Authentication\Intent\RepositoryInterface as IntentRepositoryInterface;
@@ -36,6 +37,10 @@ class AuthorizeTest extends TestCase
             ->method('verifyCredentials')
             ->with($credentials)
             ->willReturn($user);
+        $authorizer
+            ->expects($this->once())
+            ->method('supportsSecondFactor')
+            ->willReturn(false);
 
         $session = $this->createMock(SessionInterface::class);
 
@@ -64,7 +69,46 @@ class AuthorizeTest extends TestCase
 
     public function testWillIssueIntentWithValidCredentials(): void
     {
-        $this->markTestSkipped();
+        $credentials = [
+            'username' => 'user',
+            'password' => 'pass',
+        ];
+
+        $user = $this->createMock(AuthenticatedUserInterface::class);
+        $user
+            ->expects($this->once())
+            ->method('requiresSecondFactor')
+            ->willReturn(true);
+
+        $authorizer = $this->createMock(AuthorizerInterface::class);
+        $authorizer
+            ->expects($this->once())
+            ->method('verifyCredentials')
+            ->with($credentials)
+            ->willReturn($user);
+        $authorizer
+            ->expects($this->once())
+            ->method('supportsSecondFactor')
+            ->willReturn(true);
+
+        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter
+            ->expects($this->never())
+            ->method('authenticate');
+
+        $intentRepository = $this->createMock(IntentRepositoryInterface::class);
+        $intentRepository
+            ->expects($this->once())
+            ->method('createIntent')
+            ->willReturn($this->createMock(IntentInterface::class));
+
+        $intent = (new Authentication($intentRepository))->authorize(
+            $authorizer,
+            $adapter,
+            $credentials,
+        );
+
+        $this->assertInstanceOf(IntentInterface::class, $intent,);
     }
 
     public function testWillNotIssueIntentIfAuthorizerDoesNotSupportSecondFactor(): void
