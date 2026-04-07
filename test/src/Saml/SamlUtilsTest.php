@@ -12,15 +12,19 @@ use ActiveCollab\Authentication\Saml\Exception\InvalidSamlResponseException;
 use ActiveCollab\Authentication\Saml\Exception\InvalidSamlSignatureException;
 use ActiveCollab\Authentication\Saml\SamlUtils;
 use ActiveCollab\Authentication\Session\SessionInterface;
+use ActiveCollab\Authentication\Test\Saml\Fixtures\InMemorySamlRequestStateStore;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
 use LightSaml\Model\Context\DeserializationContext;
 use LightSaml\Model\Protocol\Response;
 
 class SamlUtilsTest extends TestCase
 {
+    private const FIXTURE_AUTHN_REQUEST_ID = '_saml_utils_test_fixture_authn_request_id';
+
     private SamlUtils $saml_utils;
     private array $raw_saml_response;
     private string $idp_certificate;
+    private InMemorySamlRequestStateStore $request_state_store;
 
     public function setUp(): void
     {
@@ -31,6 +35,7 @@ class SamlUtilsTest extends TestCase
         $this->raw_saml_response = [
             'SAMLResponse' => file_get_contents(__DIR__ . '/../Fixtures/saml_sha256.txt'),
         ];
+        $this->request_state_store = new InMemorySamlRequestStateStore();
     }
 
     public function testAuthnRequest()
@@ -85,10 +90,12 @@ class SamlUtilsTest extends TestCase
                 ->setNotOnOrAfter(time() + 3600);
         }
 
+        $this->request_state_store->save(self::FIXTURE_AUTHN_REQUEST_ID, 3600);
         $this->saml_utils->validateAssertionConditions(
             $response,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
 
         return $response;
@@ -138,10 +145,12 @@ class SamlUtilsTest extends TestCase
 
         $response = $this->deserializeResponse(base64_encode($xml));
 
+        $this->request_state_store->save(self::FIXTURE_AUTHN_REQUEST_ID, 3600);
         $this->saml_utils->validateAssertionConditions(
             $response,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -161,7 +170,8 @@ class SamlUtilsTest extends TestCase
             $tampered_payload,
             $this->idp_certificate,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -181,7 +191,8 @@ class SamlUtilsTest extends TestCase
             $unsigned_payload,
             $this->idp_certificate,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -202,7 +213,8 @@ class SamlUtilsTest extends TestCase
             ['SAMLResponse' => file_get_contents($fixture_path)],
             $wrong_certificate,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -222,10 +234,12 @@ class SamlUtilsTest extends TestCase
                 ->setNotOnOrAfter(time() - 3600);
         }
 
+        $this->request_state_store->save(self::FIXTURE_AUTHN_REQUEST_ID, 3600);
         $this->saml_utils->validateAssertionConditions(
             $response,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -241,7 +255,8 @@ class SamlUtilsTest extends TestCase
             ['SAMLResponse' => file_get_contents($fixture_path)],
             $this->idp_certificate,
             'http://wrong-destination.com',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 
@@ -261,10 +276,12 @@ class SamlUtilsTest extends TestCase
                 ->setNotOnOrAfter(time() + 3600);
         }
 
+        $this->request_state_store->save(self::FIXTURE_AUTHN_REQUEST_ID, 3600);
         $this->saml_utils->validateAssertionConditions(
             $response,
             'http://localhost:8887/projects',
-            'http://wrong-audience.com'
+            'http://wrong-audience.com',
+            $this->request_state_store
         );
     }
 
@@ -303,7 +320,8 @@ class SamlUtilsTest extends TestCase
             $unsupported_payload,
             $this->idp_certificate,
             'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+            'http://localhost:8887/projects',
+            $this->request_state_store
         );
     }
 }

@@ -91,10 +91,11 @@ class SamlUtils
     /**
      * Parse saml response.
      *
-     * @param  array    $payload
-     * @param  string   $idp_certificate
-     * @param  string   $expected_destination
-     * @param  string   $expected_audience
+     * @param  array                          $payload
+     * @param  string                         $idp_certificate
+     * @param  string                         $expected_destination
+     * @param  string                         $expected_audience
+     * @param  SamlRequestStateStoreInterface $request_state_store
      * @return Response
      */
     public function parseSamlResponse(
@@ -102,7 +103,7 @@ class SamlUtils
         string $idp_certificate,
         string $expected_destination,
         string $expected_audience,
-        ?SamlRequestStateStoreInterface $request_state_store = null
+        SamlRequestStateStoreInterface $request_state_store
     ) {
         $deserialization_context = new DeserializationContext();
         $deserialization_context->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
@@ -174,24 +175,22 @@ class SamlUtils
         Response $response,
         string $expected_destination,
         string $expected_audience,
-        ?SamlRequestStateStoreInterface $request_state_store = null
+        SamlRequestStateStoreInterface $request_state_store
     ): void {
         if ($response->getDestination() !== $expected_destination) {
             throw new InvalidSamlResponseException('SAML response destination mismatch.');
         }
 
-        if ($request_state_store !== null) {
-            $in_response_to = $response->getInResponseTo();
+        $in_response_to = $response->getInResponseTo();
 
-            if (empty($in_response_to)) {
-                throw new InvalidSamlResponseException('SAML response is missing InResponseTo attribute.');
-            }
+        if (empty($in_response_to)) {
+            throw new InvalidSamlResponseException('SAML response is missing InResponseTo attribute.');
+        }
 
-            if (!$request_state_store->consume($in_response_to)) {
-                throw new InvalidSamlResponseException(
-                    'SAML response InResponseTo does not match any pending authentication request.',
-                );
-            }
+        if (!$request_state_store->consume($in_response_to)) {
+            throw new InvalidSamlResponseException(
+                'SAML response InResponseTo does not match any pending authentication request.',
+            );
         }
 
         $now = time();
