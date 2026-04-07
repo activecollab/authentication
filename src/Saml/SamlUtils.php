@@ -193,6 +193,30 @@ class SamlUtils
             );
         }
 
+        foreach ($response->getAllAssertions() as $assertion) {
+            $subject = $assertion->getSubject();
+
+            if ($subject === null) {
+                continue;
+            }
+
+            foreach ($subject->getAllSubjectConfirmations() as $subject_confirmation) {
+                $confirmation_data = $subject_confirmation->getSubjectConfirmationData();
+
+                if ($confirmation_data === null) {
+                    throw new InvalidSamlResponseException(
+                        'SubjectConfirmation is missing SubjectConfirmationData.',
+                    );
+                }
+
+                if ($confirmation_data->getInResponseTo() !== $in_response_to) {
+                    throw new InvalidSamlResponseException(
+                        'SubjectConfirmationData InResponseTo is missing or does not match the response.',
+                    );
+                }
+            }
+        }
+
         $now = time();
         $skew = 60;
 

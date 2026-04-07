@@ -146,6 +146,150 @@ class InResponseToValidationTest extends TestCase
         );
     }
 
+    public function testSubjectConfirmationDataInResponseToPassesValidation(): void
+    {
+        $message_id = '123abc';
+        $authn_request_id = '_f6d3b434-629a-4c91-998a-7889e496359b';
+
+        $response_html = $this->generateResponse('owner@company.com', $message_id, $authn_request_id);
+
+        if (preg_match('/name="SAMLResponse" value="([^"]+)"/', $response_html, $matches)) {
+            $saml_response_b64 = $matches[1];
+        } else {
+            $this->fail('Could not extract SAMLResponse from HTML');
+        }
+
+        $this->store->save($authn_request_id, 3600);
+
+        $payload = ['SAMLResponse' => $saml_response_b64];
+        $parsed_response = $this->saml_utils->parseSamlResponse(
+            $payload,
+            $this->idp_certificate,
+            $this->expected_destination,
+            $this->expected_audience,
+            $this->store
+        );
+
+        $this->assertSame($authn_request_id, $parsed_response->getInResponseTo());
+    }
+
+    public function testMissingSubjectConfirmationDataInResponseToIsRejected(): void
+    {
+        $message_id = '123abc';
+        $authn_request_id = '_f6d3b434-629a-4c91-998a-7889e496359b';
+
+        $response_html = $this->generateResponse('owner@company.com', $message_id, $authn_request_id);
+
+        if (preg_match('/name="SAMLResponse" value="([^"]+)"/', $response_html, $matches)) {
+            $saml_response_b64 = $matches[1];
+        } else {
+            $this->fail('Could not extract SAMLResponse from HTML');
+        }
+
+        $xml = base64_decode($saml_response_b64);
+        $xml = preg_replace(
+            '/(<[a-zA-Z:]*SubjectConfirmationData)\s+InResponseTo="[^"]*"/',
+            '$1',
+            $xml,
+        );
+
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML($xml);
+
+        $saml_response = new Response();
+        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
+
+        $this->store->save($authn_request_id, 3600);
+
+        $this->expectException(InvalidSamlResponseException::class);
+        $this->expectExceptionMessage('SubjectConfirmationData InResponseTo is missing or does not match the response.');
+
+        $this->saml_utils->validateAssertionConditions(
+            $saml_response,
+            $this->expected_destination,
+            $this->expected_audience,
+            $this->store,
+        );
+    }
+
+    public function testMismatchedSubjectConfirmationDataInResponseToIsRejected(): void
+    {
+        $message_id = '123abc';
+        $authn_request_id = '_f6d3b434-629a-4c91-998a-7889e496359b';
+
+        $response_html = $this->generateResponse('owner@company.com', $message_id, $authn_request_id);
+
+        if (preg_match('/name="SAMLResponse" value="([^"]+)"/', $response_html, $matches)) {
+            $saml_response_b64 = $matches[1];
+        } else {
+            $this->fail('Could not extract SAMLResponse from HTML');
+        }
+
+        $xml = base64_decode($saml_response_b64);
+        $xml = preg_replace(
+            '/(<[a-zA-Z:]*SubjectConfirmationData[^>]*)\bInResponseTo="[^"]*"/',
+            '$1InResponseTo="_tampered_id"',
+            $xml,
+        );
+
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML($xml);
+
+        $saml_response = new Response();
+        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
+
+        $this->store->save($authn_request_id, 3600);
+
+        $this->expectException(InvalidSamlResponseException::class);
+        $this->expectExceptionMessage('SubjectConfirmationData InResponseTo is missing or does not match the response.');
+
+        $this->saml_utils->validateAssertionConditions(
+            $saml_response,
+            $this->expected_destination,
+            $this->expected_audience,
+            $this->store,
+        );
+    }
+
+    public function testMissingSubjectConfirmationDataElementIsRejected(): void
+    {
+        $message_id = '123abc';
+        $authn_request_id = '_f6d3b434-629a-4c91-998a-7889e496359b';
+
+        $response_html = $this->generateResponse('owner@company.com', $message_id, $authn_request_id);
+
+        if (preg_match('/name="SAMLResponse" value="([^"]+)"/', $response_html, $matches)) {
+            $saml_response_b64 = $matches[1];
+        } else {
+            $this->fail('Could not extract SAMLResponse from HTML');
+        }
+
+        $xml = base64_decode($saml_response_b64);
+        $xml = preg_replace(
+            '/<[a-zA-Z:]*SubjectConfirmationData[^>]*\/>/',
+            '',
+            $xml,
+        );
+
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML($xml);
+
+        $saml_response = new Response();
+        $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
+
+        $this->store->save($authn_request_id, 3600);
+
+        $this->expectException(InvalidSamlResponseException::class);
+        $this->expectExceptionMessage('SubjectConfirmation is missing SubjectConfirmationData.');
+
+        $this->saml_utils->validateAssertionConditions(
+            $saml_response,
+            $this->expected_destination,
+            $this->expected_audience,
+            $this->store,
+        );
+    }
+
     public function testMissingInResponseToIsRejectedWhenStoreIsProvided(): void
     {
         $message_id = '123abc';
