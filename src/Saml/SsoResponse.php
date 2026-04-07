@@ -98,6 +98,7 @@ class SsoResponse
             ->setID(Helper::generateID())
             ->setIssueInstant(new DateTime())
             ->setDestination($message->getAssertionConsumerServiceURL())
+            ->setInResponseTo($message->getID())
             ->setIssuer(new Issuer($message->getIssuer()->getValue()));
 
         $assertion
