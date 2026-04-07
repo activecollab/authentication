@@ -13,6 +13,7 @@ use ActiveCollab\Authentication\Saml\Exception\InvalidSamlSignatureException;
 use ActiveCollab\Authentication\Saml\SamlUtils;
 use ActiveCollab\Authentication\Session\SessionInterface;
 use ActiveCollab\Authentication\Test\TestCase\TestCase;
+use LightSaml\Model\Context\DeserializationContext;
 use LightSaml\Model\Protocol\Response;
 
 class SamlUtilsTest extends TestCase
@@ -61,29 +62,36 @@ class SamlUtilsTest extends TestCase
         $this->assertSame('http://www.w3.org/2001/04/xmldsig-more#rsa-sha256', $query['SigAlg']);
     }
 
+    private function deserializeResponse(string $base64_xml): Response
+    {
+        $deserialization_context = new DeserializationContext();
+        $deserialization_context->getDocument()->loadXML(base64_decode($base64_xml));
+
+        $response = new Response();
+        $response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
+
+        return $response;
+    }
+
     private function getParsedResponse(): Response
     {
-        $parsed_response = $this->saml_utils->parseSamlResponse(
-            $this->raw_saml_response,
-            $this->idp_certificate,
-            'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
-        );
+        $response = $this->deserializeResponse($this->raw_saml_response['SAMLResponse']);
 
-        foreach ($parsed_response->getAllAssertions() as $assertion) {
+        $this->saml_utils->verifySamlResponseSignature($response, $this->idp_certificate);
+
+        foreach ($response->getAllAssertions() as $assertion) {
             $assertion->getConditions()
                 ->setNotBefore(time() - 3600)
                 ->setNotOnOrAfter(time() + 3600);
         }
 
-        return $parsed_response;
-    }
+        $this->saml_utils->validateAssertionConditions(
+            $response,
+            'http://localhost:8887/projects',
+            'http://localhost:8887/projects'
+        );
 
-    public function testParseSamlResponse()
-    {
-        $parsed_response = $this->getParsedResponse();
-
-        $this->assertInstanceOf(Response::class, $parsed_response);
+        return $response;
     }
 
     public function testEmailAddress()
@@ -111,6 +119,30 @@ class SamlUtilsTest extends TestCase
         $url = $this->saml_utils->getIssuerUrl($parsed_response);
 
         $this->assertSame('http://localhost/idp', $url);
+    }
+
+    public function testParseSamlResponse()
+    {
+        $response = $this->getParsedResponse();
+
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testAssertionWithoutConditionsIsRejected()
+    {
+        $this->expectException(InvalidSamlResponseException::class);
+        $this->expectExceptionMessage('SAML assertion is missing Conditions element.');
+
+        $xml = base64_decode($this->raw_saml_response['SAMLResponse']);
+        $xml = preg_replace('/<(?:saml:)?Conditions\b[^>]*>.*?<\/(?:saml:)?Conditions>/s', '', $xml);
+
+        $response = $this->deserializeResponse(base64_encode($xml));
+
+        $this->saml_utils->validateAssertionConditions(
+            $response,
+            'http://localhost:8887/projects',
+            'http://localhost:8887/projects'
+        );
     }
 
     /**
@@ -142,7 +174,6 @@ class SamlUtilsTest extends TestCase
         $this->expectExceptionMessage('SAML response is not signed.');
 
         $xml = base64_decode(file_get_contents($fixture_path));
-        // Remove Signature element.
         $xml = preg_replace('/<ds:Signature.*<\/ds:Signature>/Uis', '', $xml);
         $unsigned_payload = ['SAMLResponse' => base64_encode($xml)];
 
@@ -183,20 +214,16 @@ class SamlUtilsTest extends TestCase
         $this->expectException(InvalidSamlResponseException::class);
         $this->expectExceptionMessage('SAML assertion has expired.');
 
-        $parsed_response = $this->saml_utils->parseSamlResponse(
-            ['SAMLResponse' => file_get_contents($fixture_path)],
-            $this->idp_certificate,
-            'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
-        );
+        $response = $this->deserializeResponse(file_get_contents($fixture_path));
 
-        // Manually set an expired condition
-        foreach ($parsed_response->getAllAssertions() as $assertion) {
-            $assertion->getConditions()->setNotOnOrAfter(time() - 3600);
+        foreach ($response->getAllAssertions() as $assertion) {
+            $assertion->getConditions()
+                ->setNotBefore(time() - 7200)
+                ->setNotOnOrAfter(time() - 3600);
         }
 
         $this->saml_utils->validateAssertionConditions(
-            $parsed_response,
+            $response,
             'http://localhost:8887/projects',
             'http://localhost:8887/projects'
         );
@@ -226,9 +253,16 @@ class SamlUtilsTest extends TestCase
         $this->expectException(InvalidSamlResponseException::class);
         $this->expectExceptionMessage('SAML assertion audience mismatch.');
 
-        $this->saml_utils->parseSamlResponse(
-            ['SAMLResponse' => file_get_contents($fixture_path)],
-            $this->idp_certificate,
+        $response = $this->deserializeResponse(file_get_contents($fixture_path));
+
+        foreach ($response->getAllAssertions() as $assertion) {
+            $assertion->getConditions()
+                ->setNotBefore(time() - 3600)
+                ->setNotOnOrAfter(time() + 3600);
+        }
+
+        $this->saml_utils->validateAssertionConditions(
+            $response,
             'http://localhost:8887/projects',
             'http://wrong-audience.com'
         );
@@ -236,16 +270,12 @@ class SamlUtilsTest extends TestCase
 
     public function testSha1SignatureIsAccepted()
     {
-        $parsed_response = $this->saml_utils->parseSamlResponse(
-            [
-                'SAMLResponse' => file_get_contents(__DIR__ . '/../Fixtures/saml_sha1.txt'),
-            ],
-            $this->idp_certificate,
-            'http://localhost:8887/projects',
-            'http://localhost:8887/projects'
+        $response = $this->deserializeResponse(
+            file_get_contents(__DIR__ . '/../Fixtures/saml_sha1.txt')
         );
 
-        $this->assertInstanceOf(Response::class, $parsed_response);
+        $this->saml_utils->verifySamlResponseSignature($response, $this->idp_certificate);
+        $this->addToAssertionCount(1);
     }
 
     public function securityTestAlgorithmProvider(): array

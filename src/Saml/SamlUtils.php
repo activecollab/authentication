@@ -178,26 +178,28 @@ class SamlUtils
 
         foreach ($response->getAllAssertions() as $assertion) {
             $conditions = $assertion->getConditions();
-            if ($conditions) {
-                if ($conditions->getNotBeforeTimestamp() && $conditions->getNotBeforeTimestamp() > ($now + $skew)) {
-                    throw new InvalidSamlResponseException('SAML assertion is not yet valid.');
-                }
-                if ($conditions->getNotOnOrAfterTimestamp() && $conditions->getNotOnOrAfterTimestamp() <= ($now - $skew)) {
-                    throw new InvalidSamlResponseException('SAML assertion has expired.');
-                }
+            if (!$conditions) {
+                throw new InvalidSamlResponseException('SAML assertion is missing Conditions element.');
+            }
 
-                $audience_restrictions = $conditions->getAllAudienceRestrictions();
-                if (!empty($audience_restrictions)) {
-                    $audience_found = false;
-                    foreach ($audience_restrictions as $restriction) {
-                        if (in_array($expected_audience, $restriction->getAllAudience())) {
-                            $audience_found = true;
-                            break;
-                        }
+            if ($conditions->getNotBeforeTimestamp() && $conditions->getNotBeforeTimestamp() > ($now + $skew)) {
+                throw new InvalidSamlResponseException('SAML assertion is not yet valid.');
+            }
+            if ($conditions->getNotOnOrAfterTimestamp() && $conditions->getNotOnOrAfterTimestamp() <= ($now - $skew)) {
+                throw new InvalidSamlResponseException('SAML assertion has expired.');
+            }
+
+            $audience_restrictions = $conditions->getAllAudienceRestrictions();
+            if (!empty($audience_restrictions)) {
+                $audience_found = false;
+                foreach ($audience_restrictions as $restriction) {
+                    if (in_array($expected_audience, $restriction->getAllAudience())) {
+                        $audience_found = true;
+                        break;
                     }
-                    if (!$audience_found) {
-                        throw new InvalidSamlResponseException('SAML assertion audience mismatch.');
-                    }
+                }
+                if (!$audience_found) {
+                    throw new InvalidSamlResponseException('SAML assertion audience mismatch.');
                 }
             }
         }
