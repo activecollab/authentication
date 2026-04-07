@@ -101,7 +101,8 @@ class SamlUtils
         array $payload,
         string $idp_certificate,
         string $expected_destination,
-        string $expected_audience
+        string $expected_audience,
+        ?SamlRequestStateStoreInterface $request_state_store = null
     ) {
         $deserialization_context = new DeserializationContext();
         $deserialization_context->getDocument()->loadXML(base64_decode($payload['SAMLResponse']));
@@ -110,7 +111,12 @@ class SamlUtils
         $saml_response->deserialize($deserialization_context->getDocument()->firstChild, $deserialization_context);
 
         $this->verifySamlResponseSignature($saml_response, $idp_certificate);
-        $this->validateAssertionConditions($saml_response, $expected_destination, $expected_audience);
+        $this->validateAssertionConditions(
+            $saml_response,
+            $expected_destination,
+            $expected_audience,
+            $request_state_store
+        );
 
         return $saml_response;
     }
@@ -167,10 +173,25 @@ class SamlUtils
     public function validateAssertionConditions(
         Response $response,
         string $expected_destination,
-        string $expected_audience
+        string $expected_audience,
+        ?SamlRequestStateStoreInterface $request_state_store = null
     ): void {
         if ($response->getDestination() !== $expected_destination) {
             throw new InvalidSamlResponseException('SAML response destination mismatch.');
+        }
+
+        if ($request_state_store !== null) {
+            $in_response_to = $response->getInResponseTo();
+
+            if (empty($in_response_to)) {
+                throw new InvalidSamlResponseException('SAML response is missing InResponseTo attribute.');
+            }
+
+            if (!$request_state_store->consume($in_response_to)) {
+                throw new InvalidSamlResponseException(
+                    'SAML response InResponseTo does not match any pending authentication request.',
+                );
+            }
         }
 
         $now = time();
