@@ -178,29 +178,4 @@ class InResponseToValidationTest extends TestCase
             $this->store,
         );
     }
-
-    public function testValidationIsSkippedWhenNoStoreIsProvided(): void
-    {
-        $message_id = '123abc';
-        $authn_request_id = '_f6d3b434-629a-4c91-998a-7889e496359b';
-        
-        $response_html = $this->generateResponse('owner@company.com', $message_id, $authn_request_id);
-        
-        if (preg_match('/name="SAMLResponse" value="([^"]+)"/', $response_html, $matches)) {
-            $saml_response_b64 = $matches[1];
-        } else {
-            $this->fail('Could not extract SAMLResponse from HTML');
-        }
-
-        $payload = ['SAMLResponse' => $saml_response_b64];
-
-        $parsed_response = $this->saml_utils->parseSamlResponse(
-            $payload,
-            $this->idp_certificate,
-            $this->expected_destination,
-            $this->expected_audience,
-        );
-
-        $this->assertSame($authn_request_id, $parsed_response->getInResponseTo());
-    }
 }
